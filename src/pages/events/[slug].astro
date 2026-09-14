@@ -1,13 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection, getEntry } from 'orbiter:collections';
+import { getEntry } from 'orbiter:collections';
 import { getDisplayContent } from '../../lib/content';
 import { EventSchema } from '../../schemas';
-
-export async function getStaticPaths() {
-  const events = await getCollection('events');
-  return events.map((e) => ({ params: { slug: e.slug } }));
-}
 
 const { slug } = Astro.params;
 const entry = await getEntry('events', slug!);

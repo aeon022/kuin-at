@@ -4,11 +4,6 @@ import { getCollection, getEntry } from 'orbiter:collections';
 import { getDisplayContent } from '../lib/content';
 import { PageSchema, PartnerSchema } from '../schemas';
 
-export async function getStaticPaths() {
-  const pages = await getCollection('pages');
-  return pages.map((p) => ({ params: { slug: p.slug } }));
-}
-
 const { slug } = Astro.params;
 const entry = await getEntry('pages', slug!);
 if (!entry) return Astro.redirect('/404');

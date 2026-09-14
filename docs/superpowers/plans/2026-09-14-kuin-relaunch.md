@@ -14,7 +14,7 @@
 
 ## Global Constraints
 
-- Astro output mode must be `'server'` (Orbiter's `orbiter:collections` virtual module needs live reads per the "Live-Daten Integration" requirement in agent.md — confirmed as mandatory in ORBITER_CONTEXT.md §10.1).
+- Astro output mode must be `'server'` (Orbiter's `orbiter:collections` virtual module needs live reads per the "Live-Daten Integration" requirement in agent.md — confirmed as mandatory in ORBITER_CONTEXT.md §10.1). Consequence: `getStaticPaths()` is ignored by Astro on every dynamic route under full `output: 'server'` (confirmed via the real build's own `[WARN] [router] getStaticPaths() ignored...` message) — dynamic `[slug].astro` routes resolve entirely via `Astro.params` at request time instead. Don't export `getStaticPaths` from any dynamic route in this project; it's dead code that only produces a build warning.
 - No custom UI component libraries; use native HTML elements styled with Tailwind v4 utilities (agent.md "Entwicklungsrichtlinien").
 - Every interactive element keyboard-operable with visible `focus-visible:ring` — prefer native elements (`<button>`, `<a>`, `<details>`) that get this for free over custom widgets with manual ARIA.
 - Every image requires an `alt` attribute. Where the source data has no alt text, store and render an explicit, visibly-flagged placeholder (never silently omit `alt` or submit an empty string that reads as decorative).
@@ -1898,11 +1898,6 @@ import { getCollection, getEntry } from 'orbiter:collections';
 import { getDisplayContent } from '../lib/content';
 import { PageSchema, PartnerSchema } from '../schemas';
 
-export async function getStaticPaths() {
-  const pages = await getCollection('pages');
-  return pages.map((p) => ({ params: { slug: p.slug } }));
-}
-
 const { slug } = Astro.params;
 const entry = await getEntry('pages', slug!);
 if (!entry) return Astro.redirect('/404');
@@ -1994,15 +1989,10 @@ const posts = (await getCollection('blog'))
 ---
 // src/pages/blog/[slug].astro
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection, getEntry } from 'orbiter:collections';
+import { getEntry } from 'orbiter:collections';
 import { getMediaItem } from 'orbiter:media';
 import { getDisplayContent } from '../../lib/content';
 import { BlogPostSchema } from '../../schemas';
-
-export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((p) => ({ params: { slug: p.slug } }));
-}
 
 const { slug } = Astro.params;
 const entry = await getEntry('blog', slug!);
@@ -2042,14 +2032,9 @@ the page without ever being duplicated into the blog entry's own data.
 ---
 // src/pages/events/[slug].astro
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection, getEntry } from 'orbiter:collections';
+import { getEntry } from 'orbiter:collections';
 import { getDisplayContent } from '../../lib/content';
 import { EventSchema } from '../../schemas';
-
-export async function getStaticPaths() {
-  const events = await getCollection('events');
-  return events.map((e) => ({ params: { slug: e.slug } }));
-}
 
 const { slug } = Astro.params;
 const entry = await getEntry('events', slug!);

@@ -1,14 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection, getEntry } from 'orbiter:collections';
+import { getEntry } from 'orbiter:collections';
 import { getMediaItem } from 'orbiter:media';
 import { getDisplayContent } from '../../lib/content';
 import { BlogPostSchema } from '../../schemas';
-
-export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((p) => ({ params: { slug: p.slug } }));
-}
 
 const { slug } = Astro.params;
 const entry = await getEntry('blog', slug!);
