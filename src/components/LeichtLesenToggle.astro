@@ -1,0 +1,23 @@
+<button
+  id="leicht-lesen-toggle"
+  type="button"
+  aria-pressed="false"
+  class="rounded-md border border-slate-500 px-3 py-2 text-sm font-medium text-ink hover:bg-teal-500/10 focus-visible:outline-none"
+>
+  Leicht Lesen
+</button>
+
+<script>
+  import { leichtLesenStore, toggleLeichtLesen } from '../stores/leichtLesenStore';
+
+  const button = document.getElementById('leicht-lesen-toggle') as HTMLButtonElement;
+
+  function render(active: boolean) {
+    button.setAttribute('aria-pressed', String(active));
+    button.classList.toggle('bg-teal-500/20', active);
+  }
+
+  render(leichtLesenStore.get());
+  leichtLesenStore.subscribe(render);
+  button.addEventListener('click', () => toggleLeichtLesen());
+</script>

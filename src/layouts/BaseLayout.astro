@@ -1,7 +1,8 @@
 ---
 import '../styles/global.css';
-interface Props { title: string; description?: string }
-const { title, description = 'Kultur Inklusiv Graz — Kunst und Kultur barrierefrei erleben.' } = Astro.props;
+import Header from '../components/Header.astro';
+interface Props { title: string; description?: string; active?: string }
+const { title, description = 'Kultur Inklusiv Graz — Kunst und Kultur barrierefrei erleben.', active } = Astro.props;
 ---
 <!doctype html>
 <html lang="de">
@@ -12,6 +13,7 @@ const { title, description = 'Kultur Inklusiv Graz — Kunst und Kultur barriere
   <meta name="description" content={description} />
 </head>
 <body class="bg-bg text-ink">
+  <Header active={active} />
   <slot />
 </body>
 </html>
