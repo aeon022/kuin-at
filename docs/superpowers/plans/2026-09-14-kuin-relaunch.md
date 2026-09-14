@@ -877,7 +877,7 @@ console.log('total rows:', posts.length);
 console.log('pages:', posts.filter(p => p.postType === 'page' && p.postStatus === 'publish').map(p => p.postTitle));
 "
 ```
-Expected: `total rows` close to 348 (the AUTO_INCREMENT high-water mark minus gaps) and the publish-status pages list includes `Über uns`, `Kontakt`, `Home`, `Landing`, `KUIN`.
+Expected: `total rows` equal to 348 and the publish-status pages list includes `KUIN`, `Landing`, `Über uns`, `Kontakt`, `Social Proof`, `Galerie`, `Archiv`, `Impressum`, `Cookie-Richtlinie (EU)`, `Datenschutzerklärung (EU)`, `Veranstaltungen` (11 pages — there is no page literally titled "Home"; `Landing` is the actual home page, corrected here after Task 5's real-data check caught this inaccuracy in the original text).
 
 - [ ] **Step 6: Commit**
 
