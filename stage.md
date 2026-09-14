@@ -138,6 +138,23 @@ Spec: `agent.md`.
       directly into the Kontakt page's rich-text content via the Orbiter
       admin. Contact block (Anita Brodtrager / office@kuin.at) is already
       hardcoded into the Kontakt route — no action needed there.
+- [ ] **Inline images in migrated blog post bodies have empty `alt=""`**
+      (found during Task 12's review, 2026-09-14) — these are WordPress
+      Gutenberg `wp-block-image` figures embedded directly in a post's
+      `content_standard` HTML, separate from the post's cover image
+      (which does get a real alt or a `[ALT-TEXT TODO]` placeholder via
+      Task 8/9). One spot-checked post (`kuin-spaziergang`) alone has 137
+      such tags. agent.md requires alt text on every image without
+      exception — this is a real gap, not a false alarm. Fixing it needs
+      either: (a) manually adding alt text per-image via the Orbiter
+      admin's rich-text editor for each of the 25 migrated blog posts, or
+      (b) a small follow-up script that walks each blog entry's
+      `content_standard`, finds `<img alt="">` tags, and replaces the
+      empty attribute with a visible `[ALT-TEXT TODO]` placeholder (same
+      pattern already used everywhere else in this migration) so the gap
+      is at least visible instead of silently shipping empty alts. Not
+      addressed by any task in the current 13-task plan — flag to the
+      client and decide before launch.
 
 ## Migration review report (full, from the real `npm run migrate` run, 2026-09-14)
 
