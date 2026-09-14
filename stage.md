@@ -161,11 +161,24 @@ Spec: `agent.md`.
       files have no alt text in the legacy WP data (full filename list in the
       migration review report below; rerun `npm run migrate` to reproduce).
 - [ ] Rewrite Oxygen-only pages flagged `needsReview` by `transformPage`.
-- [ ] Populate Partners, Events, Archive collections manually via the Orbiter
-      admin (`localhost:4322`) — no legacy source data for these. For
-      Partners, the logo SVGs already in `import-source/uploads/2025/02/`
-      are a ready starting point (upload as media, then set each Partner's
-      `logo` field to the resulting media id).
+- [x] ~~Populate Partners~~ — done: 16 real entries (15 recovered from the
+      legacy homepage's "Netzwerk" section via the parseOxygenTree.ts
+      image-reference bugfix, plus Oper Graz, see below). Archive is still
+      empty (genuinely no legacy source data — the old `archive` custom
+      taxonomy was never populated).
+- [ ] **Events (2026-09-14):** 1 real event added —
+      `events/kuin-unterwegs-in-graz-2026-09` ("KUIN – Unterwegs in Graz",
+      25.9.2026, extracted from the flyer image
+      `import-source/uploads/2026/07/KUIN-Programm-2026.jpg` via
+      `scripts/migrate/add-real-event.ts`). That same flyer lists 3 further
+      "Vorschau" (save-the-date) items with no time or location given —
+      **not** added as full Events, since inventing a time would
+      misrepresent them as confirmed:
+      - Sa., 24.10.2026 — KUIN Workshoptag für Kinder und Jugendliche
+      - Mi., 11.11.2026 — KUIN Konferenz zur kulturellen Teilhabe von
+        Kindern und Jugendlichen mit Behinderungen (KUG Brandhofgasse)
+      - Mi., 9.12.2026 — KUIN – Unterwegs in der Oper Graz
+      Add these via the Orbiter admin once the client confirms time/location.
 - [ ] Verify Downloads beyond `KUIN-Manifest.pdf` (only clear candidate found
       in `import-source/uploads/`).
 - [ ] **Partner-Logos (client mail, "DRINGEND"):** Oper Graz is **done** —
