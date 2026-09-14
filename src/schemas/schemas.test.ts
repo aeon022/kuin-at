@@ -40,6 +40,15 @@ test('EventSchema accepts accessibility_features array and optional LL field', (
   assert.ok(result.success);
 });
 
+test('EventSchema accepts gallery_id as an empty array (Orbiter resolves an unset relation this way, not undefined)', () => {
+  const result = EventSchema.safeParse({
+    title: 'Stadtspaziergang', start_date: '2026-05-01T10:00:00Z', end_date: '2026-05-01T12:00:00Z',
+    location: 'Hauptplatz Graz', description_standard: '<p>x</p>',
+    gallery_id: [],
+  });
+  assert.ok(result.success);
+});
+
 test('ArchiveSchema requires alt_text on every image', () => {
   const result = ArchiveSchema.safeParse({
     title: 'Walk 2025', year: 2025, description: 'Rückblick',
