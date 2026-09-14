@@ -24,7 +24,7 @@ const network = resolved.filter((p) => !p.is_board_member);
         <h2 class="mb-4 text-xl font-semibold">Vorstand</h2>
         <ul class="grid grid-cols-2 gap-6 sm:grid-cols-4">
           {board.map((p) => (
-            <li class="flex flex-col items-center gap-2">
+            <li class="flex flex-col items-center gap-2 rounded-2xl bg-sumi-900/[0.03] p-6 transition hover:-translate-y-1">
               <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain" />
               <span class="text-sm">{p.name}</span>
             </li>
@@ -37,7 +37,7 @@ const network = resolved.filter((p) => !p.is_board_member);
       <h2 class="mb-4 text-xl font-semibold">Netzwerk</h2>
       <ul class="grid grid-cols-2 gap-6 sm:grid-cols-4">
         {network.map((p) => (
-          <li class="flex flex-col items-center gap-2">
+          <li class="flex flex-col items-center gap-2 rounded-2xl bg-sumi-900/[0.03] p-6 transition hover:-translate-y-1">
             {p.website_url
               ? <a href={p.website_url} rel="noopener"><img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain" /></a>
               : <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain" />}

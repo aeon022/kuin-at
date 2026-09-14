@@ -1,32 +1,75 @@
 @import "tailwindcss";
 
+/* Playful Minimalism — see design-konzept.md. Kuin-Magenta (#cc5972) is
+   the real legacy brand color (verified in the WP export's nav-menu
+   customizer settings), too light for AAA text at any size (checked:
+   3.8:1 on washi, 4.0:1 even with white text) — reserved for decorative/
+   large-scale use (buttons' resting fill excepted, see magenta-dark),
+   borders, tints, and the focus ring. magenta-dark and matcha-dark are
+   derived, AAA-verified (≥7:1 on washi) text-safe siblings. */
 @theme {
-  --color-bg: #fdfcfb;
-  --color-ink: #2b2420;
+  --color-washi: #faf9f5;
+  --color-sumi-900: #1c1c1c;
+  --color-sumi-600: #4a4a4a;
 
-  --color-rose-500: #cc5972;
-  --color-rose-700: #7a2f42;
+  --color-kuin-magenta: #cc5972;
+  --color-magenta-dark: #7a2f42;
+  --color-magenta-soft: #fde8f0;
 
-  --color-teal-500: #65bec2;
-  --color-teal-700: #1f5a5c;
+  --color-matcha: #8a9a5b;
+  --color-matcha-dark: #4d5930;
 
-  --color-slate-500: #566d8f;
-  --color-slate-700: #32415a;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", "system-ui", "Segoe UI", sans-serif;
+  --font-ll: "Atkinson Hyperlegible", "system-ui", sans-serif;
 
-  --font-sans: "system-ui", "Segoe UI", sans-serif;
   --radius-md: 0.5rem;
 }
 
-:focus-visible {
-  outline: 3px solid var(--color-teal-700);
-  outline-offset: 2px;
+body {
+  font-family: var(--font-sans);
+}
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
 }
 
-/* Typography for CMS rich-text (`.prose`, 3 usages). Hand-written instead of
-   @tailwindcss/typography — "No Bloat": a dependency for this is not worth it. */
+/* Taktiles Fokus-Management — a massive, unmissable focus ring on every
+   interactive element, one global rule rather than a Tailwind ring-*
+   utility repeated everywhere. */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--color-washi), 0 0 0 8px var(--color-kuin-magenta);
+}
+
+/* Leicht-Lesen mode: html[data-ll] is set server-side from the LL cookie
+   (BaseLayout.astro) so this applies from first paint, no flash. Switches
+   the whole page to Atkinson Hyperlegible, opens up leading/size, and
+   gives read content a visual anchor — the "atmende UI" fading of
+   secondary chrome (date badges, etc.) uses [data-ll] .ll-fade below. */
+:root[data-ll] {
+  --font-sans: var(--font-ll);
+  --font-serif: var(--font-ll);
+}
+[data-ll] .prose {
+  line-height: 2;
+  font-size: 1.15em;
+  border-left: 8px solid var(--color-kuin-magenta);
+  padding-left: 1.25rem;
+}
+[data-ll] .ll-fade {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 700ms ease;
+}
+
+/* Typography for CMS rich-text (`.prose`, used across all content routes).
+   Hand-written instead of @tailwindcss/typography — "No Bloat": a
+   dependency for three usages is not worth it. */
 .prose {
-  color: var(--color-ink);
+  color: var(--color-sumi-900);
   line-height: 1.7;
+  max-width: 65ch;
+  transition: line-height 300ms ease, font-size 300ms ease;
 }
 .prose h1 { font-size: 1.875rem; font-weight: 700; margin: 1.5em 0 0.5em; line-height: 1.3; }
 .prose h2 { font-size: 1.5rem; font-weight: 700; margin: 1.5em 0 0.5em; line-height: 1.3; }
@@ -37,8 +80,8 @@
 .prose ul { list-style: disc; }
 .prose ol { list-style: decimal; }
 .prose li { margin: 0.25em 0; }
-.prose a { color: var(--color-teal-700); text-decoration: underline; }
-.prose a:hover { color: var(--color-rose-700); }
+.prose a { color: var(--color-magenta-dark); text-decoration: underline; }
+.prose a:hover { color: var(--color-kuin-magenta); }
 .prose strong { font-weight: 700; }
-.prose blockquote { border-left: 3px solid var(--color-slate-500); padding-left: 1em; margin: 1em 0; font-style: italic; color: var(--color-slate-700); }
-.prose img { border-radius: 0.5rem; margin: 1em 0; max-width: 100%; }
+.prose blockquote { border-left: 3px solid var(--color-sumi-900); opacity: 0.7; padding-left: 1em; margin: 1em 0; font-style: italic; }
+.prose img { border-radius: 1rem; margin: 1em 0; max-width: 100%; }

@@ -1,27 +1,37 @@
 ---
 import '../styles/global.css';
 import Header from '../components/Header.astro';
+import CommandPalette from '../components/CommandPalette.astro';
 interface Props { title: string; description?: string; active?: string }
 const { title, description = 'Kultur Inklusiv Graz — Kunst und Kultur barrierefrei erleben.', active } = Astro.props;
+
+// Read server-side so the Leicht-Lesen typography (Atkinson Hyperlegible,
+// wider leading) applies from first paint — no flash of the standard font
+// while client JS catches up.
+const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
 ---
 <!doctype html>
-<html lang="de">
+<html lang="de" data-ll={leichtLesenActive ? 'true' : undefined}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title} · KUIN</title>
   <meta name="description" content={description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet" />
 </head>
-<body class="bg-bg text-ink">
+<body class="bg-washi text-sumi-900">
   <Header active={active} />
   <slot />
-  <footer class="mt-16 border-t border-slate-500/20">
-    <nav class="mx-auto flex max-w-5xl flex-wrap gap-4 px-4 py-6 text-sm text-slate-700" aria-label="Rechtliches und Downloads">
-      <a href="/downloads" class="hover:text-teal-700">Downloads</a>
-      <a href="/impressum" class="hover:text-teal-700">Impressum</a>
-      <a href="/datenschutzerklaerung-eu" class="hover:text-teal-700">Datenschutz</a>
-      <a href="/cookie-richtlinie-eu" class="hover:text-teal-700">Cookie-Richtlinie</a>
+  <footer class="mt-16 border-t border-sumi-900/10">
+    <nav class="mx-auto flex max-w-5xl flex-wrap gap-4 px-4 py-6 text-sm text-sumi-600" aria-label="Rechtliches und Downloads">
+      <a href="/downloads" class="hover:text-kuin-magenta">Downloads</a>
+      <a href="/impressum" class="hover:text-kuin-magenta">Impressum</a>
+      <a href="/datenschutzerklaerung-eu" class="hover:text-kuin-magenta">Datenschutz</a>
+      <a href="/cookie-richtlinie-eu" class="hover:text-kuin-magenta">Cookie-Richtlinie</a>
     </nav>
   </footer>
+  <CommandPalette />
 </body>
 </html>

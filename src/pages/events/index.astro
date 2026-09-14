@@ -12,19 +12,19 @@ const events = (await getCollection('events'))
     {events.length > 0 ? (
       <ul class="flex flex-col gap-6">
         {events.map((event) => (
-          <li>
+          <li class="rounded-2xl bg-sumi-900/[0.03] p-5 transition hover:-translate-y-1 hover:bg-washi hover:shadow-md">
             <article>
-              <h2 class="text-xl font-semibold"><a href={`/events/${event.slug}`}>{event.data.title}</a></h2>
-              <time datetime={event.data.start_date} class="text-sm text-slate-700">
+              <h2 class="text-xl font-semibold"><a href={`/events/${event.slug}`} class="hover:text-kuin-magenta">{event.data.title}</a></h2>
+              <time datetime={event.data.start_date} class="text-sm text-sumi-600">
                 {new Date(event.data.start_date).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
               </time>
-              <p class="text-sm text-slate-700">{event.data.location}</p>
+              <p class="text-sm text-sumi-600">{event.data.location}</p>
             </article>
           </li>
         ))}
       </ul>
     ) : (
-      <p class="text-slate-700"><em>Derzeit sind keine Veranstaltungen geplant.</em></p>
+      <p class="text-sumi-600"><em>Derzeit sind keine Veranstaltungen geplant.</em></p>
     )}
   </main>
 </BaseLayout>

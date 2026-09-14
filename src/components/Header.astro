@@ -4,19 +4,20 @@ interface Props { active?: string }
 const { active } = Astro.props;
 const links = [
   { href: '/', label: 'Start', id: 'home' },
-  { href: '/blog', label: 'Blog', id: 'blog' },
   // Client request 2026-09: "Veranstaltungen" becomes the "Aktuell" hub,
-  // which splits into Veranstaltungen + Newsletter. Nav id stays 'events'
-  // so /events and /events/[slug] keep highlighting this item.
+  // which splits into Veranstaltungen + Newsletter — Blog no longer needs
+  // its own top-level nav entry, /aktuell links to it. Nav id stays
+  // 'events' so /events and /events/[slug] keep highlighting this item.
   { href: '/aktuell', label: 'Aktuell', id: 'events' },
   { href: '/archiv', label: 'Archiv', id: 'archiv' },
   { href: '/partner', label: 'Partner', id: 'partner' },
   { href: '/der-verein', label: 'Über uns', id: 'ueber-uns' },
+  { href: '/kontakt', label: 'Kontakt', id: 'kontakt' },
 ];
 ---
-<header class="border-b border-slate-500/20">
-  <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
-    <a href="/" class="text-lg font-bold text-rose-700">KUIN</a>
+<header class="border-b border-sumi-900/10">
+  <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+    <a href="/" class="text-lg font-bold text-magenta-dark transition hover:-translate-y-0.5">KUIN</a>
     <nav aria-label="Hauptnavigation">
       <ul class="flex flex-wrap gap-4">
         {links.map((link) => (
@@ -24,7 +25,7 @@ const links = [
             <a
               href={link.href}
               aria-current={active === link.id ? 'page' : undefined}
-              class="text-sm font-medium text-ink hover:text-teal-700"
+              class="text-sm font-medium text-sumi-900 transition hover:text-kuin-magenta"
             >
               {link.label}
             </a>
@@ -32,6 +33,16 @@ const links = [
         ))}
       </ul>
     </nav>
-    <LeichtLesenToggle />
+    <div class="flex items-center gap-2">
+      <button
+        id="kuroko-trigger"
+        type="button"
+        class="rounded-2xl border border-sumi-900/15 px-3 py-2 text-sm font-medium text-sumi-900 transition hover:-translate-y-0.5 hover:bg-sumi-900/5"
+        aria-haspopup="dialog"
+      >
+        Suche <kbd class="ml-1 rounded border border-sumi-900/20 px-1 text-xs">/</kbd>
+      </button>
+      <LeichtLesenToggle />
+    </div>
   </div>
 </header>

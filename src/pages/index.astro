@@ -1,6 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'orbiter:collections';
+import { getMediaItem } from 'orbiter:media';
+import { PartnerSchema } from '../schemas';
+import { parseEntries } from '../lib/content';
+
+// Hero copy and logo come from the real WordPress homepage content
+// (recovered from the "Netzwerk" section on the legacy Landing page,
+// migrated via the Oxygen extractor) — not invented placeholder text.
+const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 
 const posts = (await getCollection('blog'))
   .filter((p) => p.data.published_at)
@@ -12,35 +20,83 @@ const events = (await getCollection('events'))
   .filter((e) => e.data.start_date && new Date(e.data.start_date).getTime() >= now)
   .sort((a, b) => new Date(a.data.start_date).getTime() - new Date(b.data.start_date).getTime())
   .slice(0, 3);
+
+const partners = parseEntries('partners', await getCollection('partners'), PartnerSchema).map((e) => e.data);
+const withLogos = await Promise.all(
+  partners.map(async (p) => ({ ...p, logoMedia: await getMediaItem(p.logo) }))
+);
+const network = withLogos.filter((p) => p.logoMedia);
 ---
 <BaseLayout title="Home" active="home">
-  <main class="mx-auto max-w-3xl px-4 py-10">
-    <h1 class="mb-8 text-3xl font-bold">KUIN — Kultur Inklusiv</h1>
+  <section class="border-b border-sumi-900/10 bg-magenta-soft/40">
+    <div class="mx-auto flex max-w-5xl flex-col items-center gap-6 px-4 py-20 text-center">
+      {logo && <img src={logo.url} alt={logo.alt ?? 'KUIN Logo'} class="h-24 w-auto" />}
+      <h1 class="text-3xl font-bold text-sumi-900 sm:text-4xl">Kultur Inklusiv</h1>
+      <p class="max-w-2xl text-lg text-sumi-600">
+        Das Projekt „Kultur Inklusiv“ hat das Ziel, kulturelle Teilhabe als universelles
+        Menschenrecht zu fördern und Inklusion als selbstverständliches Element des
+        kulturellen Lebens zu etablieren.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="/der-verein" class="rounded-2xl bg-magenta-dark px-5 py-2.5 font-medium text-washi transition hover:-translate-y-1 hover:bg-kuin-magenta">
+          Über uns
+        </a>
+        <a href="/aktuell" class="rounded-2xl border border-sumi-900/15 px-5 py-2.5 font-medium text-sumi-900 transition hover:-translate-y-1 hover:bg-sumi-900/5">
+          Aktuelles
+        </a>
+      </div>
+    </div>
+  </section>
 
-    <section class="mb-10">
-      <h2 class="mb-4 text-xl font-semibold">Aktuelle Beiträge</h2>
-      {posts.length > 0 ? (
-        <ul class="flex flex-col gap-2">
-          {posts.map((post) => (
-            <li><a href={`/blog/${post.slug}`} class="text-teal-700 underline">{post.data.title}</a></li>
+  <main class="mx-auto max-w-5xl px-4 py-12">
+    <div class="grid gap-10 sm:grid-cols-2">
+      <section class="rounded-2xl bg-washi p-6 transition hover:-translate-y-1">
+        <h2 class="mb-4 text-xl font-semibold">Aktuelle Beiträge</h2>
+        {posts.length > 0 ? (
+          <ul class="flex flex-col gap-2">
+            {posts.map((post) => (
+              <li><a href={`/blog/${post.slug}`} class="text-magenta-dark underline hover:text-kuin-magenta">{post.data.title}</a></li>
+            ))}
+          </ul>
+        ) : (
+          <p class="text-sumi-600"><em>Derzeit keine Beiträge.</em></p>
+        )}
+      </section>
+
+      <section class="rounded-2xl bg-washi p-6 transition hover:-translate-y-1">
+        <h2 class="mb-4 text-xl font-semibold">Kommende Veranstaltungen</h2>
+        {events.length > 0 ? (
+          <ul class="flex flex-col gap-2">
+            {events.map((event) => (
+              <li><a href={`/events/${event.slug}`} class="text-magenta-dark underline hover:text-kuin-magenta">{event.data.title}</a></li>
+            ))}
+          </ul>
+        ) : (
+          <p class="text-sumi-600"><em>Derzeit sind keine Veranstaltungen geplant.</em></p>
+        )}
+      </section>
+    </div>
+
+    {network.length > 0 && (
+      <section class="mt-16 border-t border-sumi-900/10 pt-10">
+        <h2 class="mb-6 text-center text-xl font-semibold">Unser Netzwerk</h2>
+        <ul class="grid grid-cols-3 gap-8 sm:grid-cols-5">
+          {network.map((p) => (
+            <li class="flex items-center justify-center">
+              {p.website_url ? (
+                <a href={p.website_url} rel="noopener" title={p.name} class="transition hover:-translate-y-1">
+                  <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? p.name} class="h-12 w-auto object-contain grayscale transition hover:grayscale-0" />
+                </a>
+              ) : (
+                <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? p.name} class="h-12 w-auto object-contain" />
+              )}
+            </li>
           ))}
         </ul>
-      ) : (
-        <p class="text-slate-700"><em>Derzeit keine Beiträge.</em></p>
-      )}
-    </section>
-
-    <section>
-      <h2 class="mb-4 text-xl font-semibold">Kommende Veranstaltungen</h2>
-      {events.length > 0 ? (
-        <ul class="flex flex-col gap-2">
-          {events.map((event) => (
-            <li><a href={`/events/${event.slug}`} class="text-teal-700 underline">{event.data.title}</a></li>
-          ))}
-        </ul>
-      ) : (
-        <p class="text-slate-700"><em>Derzeit sind keine Veranstaltungen geplant.</em></p>
-      )}
-    </section>
+        <p class="mt-6 text-center">
+          <a href="/partner" class="text-magenta-dark underline hover:text-kuin-magenta">Alle Partner ansehen</a>
+        </p>
+      </section>
+    )}
   </main>
 </BaseLayout>

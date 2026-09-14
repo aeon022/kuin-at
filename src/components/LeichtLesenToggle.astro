@@ -2,7 +2,7 @@
   id="leicht-lesen-toggle"
   type="button"
   aria-pressed="false"
-  class="rounded-md border border-slate-500 px-3 py-2 text-sm font-medium text-ink hover:bg-teal-500/10 focus-visible:outline-none"
+  class="rounded-2xl border border-sumi-900/15 px-3 py-2 text-sm font-medium text-sumi-900 transition hover:-translate-y-0.5 hover:bg-kuin-magenta/10"
 >
   Leicht Lesen
 </button>
@@ -14,7 +14,7 @@
 
   function render(active: boolean) {
     button.setAttribute('aria-pressed', String(active));
-    button.classList.toggle('bg-teal-500/20', active);
+    button.classList.toggle('bg-kuin-magenta/20', active);
   }
 
   render(leichtLesenStore.get());

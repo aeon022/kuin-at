@@ -1,0 +1,133 @@
+---
+// "Kuroko" — a lightweight command palette (design-konzept.md §5A).
+// Native <dialog> gives us a focus trap, Escape-to-close and an inert
+// backdrop for free — no modal library. Search is a plain substring
+// filter over a small, build-time index (well under 50 entries) — no
+// fuzzy-search dependency, "No Bloat".
+import { getCollection } from 'orbiter:collections';
+
+const staticRoutes = [
+  { title: 'Start', href: '/' },
+  { title: 'Aktuell', href: '/aktuell' },
+  { title: 'Archiv', href: '/archiv' },
+  { title: 'Partner & Netzwerk', href: '/partner' },
+  { title: 'Über uns', href: '/der-verein' },
+  { title: 'Kontakt', href: '/kontakt' },
+  { title: 'Blog', href: '/blog' },
+  { title: 'Veranstaltungen', href: '/events' },
+  { title: 'Downloads', href: '/downloads' },
+];
+
+const pages = (await getCollection('pages'))
+  .filter((p) => !staticRoutes.some((r) => r.href === `/${p.slug}`))
+  .map((p) => ({ title: String(p.data.title), href: `/${p.slug}` }));
+
+const posts = (await getCollection('blog')).map((p) => ({ title: String(p.data.title), href: `/blog/${p.slug}` }));
+
+const events = (await getCollection('events')).map((e) => ({ title: String(e.data.title), href: `/events/${e.slug}` }));
+
+const index = [...staticRoutes, ...pages, ...posts, ...events];
+---
+<!-- The trigger button lives in Header.astro (id="kuroko-trigger") so it
+     sits with the rest of the nav chrome; only the dialog + its script
+     are mounted here, once, in BaseLayout. -->
+<dialog id="kuroko" class="w-full max-w-2xl rounded-2xl border-0 bg-washi p-0 shadow-2xl backdrop:bg-sumi-900/40 backdrop:backdrop-blur-md">
+  <form method="dialog">
+    <label for="kuroko-input" class="sr-only">Suche &amp; Aktionen</label>
+    <input
+      id="kuroko-input"
+      type="text"
+      autocomplete="off"
+      placeholder="Suchen oder Befehl eingeben…"
+      class="w-full border-b border-sumi-900/10 bg-transparent px-6 py-5 text-2xl text-sumi-900 outline-none placeholder:text-sumi-600 sm:text-4xl"
+    />
+  </form>
+  <ul id="kuroko-results" role="listbox" aria-label="Ergebnisse" class="max-h-96 overflow-y-auto p-2">
+  </ul>
+  <p id="kuroko-empty" class="hidden px-6 py-8 text-center text-sumi-600">Keine Ergebnisse.</p>
+</dialog>
+
+<script define:vars={{ index }}>
+  const dialog = document.getElementById('kuroko');
+  const trigger = document.getElementById('kuroko-trigger');
+  const input = document.getElementById('kuroko-input');
+  const resultsEl = document.getElementById('kuroko-results');
+  const emptyEl = document.getElementById('kuroko-empty');
+
+  const actions = [
+    {
+      title: 'Leicht Lesen umschalten',
+      run: () => document.getElementById('leicht-lesen-toggle')?.click(),
+    },
+  ];
+
+  let activeIndex = 0;
+  let current = [];
+
+  function render(items) {
+    current = items;
+    activeIndex = 0;
+    resultsEl.innerHTML = '';
+    emptyEl.classList.toggle('hidden', items.length > 0);
+    for (const [i, item] of items.entries()) {
+      const li = document.createElement('li');
+      li.role = 'option';
+      li.id = `kuroko-option-${i}`;
+      li.setAttribute('aria-selected', String(i === activeIndex));
+      li.className = 'cursor-pointer rounded-xl px-4 py-3 text-sumi-900' + (i === activeIndex ? ' bg-kuin-magenta/10' : '');
+      li.textContent = item.title;
+      li.addEventListener('click', () => activate(item));
+      li.addEventListener('mouseenter', () => setActive(i));
+      resultsEl.appendChild(li);
+    }
+  }
+
+  function setActive(i) {
+    activeIndex = i;
+    [...resultsEl.children].forEach((li, idx) => {
+      li.setAttribute('aria-selected', String(idx === i));
+      li.classList.toggle('bg-kuin-magenta/10', idx === i);
+    });
+  }
+
+  function activate(item) {
+    dialog.close();
+    if (item.run) item.run();
+    else if (item.href) location.href = item.href;
+  }
+
+  function filter(query) {
+    const q = query.trim().toLowerCase();
+    const all = [...actions.map((a) => ({ ...a, title: `› ${a.title}` })), ...index];
+    render(q ? all.filter((item) => item.title.toLowerCase().includes(q)) : all);
+  }
+
+  function open() {
+    dialog.showModal();
+    input.value = '';
+    filter('');
+    input.focus();
+  }
+
+  trigger.addEventListener('click', open);
+
+  document.addEventListener('keydown', (e) => {
+    const target = e.target;
+    const typing = target instanceof HTMLElement && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
+    if (e.key === '/' && !typing && !dialog.open) {
+      e.preventDefault();
+      open();
+    }
+  });
+
+  input.addEventListener('input', () => filter(input.value));
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(Math.min(activeIndex + 1, current.length - 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(activeIndex - 1, 0)); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (current[activeIndex]) activate(current[activeIndex]); }
+  });
+
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+</script>

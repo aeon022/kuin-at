@@ -18,12 +18,12 @@ const downloads = withFiles.filter((d) => d.fileMedia);
     <h1 class="mb-6 text-3xl font-bold">Downloads</h1>
     <ul class="flex flex-col gap-4">
       {downloads.map((d) => (
-        <li class="flex items-baseline justify-between gap-4 border-b border-slate-500/20 pb-4">
+        <li class="flex items-baseline justify-between gap-4 rounded-2xl bg-sumi-900/[0.03] p-5">
           <div>
             <p class="font-medium">{d.title}</p>
-            {d.description && <p class="text-sm text-slate-700">{d.description}</p>}
+            {d.description && <p class="text-sm text-sumi-600">{d.description}</p>}
           </div>
-          <a href={d.fileMedia?.url} class="shrink-0 rounded-md border border-teal-700 px-3 py-1 text-sm text-teal-700">
+          <a href={d.fileMedia?.url} class="shrink-0 rounded-2xl bg-magenta-dark px-3 py-1.5 text-sm text-washi transition hover:-translate-y-0.5 hover:bg-kuin-magenta">
             Herunterladen
           </a>
         </li>

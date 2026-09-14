@@ -27,25 +27,31 @@ const isKontakt = slug === 'kontakt';
 const board = isKontakt
   ? parseEntries('partners', await getCollection('partners'), PartnerSchema).map((e) => e.data).filter((p) => p.is_board_member)
   : [];
+
+// Highlight the matching nav item for the two Pages entries that have one
+// (Header.astro's link ids: 'ueber-uns' for /der-verein, 'kontakt' for
+// /kontakt); every other migrated page has no nav entry, so no highlight.
+const navIdBySlug: Record<string, string> = { 'der-verein': 'ueber-uns', kontakt: 'kontakt' };
+const active = navIdBySlug[slug!];
 ---
-<BaseLayout title={data.title} description={data.seo_description}>
+<BaseLayout title={data.title} description={data.seo_description} active={active}>
   <main class="mx-auto max-w-3xl px-4 py-10">
-    <h1 class="mb-6 text-3xl font-bold text-ink">{data.title}</h1>
+    <h1 class="mb-6 text-3xl font-bold text-sumi-900">{data.title}</h1>
     <article class="prose" set:html={content} />
 
     {isKontakt && (
-      <section class="mt-10 border-t border-slate-500/20 pt-8">
-        <h2 class="mb-4 text-xl font-semibold text-ink">Vorstand</h2>
+      <section class="mt-10 border-t border-sumi-900/10 pt-8">
+        <h2 class="mb-4 text-xl font-semibold text-sumi-900">Vorstand</h2>
         {board.length > 0 ? (
           <ul class="mb-6 flex flex-wrap gap-x-6 gap-y-1">
             {board.map((p) => <li>{p.name}</li>)}
           </ul>
         ) : (
-          <p class="mb-6 text-slate-700"><em>[TODO: Vorstandsmitglieder in der Partners-Collection als is_board_member eintragen — ein Vorstandsfoto kann direkt im Rich-Text-Editor dieser Seite ergänzt werden.]</em></p>
+          <p class="mb-6 text-sumi-600"><em>[TODO: Vorstandsmitglieder in der Partners-Collection als is_board_member eintragen — ein Vorstandsfoto kann direkt im Rich-Text-Editor dieser Seite ergänzt werden.]</em></p>
         )}
-        <p class="text-ink">
+        <p class="text-sumi-900">
           Für Anfragen wenden Sie sich bitte an <strong>Anita Brodtrager</strong>:
-          {' '}<a href="mailto:office@kuin.at" class="text-teal-700 underline">office@kuin.at</a>
+          {' '}<a href="mailto:office@kuin.at" class="text-magenta-dark underline hover:text-kuin-magenta">office@kuin.at</a>
         </p>
       </section>
     )}

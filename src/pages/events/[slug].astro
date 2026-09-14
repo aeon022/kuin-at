@@ -22,16 +22,16 @@ const content = getDisplayContent(data, 'description_standard', 'description_lei
   <main class="mx-auto max-w-3xl px-4 py-10">
     <article>
       <h1 class="mb-2 text-3xl font-bold">{data.title}</h1>
-      <p class="mb-1 text-slate-700">
+      <p class="mb-1 text-sumi-600">
         <time datetime={data.start_date}>{new Date(data.start_date).toLocaleString('de-AT')}</time>
         {' – '}
         <time datetime={data.end_date}>{new Date(data.end_date).toLocaleString('de-AT')}</time>
       </p>
-      <p class="mb-6 text-slate-700">{data.location}</p>
+      <p class="mb-6 text-sumi-600">{data.location}</p>
       {data.accessibility_features.length > 0 && (
         <ul class="mb-6 flex flex-wrap gap-2">
           {data.accessibility_features.map((f) => (
-            <li class="rounded-md border border-teal-700 px-2 py-1 text-sm text-teal-700">{f}</li>
+            <li class="rounded-2xl border border-matcha-dark bg-matcha/10 px-3 py-1 text-sm text-matcha-dark">{f}</li>
           ))}
         </ul>
       )}
