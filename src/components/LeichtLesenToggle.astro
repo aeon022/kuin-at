@@ -22,5 +22,7 @@
   button.addEventListener('click', () => {
     toggleLeichtLesen();
     document.cookie = `kuin-leicht-lesen=${leichtLesenStore.get()}; path=/; max-age=31536000; samesite=lax`;
+    // Content is rendered server-side from the cookie — reload to re-fetch it.
+    location.reload();
   });
 </script>

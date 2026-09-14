@@ -26,7 +26,7 @@ export function createKuinCollections(podPath: string): void {
   db.createCollection('blog', 'Blog', {
     title: { type: 'string', label: 'Titel', required: true },
     published_at: { type: 'datetime', label: 'Veröffentlicht', required: true },
-    cover_image: { type: 'image', label: 'Titelbild', required: true },
+    cover_image: { type: 'image', label: 'Titelbild' },
     content_standard: { type: 'richtext', label: 'Inhalt (Standard)', required: true },
     content_leicht_lesen: { type: 'richtext', label: 'Inhalt (Leicht Lesen)' },
   });

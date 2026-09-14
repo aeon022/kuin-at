@@ -2,9 +2,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'orbiter:collections';
 import { ArchiveSchema } from '../../schemas';
+import { parseEntries } from '../../lib/content';
 
-const archives = (await getCollection('archive'))
-  .map((e) => ArchiveSchema.parse(e.data))
+const archives = parseEntries('archive', await getCollection('archive'), ArchiveSchema)
+  .map((e) => e.data)
   .sort((a, b) => b.year - a.year);
 ---
 <BaseLayout title="Archiv" active="archiv">

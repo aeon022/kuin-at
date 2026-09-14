@@ -1,14 +1,20 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection, getEntry } from 'orbiter:collections';
-import { getDisplayContent } from '../lib/content';
+import { getDisplayContent, parseEntries } from '../lib/content';
 import { PageSchema, PartnerSchema } from '../schemas';
 
 const { slug } = Astro.params;
 const entry = await getEntry('pages', slug!);
 if (!entry) return Astro.redirect('/404');
 
-const data = PageSchema.parse(entry.data);
+// Malformed CMS data must not 500 the public page — treat it like "not found".
+const parsed = PageSchema.safeParse(entry.data);
+if (!parsed.success) {
+  console.warn(`pages/${slug}: invalid entry data, redirecting to /404`, parsed.error.issues);
+  return Astro.redirect('/404');
+}
+const data = parsed.data;
 const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
 const content = getDisplayContent(data, 'content_standard', 'content_leicht_lesen', leichtLesenActive);
 
@@ -19,7 +25,7 @@ const content = getDisplayContent(data, 'content_standard', 'content_leicht_lese
 // the board changes; the contact name/email is fixed on this one page.
 const isKontakt = slug === 'kontakt';
 const board = isKontakt
-  ? (await getCollection('partners')).map((e) => PartnerSchema.parse(e.data)).filter((p) => p.is_board_member)
+  ? parseEntries('partners', await getCollection('partners'), PartnerSchema).map((e) => e.data).filter((p) => p.is_board_member)
   : [];
 ---
 <BaseLayout title={data.title} description={data.seo_description}>

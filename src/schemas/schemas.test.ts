@@ -9,12 +9,18 @@ test('PageSchema accepts a minimal valid page', () => {
   assert.ok(result.success);
 });
 
-test('BlogPostSchema rejects an empty cover_image', () => {
-  const result = BlogPostSchema.safeParse({
+// cover_image is optional: 21 of the 25 migrated WP posts have no featured
+// image, and the migration wrote '' for those — both shapes must parse.
+test('BlogPostSchema accepts a missing or empty cover_image', () => {
+  const empty = BlogPostSchema.safeParse({
     title: 'News', published_at: '2026-01-01T00:00:00Z',
     cover_image: '', content_standard: '<p>x</p>',
   });
-  assert.equal(result.success, false);
+  assert.ok(empty.success);
+  const absent = BlogPostSchema.safeParse({
+    title: 'News', published_at: '2026-01-01T00:00:00Z', content_standard: '<p>x</p>',
+  });
+  assert.ok(absent.success);
 });
 
 test('BlogPostSchema accepts cover_image as an Orbiter media-id string', () => {

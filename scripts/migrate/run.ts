@@ -91,6 +91,7 @@ async function main() {
 
   console.log('→ migrating blog posts');
   let blogCount = 0;
+  const usedBlogSlugs = new Set<string>();
   for (const post of posts.filter((p) => p.postType === 'post')) {
     const thumbMeta = (postmeta.get(post.id) ?? []).find((m) => m.key === '_thumbnail_id');
     // As with alt text above, the thumbnail attachment's guid is often a
@@ -100,9 +101,17 @@ async function main() {
     const coverImageId = attachedFile ? mediaIdByFilename.get(path.basename(attachedFile)) ?? null : null;
     const result = transformBlogPost(post, coverImageId);
     if (!result) continue;
-    db.createEntry('blog', result.slug, result.data, post.postStatus === 'publish' ? 'published' : 'draft');
+    // Same WP-allows-duplicate-post_name guard as for pages above; no
+    // collision exists in the current dataset, but Orbiter enforces unique slugs.
+    let slug = result.slug;
+    if (usedBlogSlugs.has(slug)) {
+      slug = `${slug}-${post.id}`;
+      needsReview.push(`blog/${slug}: slug collided with another post's "${result.slug}" — auto-renamed, verify/fix manually`);
+    }
+    usedBlogSlugs.add(slug);
+    db.createEntry('blog', slug, result.data, post.postStatus === 'publish' ? 'published' : 'draft');
     blogCount++;
-    if (result.needsReview) needsReview.push(`blog/${result.slug}: content or cover image needs manual review`);
+    if (result.needsReview) needsReview.push(`blog/${slug}: content or cover image needs manual review`);
   }
   console.log(`  migrated ${blogCount} blog posts`);
 
@@ -118,4 +127,7 @@ async function main() {
   for (const item of needsReview) console.log(' -', item);
 }
 
-main();
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

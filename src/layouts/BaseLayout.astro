@@ -15,5 +15,13 @@ const { title, description = 'Kultur Inklusiv Graz — Kunst und Kultur barriere
 <body class="bg-bg text-ink">
   <Header active={active} />
   <slot />
+  <footer class="mt-16 border-t border-slate-500/20">
+    <nav class="mx-auto flex max-w-5xl flex-wrap gap-4 px-4 py-6 text-sm text-slate-700" aria-label="Rechtliches und Downloads">
+      <a href="/downloads" class="hover:text-teal-700">Downloads</a>
+      <a href="/impressum" class="hover:text-teal-700">Impressum</a>
+      <a href="/datenschutzerklaerung-eu" class="hover:text-teal-700">Datenschutz</a>
+      <a href="/cookie-richtlinie-eu" class="hover:text-teal-700">Cookie-Richtlinie</a>
+    </nav>
+  </footer>
 </body>
 </html>

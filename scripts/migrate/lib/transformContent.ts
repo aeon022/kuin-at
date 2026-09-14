@@ -51,7 +51,7 @@ export function transformPage(
 export function transformBlogPost(
   post: WpPost,
   coverImageId: string | null,
-): { slug: string; data: { title: string; published_at: string; cover_image: string; content_standard: string }; needsReview: boolean } | null {
+): { slug: string; data: { title: string; published_at: string; cover_image?: string; content_standard: string }; needsReview: boolean } | null {
   if (post.postType !== 'post') return null;
   const content = stripToText(post.postContent);
   const isUsable = content.length > 0;
@@ -60,7 +60,7 @@ export function transformBlogPost(
     data: {
       title: post.postTitle,
       published_at: new Date(post.postDate.replace(' ', 'T') + 'Z').toISOString(),
-      cover_image: coverImageId ?? '',
+      cover_image: coverImageId ?? undefined,
       content_standard: isUsable ? content : CONTENT_REVIEW_PLACEHOLDER,
     },
     needsReview: !isUsable || !coverImageId,

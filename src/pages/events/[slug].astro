@@ -8,7 +8,13 @@ const { slug } = Astro.params;
 const entry = await getEntry('events', slug!);
 if (!entry) return Astro.redirect('/404');
 
-const data = EventSchema.parse(entry.data);
+// Malformed CMS data must not 500 the public page — treat it like "not found".
+const parsed = EventSchema.safeParse(entry.data);
+if (!parsed.success) {
+  console.warn(`events/${slug}: invalid entry data, redirecting to /404`, parsed.error.issues);
+  return Astro.redirect('/404');
+}
+const data = parsed.data;
 const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
 const content = getDisplayContent(data, 'description_standard', 'description_leicht_lesen', leichtLesenActive);
 ---

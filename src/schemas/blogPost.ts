@@ -8,7 +8,8 @@ import { z } from 'zod';
 export const BlogPostSchema = z.object({
   title: z.string().min(1),
   published_at: z.string().datetime(),
-  cover_image: z.string().min(1),
+  // Optional: 21 of the 25 migrated WP posts have no featured image at all.
+  cover_image: z.string().optional(),
   content_standard: z.string().min(1),
   content_leicht_lesen: z.string().optional(),
 });
