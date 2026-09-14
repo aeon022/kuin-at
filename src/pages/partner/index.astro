@@ -20,12 +20,12 @@ const network = resolved.filter((p) => !p.is_board_member);
     <h1 class="mb-16 text-4xl font-bold md:text-5xl">Partner & Netzwerk</h1>
 
     {board.length > 0 && (
-      <section class="mb-10">
-        <h2 class="mb-4 text-xl font-semibold">Vorstand</h2>
+      <section class="mb-16">
+        <h2 class="mb-8 text-sm font-bold tracking-widest text-sumi-600 uppercase">Vorstand</h2>
         <ul class="grid grid-cols-2 gap-6 sm:grid-cols-4">
           {board.map((p) => (
             <li class="flex flex-col items-center gap-2 rounded-2xl bg-sumi-900/[0.03] p-6 transition hover:-translate-y-1">
-              <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain" />
+              <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain grayscale transition hover:grayscale-0" />
               <span class="text-sm">{p.name}</span>
             </li>
           ))}
@@ -34,13 +34,13 @@ const network = resolved.filter((p) => !p.is_board_member);
     )}
 
     <section>
-      <h2 class="mb-4 text-xl font-semibold">Netzwerk</h2>
+      <h2 class="mb-8 text-sm font-bold tracking-widest text-sumi-600 uppercase">Netzwerk</h2>
       <ul class="grid grid-cols-2 gap-6 sm:grid-cols-4">
         {network.map((p) => (
           <li class="flex flex-col items-center gap-2 rounded-2xl bg-sumi-900/[0.03] p-6 transition hover:-translate-y-1">
             {p.website_url
-              ? <a href={p.website_url} rel="noopener"><img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain" /></a>
-              : <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain" />}
+              ? <a href={p.website_url} rel="noopener"><img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain grayscale transition hover:grayscale-0" /></a>
+              : <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain grayscale transition hover:grayscale-0" />}
             <span class="text-sm">{p.name}</span>
           </li>
         ))}
