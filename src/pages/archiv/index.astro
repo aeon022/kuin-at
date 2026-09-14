@@ -38,7 +38,7 @@ const reports = await Promise.all(
 const resolvedReports = reports.filter((r) => r.fileMedia);
 ---
 <BaseLayout title="Archiv" active="archiv">
-  <main class="mx-auto max-w-5xl px-4 py-10">
+  <main id="main" class="mx-auto max-w-5xl px-4 py-10">
     <h1 class="mb-8 text-3xl font-bold">Archiv — Rückblicke</h1>
 
     <section class="mb-12">
@@ -75,7 +75,7 @@ const resolvedReports = reports.filter((r) => r.fileMedia);
                 <h3 class="text-lg font-semibold">
                   <a href={`/blog/${post.slug}`} class="text-magenta-dark underline hover:text-kuin-magenta">{post.data.title}</a>
                 </h3>
-                <time datetime={post.data.published_at} class="text-sm text-sumi-600">
+                <time datetime={post.data.published_at} class="ll-fade text-sm text-sumi-600">
                   {new Date(post.data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </time>
               </article>

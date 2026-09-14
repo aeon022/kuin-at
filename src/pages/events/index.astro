@@ -7,7 +7,7 @@ const events = (await getCollection('events'))
   .sort((a, b) => new Date(a.data.start_date).getTime() - new Date(b.data.start_date).getTime());
 ---
 <BaseLayout title="Veranstaltungen" active="events">
-  <main class="mx-auto max-w-3xl px-4 py-10">
+  <main id="main" class="mx-auto max-w-3xl px-4 py-10">
     <h1 class="mb-6 text-3xl font-bold">Veranstaltungen</h1>
     {events.length > 0 ? (
       <ul class="flex flex-col gap-6">
@@ -15,7 +15,7 @@ const events = (await getCollection('events'))
           <li class="rounded-2xl bg-sumi-900/[0.03] p-5 transition hover:-translate-y-1 hover:bg-washi hover:shadow-md">
             <article>
               <h2 class="text-xl font-semibold"><a href={`/events/${event.slug}`} class="hover:text-kuin-magenta">{event.data.title}</a></h2>
-              <time datetime={event.data.start_date} class="text-sm text-sumi-600">
+              <time datetime={event.data.start_date} class="ll-fade text-sm text-sumi-600">
                 {new Date(event.data.start_date).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
               </time>
               <p class="text-sm text-sumi-600">{event.data.location}</p>

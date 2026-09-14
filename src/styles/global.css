@@ -15,6 +15,9 @@
   --color-kuin-magenta: #cc5972;
   --color-magenta-dark: #7a2f42;
   --color-magenta-soft: #fde8f0;
+  /* AAA-safe on dark backgrounds only (9.1:1 on sumi-900) — magenta-dark
+     is tuned for light backgrounds and fails badly on dark (1.9:1). */
+  --color-magenta-light: #f3a9be;
 
   --color-matcha: #8a9a5b;
   --color-matcha-dark: #4d5930;

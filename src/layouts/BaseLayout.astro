@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import CommandPalette from '../components/CommandPalette.astro';
+import { getMediaItem } from 'orbiter:media';
 interface Props { title: string; description?: string; active?: string }
 const { title, description = 'Kultur Inklusiv Graz — Kunst und Kultur barrierefrei erleben.', active } = Astro.props;
 
@@ -9,6 +10,12 @@ const { title, description = 'Kultur Inklusiv Graz — Kunst und Kultur barriere
 // wider leading) applies from first paint — no flash of the standard font
 // while client JS catches up.
 const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
+
+// "Mit freundlicher Unterstützung der Stadt Graz" — a funding credit, not a
+// network member, so it lives in the footer rather than the Partners grid
+// (see src/pages/partner/index.astro and the Netzwerk section on the
+// homepage, which list actual member organizations only).
+const grazLogo = await getMediaItem('6923fde6-9248-406d-8213-2decc73b8ad8');
 ---
 <!doctype html>
 <html lang="de" data-ll={leichtLesenActive ? 'true' : undefined}>
@@ -21,16 +28,43 @@ const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'tru
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet" />
 </head>
-<body class="bg-washi text-sumi-900">
+<body class="bg-washi text-sumi-900 selection:bg-kuin-magenta selection:text-washi">
+  <a href="#main" class="sr-only rounded-2xl bg-magenta-dark px-6 py-3 font-bold text-washi focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50">
+    Zum Hauptinhalt springen
+  </a>
   <Header active={active} />
   <slot />
-  <footer class="mt-16 border-t border-sumi-900/10">
-    <nav class="mx-auto flex max-w-5xl flex-wrap gap-4 px-4 py-6 text-sm text-sumi-600" aria-label="Rechtliches und Downloads">
-      <a href="/downloads" class="hover:text-kuin-magenta">Downloads</a>
-      <a href="/impressum" class="hover:text-kuin-magenta">Impressum</a>
-      <a href="/datenschutzerklaerung-eu" class="hover:text-kuin-magenta">Datenschutz</a>
-      <a href="/cookie-richtlinie-eu" class="hover:text-kuin-magenta">Cookie-Richtlinie</a>
-    </nav>
+  <footer class="mt-16 border-t-8 border-kuin-magenta bg-sumi-900 pt-16 pb-10 text-washi">
+    <div class="mx-auto grid max-w-5xl grid-cols-1 gap-10 px-4 sm:grid-cols-4">
+      <div class="sm:col-span-2">
+        <p class="font-serif text-2xl font-bold">KUIN</p>
+        <p class="mt-2 max-w-sm text-washi/70">Das Netzwerk für barrierefreie Kulturerlebnisse in Graz.</p>
+        {grazLogo && (
+          <div class="mt-6 flex items-center gap-3">
+            <img src={grazLogo.url} alt={grazLogo.alt ?? 'Logo der Stadt Graz'} class="h-10 w-auto" />
+            <span class="text-xs text-washi/70">Mit freundlicher Unterstützung der Stadt Graz</span>
+          </div>
+        )}
+      </div>
+      <div>
+        <h2 class="text-sm font-bold tracking-widest text-magenta-light uppercase">Kontakt</h2>
+        <ul class="mt-4 space-y-2 text-washi/80">
+          <li><a href="/kontakt" class="hover:text-washi">Kontakt</a></li>
+          <li><a href="mailto:office@kuin.at" class="hover:text-washi">office@kuin.at</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="text-sm font-bold tracking-widest text-magenta-light uppercase">Rechtliches</h2>
+        <nav aria-label="Rechtliches und Downloads">
+          <ul class="mt-4 space-y-2 text-washi/80">
+            <li><a href="/downloads" class="hover:text-washi">Downloads</a></li>
+            <li><a href="/impressum" class="hover:text-washi">Impressum</a></li>
+            <li><a href="/datenschutzerklaerung-eu" class="hover:text-washi">Datenschutz</a></li>
+            <li><a href="/cookie-richtlinie-eu" class="hover:text-washi">Cookie-Richtlinie</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
   </footer>
   <CommandPalette />
 </body>

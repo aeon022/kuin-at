@@ -15,7 +15,7 @@ const links = [
   { href: '/kontakt', label: 'Kontakt', id: 'kontakt' },
 ];
 ---
-<header class="border-b border-sumi-900/10">
+<header class="sticky top-0 z-40 border-b border-sumi-900/10 bg-washi/90 backdrop-blur-md">
   <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-4">
     <a href="/" class="text-lg font-bold text-magenta-dark transition hover:-translate-y-0.5">KUIN</a>
     <nav aria-label="Hauptnavigation">
@@ -40,7 +40,7 @@ const links = [
         class="rounded-2xl border border-sumi-900/15 px-3 py-2 text-sm font-medium text-sumi-900 transition hover:-translate-y-0.5 hover:bg-sumi-900/5"
         aria-haspopup="dialog"
       >
-        Suche <kbd class="ml-1 rounded border border-sumi-900/20 px-1 text-xs">/</kbd>
+        Suche <kbd class="ml-1 rounded border border-sumi-900/20 px-1 text-xs">⌘K</kbd>
       </button>
       <LeichtLesenToggle />
     </div>
