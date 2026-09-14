@@ -7,58 +7,75 @@
 import { getCollection } from 'orbiter:collections';
 
 const staticRoutes = [
-  { title: 'Start', href: '/' },
-  { title: 'Aktuell', href: '/aktuell' },
-  { title: 'Archiv', href: '/archiv' },
-  { title: 'Partner & Netzwerk', href: '/partner' },
-  { title: 'Über uns', href: '/der-verein' },
-  { title: 'Kontakt', href: '/kontakt' },
-  { title: 'Blog', href: '/blog' },
-  { title: 'Veranstaltungen', href: '/events' },
-  { title: 'Downloads', href: '/downloads' },
+  { title: 'Start', href: '/', type: 'nav' },
+  { title: 'Aktuell', href: '/aktuell', type: 'nav' },
+  { title: 'Archiv', href: '/archiv', type: 'nav' },
+  { title: 'Partner & Netzwerk', href: '/partner', type: 'nav' },
+  { title: 'Über uns', href: '/der-verein', type: 'nav' },
+  { title: 'Kontakt', href: '/kontakt', type: 'nav' },
+  { title: 'Blog', href: '/blog', type: 'nav' },
+  { title: 'Veranstaltungen', href: '/events', type: 'nav' },
+  { title: 'Downloads', href: '/downloads', type: 'nav' },
 ];
 
 const pages = (await getCollection('pages'))
   .filter((p) => !staticRoutes.some((r) => r.href === `/${p.slug}`))
-  .map((p) => ({ title: String(p.data.title), href: `/${p.slug}` }));
+  .map((p) => ({ title: String(p.data.title), href: `/${p.slug}`, type: 'nav' }));
 
-const posts = (await getCollection('blog')).map((p) => ({ title: String(p.data.title), href: `/blog/${p.slug}` }));
+const posts = (await getCollection('blog')).map((p) => ({ title: String(p.data.title), href: `/blog/${p.slug}`, type: 'blog' }));
 
-const events = (await getCollection('events')).map((e) => ({ title: String(e.data.title), href: `/events/${e.slug}` }));
+const events = (await getCollection('events')).map((e) => ({ title: String(e.data.title), href: `/events/${e.slug}`, type: 'event' }));
 
 const index = [...staticRoutes, ...pages, ...posts, ...events];
+
+// icon + right-aligned category label per result type, matching the
+// mockup's row structure (icon badge + label, category tag on the right).
+const META = {
+  nav: { icon: '🧭', label: 'Seite' },
+  blog: { icon: '📰', label: 'Beitrag' },
+  event: { icon: '📅', label: 'Event' },
+  action: { icon: '⚙️', label: 'Aktion' },
+};
 ---
 <!-- The trigger button lives in Header.astro (id="kuroko-trigger") so it
      sits with the rest of the nav chrome; only the dialog + its script
-     are mounted here, once, in BaseLayout. -->
-<dialog id="kuroko" class="w-full max-w-2xl rounded-2xl border-0 bg-washi p-0 shadow-2xl backdrop:bg-sumi-900/40 backdrop:backdrop-blur-md">
-  <form method="dialog">
-    <label for="kuroko-input" class="sr-only">Suche &amp; Aktionen</label>
-    <input
-      id="kuroko-input"
-      type="text"
-      autocomplete="off"
-      placeholder="Suchen oder Befehl eingeben…"
-      class="w-full border-b border-sumi-900/10 bg-transparent px-6 py-5 text-2xl text-sumi-900 outline-none placeholder:text-sumi-600 sm:text-4xl"
-    />
-  </form>
-  <ul id="kuroko-results" role="listbox" aria-label="Ergebnisse" class="max-h-96 overflow-y-auto p-2">
-  </ul>
-  <p id="kuroko-empty" class="hidden px-6 py-8 text-center text-sumi-600">Keine Ergebnisse.</p>
+     are mounted here, once, in BaseLayout. The <dialog> itself is a bare
+     positioning shell — all visible chrome (rounded corners, shadow,
+     border, the open/close animation) lives on the inner container, same
+     split as the design mockup. -->
+<dialog id="kuroko" class="top-20 m-auto w-full max-w-2xl border-0 bg-transparent p-0 backdrop:bg-[rgba(250,249,245,0.85)] backdrop:backdrop-blur-md">
+  <div id="kuroko-container" class="scale-95 rounded-3xl border border-sumi-900/10 bg-white opacity-0 shadow-2xl transition-all duration-300">
+    <div class="flex items-center gap-4 border-b border-sumi-900/10 bg-washi/50 p-6">
+      <svg class="h-6 w-6 shrink-0 text-kuin-magenta" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <label for="kuroko-input" class="sr-only">Suche &amp; Aktionen</label>
+      <input
+        id="kuroko-input"
+        type="text"
+        autocomplete="off"
+        placeholder="Suchen oder Aktion wählen…"
+        class="w-full bg-transparent font-serif text-2xl font-medium text-sumi-900 outline-none placeholder:font-sans placeholder:text-base placeholder:text-sumi-600"
+      />
+      <button id="kuroko-close" type="button" class="shrink-0 rounded bg-sumi-900/10 px-2 py-1 text-xs font-bold text-sumi-600 hover:text-sumi-900">ESC</button>
+    </div>
+    <ul id="kuroko-results" role="listbox" aria-label="Ergebnisse" class="max-h-[50vh] space-y-1 overflow-y-auto p-2">
+    </ul>
+    <p id="kuroko-empty" class="hidden px-6 py-8 text-center text-sumi-600">Keine Ergebnisse.</p>
+  </div>
 </dialog>
 
-<script define:vars={{ index }}>
+<script define:vars={{ index, META }}>
   const dialog = document.getElementById('kuroko');
+  const container = document.getElementById('kuroko-container');
   const trigger = document.getElementById('kuroko-trigger');
+  const closeBtn = document.getElementById('kuroko-close');
   const input = document.getElementById('kuroko-input');
   const resultsEl = document.getElementById('kuroko-results');
   const emptyEl = document.getElementById('kuroko-empty');
 
   const actions = [
-    {
-      title: 'Leicht Lesen umschalten',
-      run: () => document.getElementById('leicht-lesen-toggle')?.click(),
-    },
+    { title: 'Leicht Lesen umschalten', type: 'action', run: () => document.getElementById('leicht-lesen-toggle')?.click() },
   ];
 
   let activeIndex = 0;
@@ -70,12 +87,19 @@ const index = [...staticRoutes, ...pages, ...posts, ...events];
     resultsEl.innerHTML = '';
     emptyEl.classList.toggle('hidden', items.length > 0);
     for (const [i, item] of items.entries()) {
+      const meta = META[item.type] ?? META.nav;
       const li = document.createElement('li');
       li.role = 'option';
       li.id = `kuroko-option-${i}`;
       li.setAttribute('aria-selected', String(i === activeIndex));
-      li.className = 'cursor-pointer rounded-xl px-4 py-3 text-sumi-900' + (i === activeIndex ? ' bg-kuin-magenta/10' : '');
-      li.textContent = item.title;
+      li.className = 'group flex cursor-pointer items-center justify-between rounded-2xl p-4 transition-colors' + (i === activeIndex ? ' bg-magenta-soft' : '');
+      li.innerHTML = `
+        <span class="flex items-center gap-4">
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-kuin-magenta/10 text-lg">${meta.icon}</span>
+          <span class="text-lg font-medium text-sumi-900">${item.title}</span>
+        </span>
+        <span class="text-xs font-bold tracking-widest text-sumi-600 uppercase">${meta.label}</span>
+      `;
       li.addEventListener('click', () => activate(item));
       li.addEventListener('mouseenter', () => setActive(i));
       resultsEl.appendChild(li);
@@ -86,19 +110,19 @@ const index = [...staticRoutes, ...pages, ...posts, ...events];
     activeIndex = i;
     [...resultsEl.children].forEach((li, idx) => {
       li.setAttribute('aria-selected', String(idx === i));
-      li.classList.toggle('bg-kuin-magenta/10', idx === i);
+      li.classList.toggle('bg-magenta-soft', idx === i);
     });
   }
 
   function activate(item) {
-    dialog.close();
+    close();
     if (item.run) item.run();
     else if (item.href) location.href = item.href;
   }
 
   function filter(query) {
     const q = query.trim().toLowerCase();
-    const all = [...actions.map((a) => ({ ...a, title: `› ${a.title}` })), ...index];
+    const all = [...actions, ...index];
     render(q ? all.filter((item) => item.title.toLowerCase().includes(q)) : all);
   }
 
@@ -106,10 +130,21 @@ const index = [...staticRoutes, ...pages, ...posts, ...events];
     dialog.showModal();
     input.value = '';
     filter('');
+    requestAnimationFrame(() => {
+      container.classList.remove('scale-95', 'opacity-0');
+      container.classList.add('scale-100', 'opacity-100');
+    });
     input.focus();
   }
 
+  function close() {
+    container.classList.remove('scale-100', 'opacity-100');
+    container.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => dialog.close(), 300);
+  }
+
   trigger.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
 
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -133,6 +168,14 @@ const index = [...staticRoutes, ...pages, ...posts, ...events];
   });
 
   dialog.addEventListener('click', (e) => {
-    if (e.target === dialog) dialog.close();
+    if (e.target === dialog) close();
+  });
+
+  // The native <dialog> closes itself on Escape via its own "cancel" event,
+  // which would skip the fade/scale-out animation — intercept it and run
+  // the animated close() instead.
+  dialog.addEventListener('cancel', (e) => {
+    e.preventDefault();
+    close();
   });
 </script>

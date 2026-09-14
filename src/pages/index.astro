@@ -58,38 +58,10 @@ const network = withLogos.filter((p) => p.logoMedia);
   </section>
 
   <main id="main" class="mx-auto max-w-5xl space-y-24 px-4 pb-24 md:space-y-32">
-    <!-- Featured card: layered depth (a rotated shadow panel behind a
-         glass-blur foreground), the actual most recent real content. -->
-    {posts.length > 0 && (
-      <section class="group relative">
-        <div class="absolute inset-0 -z-10 rotate-1 rounded-[2.5rem] border border-sumi-900/5 bg-washi transition-transform duration-500 group-hover:rotate-2"></div>
-        <div class="rounded-[2.5rem] border border-sumi-900/10 bg-white/60 p-8 backdrop-blur-sm md:p-12">
-          <div class="ll-fade mb-8 inline-flex items-center gap-2 rounded-full bg-kuin-magenta/10 px-4 py-1.5 text-xs font-bold tracking-widest text-magenta-dark uppercase">
-            <span class="h-1.5 w-1.5 rounded-full bg-kuin-magenta"></span>
-            Aktuell
-          </div>
-          <div class="grid gap-8 md:grid-cols-2">
-            {posts.map((post) => (
-              <article>
-                <h2 class="text-2xl font-bold text-sumi-900">
-                  <a href={`/blog/${post.slug}`} class="hover:text-kuin-magenta">{post.data.title}</a>
-                </h2>
-                <time datetime={post.data.published_at} class="ll-fade mt-2 block text-sm font-semibold tracking-widest text-sumi-600 uppercase">
-                  {new Date(post.data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
-                </time>
-              </article>
-            ))}
-          </div>
-          <a href="/blog" class="mt-8 inline-flex items-center gap-2 font-semibold text-magenta-dark hover:text-kuin-magenta">
-            Alle Beiträge <span class="transition-transform group-hover:translate-x-1">→</span>
-          </a>
-        </div>
-      </section>
-    )}
-
-    <!-- Upcoming events as cards — a big display-serif date numeral is the
-         real KUIN identity carried over from the old site's event flyers,
-         not decoration. -->
+    <!-- Upcoming events lead — live, actionable content comes before
+         archival content (blog/newsletter posts, below). Matches the
+         mockup's Hero → Walk → Archiv priority order, which had this
+         backwards in an earlier pass (blog first, events second). -->
     <section>
       <h2 class="mb-8 text-sm font-bold tracking-widest text-sumi-600 uppercase">Kommende Veranstaltungen</h2>
       {events.length > 0 ? (
@@ -124,6 +96,35 @@ const network = withLogos.filter((p) => p.logoMedia);
         </div>
       )}
     </section>
+
+    <!-- Featured card: layered depth (a rotated shadow panel behind a
+         glass-blur foreground), the actual most recent real content. -->
+    {posts.length > 0 && (
+      <section class="group relative">
+        <div class="absolute inset-0 -z-10 rotate-1 rounded-[2.5rem] border border-sumi-900/5 bg-washi transition-transform duration-500 group-hover:rotate-2"></div>
+        <div class="rounded-[2.5rem] border border-sumi-900/10 bg-white/60 p-8 backdrop-blur-sm md:p-12">
+          <div class="ll-fade mb-8 inline-flex items-center gap-2 rounded-full bg-kuin-magenta/10 px-4 py-1.5 text-xs font-bold tracking-widest text-magenta-dark uppercase">
+            <span class="h-1.5 w-1.5 rounded-full bg-kuin-magenta"></span>
+            Aktuell
+          </div>
+          <div class="grid gap-8 md:grid-cols-2">
+            {posts.map((post) => (
+              <article>
+                <h2 class="text-2xl font-bold text-sumi-900">
+                  <a href={`/blog/${post.slug}`} class="hover:text-kuin-magenta">{post.data.title}</a>
+                </h2>
+                <time datetime={post.data.published_at} class="ll-fade mt-2 block text-sm font-semibold tracking-widest text-sumi-600 uppercase">
+                  {new Date(post.data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </time>
+              </article>
+            ))}
+          </div>
+          <a href="/blog" class="mt-8 inline-flex items-center gap-2 font-semibold text-magenta-dark hover:text-kuin-magenta">
+            Alle Beiträge <span class="transition-transform group-hover:translate-x-1">→</span>
+          </a>
+        </div>
+      </section>
+    )}
 
     <!-- Pull-quote — verbatim sentence from der-verein, styled at real
          editorial scale. -->
