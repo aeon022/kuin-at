@@ -10,18 +10,30 @@ const events = (await getCollection('events'))
   <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
     <h1 class="mb-12 text-4xl font-bold md:text-5xl">Veranstaltungen</h1>
     {events.length > 0 ? (
-      <ul class="flex flex-col gap-6">
-        {events.map((event) => (
-          <li class="rounded-2xl bg-sumi-900/[0.03] p-5 transition hover:-translate-y-1 hover:bg-washi hover:shadow-md">
-            <article>
-              <h2 class="text-xl font-semibold"><a href={`/events/${event.slug}`} class="hover:text-kuin-magenta">{event.data.title}</a></h2>
-              <time datetime={event.data.start_date} class="ll-fade text-sm text-sumi-600">
-                {new Date(event.data.start_date).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
-              </time>
-              <p class="text-sm text-sumi-600">{event.data.location}</p>
-            </article>
-          </li>
-        ))}
+      <ul class="grid gap-8 sm:grid-cols-2">
+        {events.map((event) => {
+          const eventDate = new Date(event.data.start_date);
+          return (
+            <li class="rounded-[2.5rem] border border-sumi-900/10 bg-washi p-8 transition hover:-translate-y-1">
+              <article class="flex items-start gap-6">
+                <div class="shrink-0">
+                  <span class="block font-serif text-5xl font-bold tracking-tighter text-sumi-900">
+                    {eventDate.getDate()}.
+                  </span>
+                  <span class="ll-fade mt-1 block text-xs font-semibold tracking-widest text-sumi-600 uppercase">
+                    {eventDate.toLocaleDateString('de-AT', { month: 'long' })}
+                  </span>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold text-sumi-900">
+                    <a href={`/events/${event.slug}`} class="hover:text-kuin-magenta">{event.data.title}</a>
+                  </h2>
+                  <p class="mt-2 text-sm text-sumi-600">{event.data.location}</p>
+                </div>
+              </article>
+            </li>
+          );
+        })}
       </ul>
     ) : (
       <p class="text-sumi-600"><em>Derzeit sind keine Veranstaltungen geplant.</em></p>
