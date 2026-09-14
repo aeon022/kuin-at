@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'orbiter:collections';
+import { getMediaItem } from 'orbiter:media';
+import { DownloadSchema } from '../../schemas';
+
+const parsed = (await getCollection('downloads')).map((e) => DownloadSchema.parse(e.data));
+const downloads = await Promise.all(
+  parsed.map(async (d) => ({ ...d, fileMedia: await getMediaItem(d.file) }))
+);
+---
+<BaseLayout title="Downloads" active="downloads">
+  <main class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="mb-6 text-3xl font-bold">Downloads</h1>
+    <ul class="flex flex-col gap-4">
+      {downloads.map((d) => (
+        <li class="flex items-baseline justify-between gap-4 border-b border-slate-500/20 pb-4">
+          <div>
+            <p class="font-medium">{d.title}</p>
+            {d.description && <p class="text-sm text-slate-700">{d.description}</p>}
+          </div>
+          <a href={d.fileMedia?.url} class="shrink-0 rounded-md border border-teal-700 px-3 py-1 text-sm text-teal-700">
+            Herunterladen
+          </a>
+        </li>
+      ))}
+    </ul>
+  </main>
+</BaseLayout>

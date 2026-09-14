@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'orbiter:collections';
+import { ArchiveSchema } from '../../schemas';
+
+const archives = (await getCollection('archive'))
+  .map((e) => ArchiveSchema.parse(e.data))
+  .sort((a, b) => b.year - a.year);
+---
+<BaseLayout title="Archiv" active="archiv">
+  <main class="mx-auto max-w-5xl px-4 py-10">
+    <h1 class="mb-6 text-3xl font-bold">Archiv — Rückblicke</h1>
+    {archives.map((archive) => (
+      <section class="mb-10">
+        <h2 class="mb-2 text-xl font-semibold">{archive.title} ({archive.year})</h2>
+        {archive.description && <p class="mb-4 text-slate-700">{archive.description}</p>}
+        <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          {archive.images.map((img) => (
+            <li>
+              <figure>
+                <img src={img.image_url} alt={img.alt_text} class="rounded-md" loading="lazy" />
+                {img.caption && <figcaption class="mt-1 text-sm text-slate-700">{img.caption}</figcaption>}
+              </figure>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </main>
+</BaseLayout>

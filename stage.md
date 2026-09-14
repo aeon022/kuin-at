@@ -121,6 +121,31 @@ Spec: `agent.md`.
   post_name `landing` — WP allows this across statuses but Orbiter enforces
   unique slugs, so the draft is auto-renamed to `landing-479` with a review
   note.
+- 2026-09-14 — Task 13 (final task): built the last 3 listing pages —
+  `/archiv`, `/partner`, `/downloads` — completing the full route set (Pages,
+  Blog, Events, Archive, Partners, Downloads) planned across all 13 tasks.
+  `/archiv` reads the `archive` collection directly (images carry their own
+  `image_url`/`alt_text` per `ArchiveSchema`, no media-id resolution needed).
+  `/partner` and `/downloads` resolve `Partner.logo`/`Download.file`
+  media-id strings via `getMediaItem` (`orbiter:media`), same pattern as
+  Task 12's blog cover image, with a `[ALT-TEXT TODO: Bild manuell
+  beschreiben]` fallback so every `<img>` alt stays non-empty. All three
+  Orbiter collections are genuinely empty right now (no legacy structured
+  data for Archive/Partners/Downloads — the WP pages were intro text only,
+  already migrated into Pages in Task 9); each route's `.map()` over an
+  empty array renders an empty section rather than crashing, same guarantee
+  Task 12 already proved live for `/events`. `npm run build` green
+  (confirmed twice, foreground, exit code 0). Live dev-server curl
+  verification of the empty-state render was attempted but the sandbox's
+  background-task/monitor notification channel repeatedly stalled against
+  Astro 7's own dev-server daemon (its agent-auto-detected background mode
+  imposes a hard 30s startup timeout, shorter than this project's Orbiter
+  pod load time) — root-caused to `node_modules/astro/dist/cli/dev/index.js`
+  (`isRunByAgent()` → background mode → `node_modules/astro/dist/cli/server.js`'s
+  30s watchdog), not to the new page code. Substituted a static build pass
+  plus line-by-line inspection of all three files against the brief (which
+  specifies their exact contents) instead. This closes the 13-task
+  kuin-relaunch plan.
 
 ## Remaining manual work (fills in as migration runs — empty until Task 9)
 
@@ -129,7 +154,10 @@ Spec: `agent.md`.
       migration review report below; rerun `npm run migrate` to reproduce).
 - [ ] Rewrite Oxygen-only pages flagged `needsReview` by `transformPage`.
 - [ ] Populate Partners, Events, Archive collections manually via the Orbiter
-      admin (`localhost:4322`) — no legacy source data for these.
+      admin (`localhost:4322`) — no legacy source data for these. For
+      Partners, the logo SVGs already in `import-source/uploads/2025/02/`
+      are a ready starting point (upload as media, then set each Partner's
+      `logo` field to the resulting media id).
 - [ ] Verify Downloads beyond `KUIN-Manifest.pdf` (only clear candidate found
       in `import-source/uploads/`).
 - [ ] **Kontakt page (user request 2026-09-14):** add board members to the

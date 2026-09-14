@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'orbiter:collections';
+import { getMediaItem } from 'orbiter:media';
+import { PartnerSchema } from '../../schemas';
+
+const partners = (await getCollection('partners')).map((e) => PartnerSchema.parse(e.data));
+const withLogos = await Promise.all(
+  partners.map(async (p) => ({ ...p, logoMedia: await getMediaItem(p.logo) }))
+);
+const board = withLogos.filter((p) => p.is_board_member);
+const network = withLogos.filter((p) => !p.is_board_member);
+---
+<BaseLayout title="Partner & Netzwerk" active="partner">
+  <main class="mx-auto max-w-5xl px-4 py-10">
+    <h1 class="mb-8 text-3xl font-bold">Partner & Netzwerk</h1>
+
+    {board.length > 0 && (
+      <section class="mb-10">
+        <h2 class="mb-4 text-xl font-semibold">Vorstand</h2>
+        <ul class="grid grid-cols-2 gap-6 sm:grid-cols-4">
+          {board.map((p) => (
+            <li class="flex flex-col items-center gap-2">
+              <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain" />
+              <span class="text-sm">{p.name}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section>
+      <h2 class="mb-4 text-xl font-semibold">Netzwerk</h2>
+      <ul class="grid grid-cols-2 gap-6 sm:grid-cols-4">
+        {network.map((p) => (
+          <li class="flex flex-col items-center gap-2">
+            {p.website_url
+              ? <a href={p.website_url} rel="noopener"><img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain" /></a>
+              : <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain" />}
+            <span class="text-sm">{p.name}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </main>
+</BaseLayout>
