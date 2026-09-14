@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection, getEntry } from 'orbiter:collections';
+import { getDisplayContent } from '../lib/content';
+import { PageSchema, PartnerSchema } from '../schemas';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  return pages.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const entry = await getEntry('pages', slug!);
+if (!entry) return Astro.redirect('/404');
+
+const data = PageSchema.parse(entry.data);
+const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
+const content = getDisplayContent(data, 'content_standard', 'content_leicht_lesen', leichtLesenActive);
+
+// The Kontakt page additionally shows the board and a named contact for
+// inquiries — requested directly by the client, not derivable from the
+// legacy WP data. Board names are pulled live from Partners
+// (is_board_member) rather than hardcoded, so the list stays correct as
+// the board changes; the contact name/email is fixed on this one page.
+const isKontakt = slug === 'kontakt';
+const board = isKontakt
+  ? (await getCollection('partners')).map((e) => PartnerSchema.parse(e.data)).filter((p) => p.is_board_member)
+  : [];
+---
+<BaseLayout title={data.title} description={data.seo_description}>
+  <main class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="mb-6 text-3xl font-bold text-ink">{data.title}</h1>
+    <article class="prose" set:html={content} />
+
+    {isKontakt && (
+      <section class="mt-10 border-t border-slate-500/20 pt-8">
+        <h2 class="mb-4 text-xl font-semibold text-ink">Vorstand</h2>
+        {board.length > 0 ? (
+          <ul class="mb-6 flex flex-wrap gap-x-6 gap-y-1">
+            {board.map((p) => <li>{p.name}</li>)}
+          </ul>
+        ) : (
+          <p class="mb-6 text-slate-700"><em>[TODO: Vorstandsmitglieder in der Partners-Collection als is_board_member eintragen — ein Vorstandsfoto kann direkt im Rich-Text-Editor dieser Seite ergänzt werden.]</em></p>
+        )}
+        <p class="text-ink">
+          Für Anfragen wenden Sie sich bitte an <strong>Anita Brodtrager</strong>:
+          {' '}<a href="mailto:office@kuin.at" class="text-teal-700 underline">office@kuin.at</a>
+        </p>
+      </section>
+    )}
+  </main>
+</BaseLayout>

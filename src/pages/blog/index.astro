@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'orbiter:collections';
+
+const posts = (await getCollection('blog'))
+  .filter((p) => p.data.published_at)
+  .sort((a, b) => new Date(b.data.published_at).getTime() - new Date(a.data.published_at).getTime());
+---
+<BaseLayout title="Blog" active="blog">
+  <main class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="mb-6 text-3xl font-bold">Blog</h1>
+    <ul class="flex flex-col gap-6">
+      {posts.map((post) => (
+        <li>
+          <article>
+            <h2 class="text-xl font-semibold"><a href={`/blog/${post.slug}`}>{post.data.title}</a></h2>
+            <time datetime={post.data.published_at} class="text-sm text-slate-700">
+              {new Date(post.data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </time>
+          </article>
+        </li>
+      ))}
+    </ul>
+  </main>
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, getEntry } from 'orbiter:collections';
+import { getMediaItem } from 'orbiter:media';
+import { getDisplayContent } from '../../lib/content';
+import { BlogPostSchema } from '../../schemas';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const entry = await getEntry('blog', slug!);
+if (!entry) return Astro.redirect('/404');
+
+const data = BlogPostSchema.parse(entry.data);
+const coverImage = await getMediaItem(data.cover_image);
+const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
+const content = getDisplayContent(data, 'content_standard', 'content_leicht_lesen', leichtLesenActive);
+---
+<BaseLayout title={data.title} active="blog">
+  <main class="mx-auto max-w-3xl px-4 py-10">
+    <article>
+      <h1 class="mb-2 text-3xl font-bold">{data.title}</h1>
+      <time datetime={data.published_at} class="mb-6 block text-sm text-slate-700">
+        {new Date(data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </time>
+      {coverImage && (
+        <img src={coverImage.url} alt={coverImage.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="mb-6 rounded-md" />
+      )}
+      <div class="prose" set:html={content} />
+    </article>
+  </main>
+</BaseLayout>

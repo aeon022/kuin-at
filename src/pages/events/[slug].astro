@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, getEntry } from 'orbiter:collections';
+import { getDisplayContent } from '../../lib/content';
+import { EventSchema } from '../../schemas';
+
+export async function getStaticPaths() {
+  const events = await getCollection('events');
+  return events.map((e) => ({ params: { slug: e.slug } }));
+}
+
+const { slug } = Astro.params;
+const entry = await getEntry('events', slug!);
+if (!entry) return Astro.redirect('/404');
+
+const data = EventSchema.parse(entry.data);
+const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
+const content = getDisplayContent(data, 'description_standard', 'description_leicht_lesen', leichtLesenActive);
+---
+<BaseLayout title={data.title} active="events">
+  <main class="mx-auto max-w-3xl px-4 py-10">
+    <article>
+      <h1 class="mb-2 text-3xl font-bold">{data.title}</h1>
+      <p class="mb-1 text-slate-700">
+        <time datetime={data.start_date}>{new Date(data.start_date).toLocaleString('de-AT')}</time>
+        {' – '}
+        <time datetime={data.end_date}>{new Date(data.end_date).toLocaleString('de-AT')}</time>
+      </p>
+      <p class="mb-6 text-slate-700">{data.location}</p>
+      {data.accessibility_features.length > 0 && (
+        <ul class="mb-6 flex flex-wrap gap-2">
+          {data.accessibility_features.map((f) => (
+            <li class="rounded-md border border-teal-700 px-2 py-1 text-sm text-teal-700">{f}</li>
+          ))}
+        </ul>
+      )}
+      <div class="prose" set:html={content} />
+    </article>
+  </main>
+</BaseLayout>

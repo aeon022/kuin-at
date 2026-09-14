@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'orbiter:collections';
+
+const events = (await getCollection('events'))
+  .filter((e) => e.data.start_date)
+  .sort((a, b) => new Date(a.data.start_date).getTime() - new Date(b.data.start_date).getTime());
+---
+<BaseLayout title="Veranstaltungen" active="events">
+  <main class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="mb-6 text-3xl font-bold">Veranstaltungen</h1>
+    {events.length > 0 ? (
+      <ul class="flex flex-col gap-6">
+        {events.map((event) => (
+          <li>
+            <article>
+              <h2 class="text-xl font-semibold"><a href={`/events/${event.slug}`}>{event.data.title}</a></h2>
+              <time datetime={event.data.start_date} class="text-sm text-slate-700">
+                {new Date(event.data.start_date).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </time>
+              <p class="text-sm text-slate-700">{event.data.location}</p>
+            </article>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="text-slate-700"><em>Derzeit sind keine Veranstaltungen geplant.</em></p>
+    )}
+  </main>
+</BaseLayout>

@@ -19,5 +19,8 @@
 
   render(leichtLesenStore.get());
   leichtLesenStore.subscribe(render);
-  button.addEventListener('click', () => toggleLeichtLesen());
+  button.addEventListener('click', () => {
+    toggleLeichtLesen();
+    document.cookie = `kuin-leicht-lesen=${leichtLesenStore.get()}; path=/; max-age=31536000; samesite=lax`;
+  });
 </script>
