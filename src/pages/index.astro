@@ -10,6 +10,10 @@ import { parseEntries } from '../lib/content';
 // migrated via the Oxygen extractor) — not invented placeholder text.
 const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 
+// Pull-quote is a verbatim sentence from the real der-verein page content
+// (Projektkonzept section) — not invented copy.
+const quote = 'Kultur Inklusiv basiert auf der Überzeugung, dass Kultur durch die Begegnung und den Austausch von Menschen entsteht.';
+
 const posts = (await getCollection('blog'))
   .filter((p) => p.data.published_at)
   .sort((a, b) => new Date(b.data.published_at).getTime() - new Date(a.data.published_at).getTime())
@@ -20,6 +24,8 @@ const events = (await getCollection('events'))
   .filter((e) => e.data.start_date && new Date(e.data.start_date).getTime() >= now)
   .sort((a, b) => new Date(a.data.start_date).getTime() - new Date(b.data.start_date).getTime())
   .slice(0, 3);
+const nextEvent = events[0];
+const nextEventDate = nextEvent ? new Date(nextEvent.data.start_date) : null;
 
 const partners = parseEntries('partners', await getCollection('partners'), PartnerSchema).map((e) => e.data);
 const withLogos = await Promise.all(
@@ -28,59 +34,103 @@ const withLogos = await Promise.all(
 const network = withLogos.filter((p) => p.logoMedia);
 ---
 <BaseLayout title="Home" active="home">
-  <section class="border-b border-sumi-900/10 bg-magenta-soft/40">
-    <div class="mx-auto flex max-w-5xl flex-col items-center gap-6 px-4 py-20 text-center">
-      {logo && <img src={logo.url} alt={logo.alt ?? 'KUIN Logo'} class="h-24 w-auto" />}
-      <h1 class="text-3xl font-bold text-sumi-900 sm:text-4xl">Kultur Inklusiv</h1>
-      <p class="max-w-2xl text-lg text-sumi-600">
-        Das Projekt „Kultur Inklusiv“ hat das Ziel, kulturelle Teilhabe als universelles
-        Menschenrecht zu fördern und Inklusion als selbstverständliches Element des
-        kulturellen Lebens zu etablieren.
-      </p>
-      <div class="flex flex-wrap justify-center gap-4">
-        <a href="/der-verein" class="rounded-2xl bg-magenta-dark px-5 py-2.5 font-medium text-washi transition hover:-translate-y-1 hover:bg-kuin-magenta">
-          Über uns
-        </a>
-        <a href="/aktuell" class="rounded-2xl border border-sumi-900/15 px-5 py-2.5 font-medium text-sumi-900 transition hover:-translate-y-1 hover:bg-sumi-900/5">
-          Aktuelles
-        </a>
-      </div>
+  <!-- Hero: editorial, left-aligned, generous whitespace ("Ma") — the
+       previous version was a small, centered template hero with no real
+       typographic drama. This is Playfair Display at real display scale. -->
+  <section class="mx-auto max-w-4xl px-4 pt-20 pb-16 md:pt-28 md:pb-24">
+    {logo && <img src={logo.url} alt={logo.alt ?? 'KUIN Logo'} class="mb-10 h-14 w-auto" />}
+    <h1 class="text-6xl leading-[1.05] font-bold tracking-tight text-sumi-900 md:text-[5.5rem]">
+      Kultur ohne <br />
+      <span class="font-medium text-sumi-600 italic">Hindernisse.</span>
+    </h1>
+    <p class="mt-10 max-w-2xl text-xl leading-relaxed font-light text-sumi-600">
+      Das Projekt „Kultur Inklusiv" hat das Ziel, kulturelle Teilhabe als universelles
+      Menschenrecht zu fördern und Inklusion als selbstverständliches Element des
+      kulturellen Lebens zu etablieren.
+    </p>
+    <div class="mt-10 flex flex-wrap gap-4">
+      <a href="/der-verein" class="rounded-2xl bg-magenta-dark px-6 py-3 font-medium text-washi transition hover:-translate-y-1 hover:bg-kuin-magenta">
+        Über uns
+      </a>
+      <a href="/aktuell" class="rounded-2xl border border-sumi-900/15 px-6 py-3 font-medium text-sumi-900 transition hover:-translate-y-1 hover:bg-sumi-900/5">
+        Aktuelles
+      </a>
     </div>
   </section>
 
-  <main id="main" class="mx-auto max-w-5xl px-4 py-12">
-    <div class="grid gap-10 sm:grid-cols-2">
-      <section class="rounded-2xl bg-washi p-6 transition hover:-translate-y-1">
-        <h2 class="mb-4 text-xl font-semibold">Aktuelle Beiträge</h2>
-        {posts.length > 0 ? (
-          <ul class="flex flex-col gap-2">
+  <main id="main" class="mx-auto max-w-5xl space-y-24 px-4 pb-24 md:space-y-32">
+    <!-- Featured card: layered depth (a rotated shadow panel behind a
+         glass-blur foreground), the actual most recent real content. -->
+    {posts.length > 0 && (
+      <section class="group relative">
+        <div class="absolute inset-0 -z-10 rotate-1 rounded-[2.5rem] border border-sumi-900/5 bg-washi transition-transform duration-500 group-hover:rotate-2"></div>
+        <div class="rounded-[2.5rem] border border-sumi-900/10 bg-white/60 p-8 backdrop-blur-sm md:p-12">
+          <div class="ll-fade mb-8 inline-flex items-center gap-2 rounded-full bg-kuin-magenta/10 px-4 py-1.5 text-xs font-bold tracking-widest text-magenta-dark uppercase">
+            <span class="h-1.5 w-1.5 rounded-full bg-kuin-magenta"></span>
+            Aktuell
+          </div>
+          <div class="grid gap-8 md:grid-cols-2">
             {posts.map((post) => (
-              <li><a href={`/blog/${post.slug}`} class="text-magenta-dark underline hover:text-kuin-magenta">{post.data.title}</a></li>
+              <article>
+                <h2 class="text-2xl font-bold text-sumi-900">
+                  <a href={`/blog/${post.slug}`} class="hover:text-kuin-magenta">{post.data.title}</a>
+                </h2>
+                <time datetime={post.data.published_at} class="ll-fade mt-2 block text-sm font-semibold tracking-widest text-sumi-600 uppercase">
+                  {new Date(post.data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </time>
+              </article>
             ))}
-          </ul>
-        ) : (
-          <p class="text-sumi-600"><em>Derzeit keine Beiträge.</em></p>
-        )}
+          </div>
+          <a href="/blog" class="mt-8 inline-flex items-center gap-2 font-semibold text-magenta-dark hover:text-kuin-magenta">
+            Alle Beiträge <span class="transition-transform group-hover:translate-x-1">→</span>
+          </a>
+        </div>
       </section>
+    )}
 
-      <section class="rounded-2xl bg-washi p-6 transition hover:-translate-y-1">
-        <h2 class="mb-4 text-xl font-semibold">Kommende Veranstaltungen</h2>
-        {events.length > 0 ? (
-          <ul class="flex flex-col gap-2">
-            {events.map((event) => (
-              <li><a href={`/events/${event.slug}`} class="text-magenta-dark underline hover:text-kuin-magenta">{event.data.title}</a></li>
-            ))}
-          </ul>
-        ) : (
-          <p class="text-sumi-600"><em>Derzeit sind keine Veranstaltungen geplant.</em></p>
-        )}
+    <!-- Next event, if one exists. Same visual language as the walk card
+         above: a big display-serif date numeral is the real KUIN identity
+         from the old site's event pages, not decoration. -->
+    {nextEvent && nextEventDate && (
+      <section class="rounded-[2.5rem] border border-sumi-900/10 bg-washi p-8 md:p-12">
+        <article class="flex flex-col items-start gap-8 md:flex-row md:gap-16">
+          <div class="shrink-0">
+            <span class="block font-serif text-6xl font-bold tracking-tighter text-sumi-900">
+              {nextEventDate.getDate()}.
+            </span>
+            <span class="mt-2 block text-sm font-semibold tracking-widest text-sumi-600 uppercase">
+              {nextEventDate.toLocaleDateString('de-AT', { month: 'long' })}
+            </span>
+          </div>
+          <div>
+            <h2 class="text-3xl font-bold text-sumi-900">
+              <a href={`/events/${nextEvent.slug}`} class="hover:text-kuin-magenta">{nextEvent.data.title}</a>
+            </h2>
+            <p class="mt-3 text-sumi-600">{nextEvent.data.location}</p>
+          </div>
+        </article>
       </section>
-    </div>
+    )}
+
+    {!nextEvent && (
+      <section class="rounded-[2.5rem] border border-sumi-900/10 bg-washi p-8 text-center md:p-12">
+        <h2 class="text-xl font-semibold text-sumi-900">Kommende Veranstaltungen</h2>
+        <p class="mt-2 text-sumi-600"><em>Derzeit sind keine Veranstaltungen geplant.</em></p>
+      </section>
+    )}
+
+    <!-- Pull-quote — verbatim sentence from der-verein, styled at real
+         editorial scale. -->
+    <section class="mx-auto max-w-2xl">
+      <blockquote class="border-l-4 border-kuin-magenta py-2 pl-8 font-serif text-3xl leading-snug text-sumi-900 italic">
+        „{quote}"
+      </blockquote>
+    </section>
 
     {network.length > 0 && (
-      <section class="mt-16 border-t border-sumi-900/10 pt-10">
-        <h2 class="mb-6 text-center text-xl font-semibold">Unser Netzwerk</h2>
-        <ul class="grid grid-cols-3 gap-8 sm:grid-cols-5">
+      <section class="border-t border-sumi-900/10 pt-16 text-center">
+        <h2 class="mb-2 text-sm font-bold tracking-widest text-sumi-600 uppercase">Unser Netzwerk</h2>
+        <ul class="mt-10 grid grid-cols-3 gap-x-8 gap-y-10 opacity-70 transition-opacity duration-500 hover:opacity-100 sm:grid-cols-5">
           {network.map((p) => (
             <li class="flex items-center justify-center">
               {p.website_url ? (
@@ -93,8 +143,8 @@ const network = withLogos.filter((p) => p.logoMedia);
             </li>
           ))}
         </ul>
-        <p class="mt-6 text-center">
-          <a href="/partner" class="text-magenta-dark underline hover:text-kuin-magenta">Alle Partner ansehen</a>
+        <p class="mt-10">
+          <a href="/partner" class="font-semibold text-magenta-dark hover:text-kuin-magenta">Alle Partner ansehen →</a>
         </p>
       </section>
     )}

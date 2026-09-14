@@ -7,8 +7,8 @@ const posts = (await getCollection('blog'))
   .sort((a, b) => new Date(b.data.published_at).getTime() - new Date(a.data.published_at).getTime());
 ---
 <BaseLayout title="Blog" active="events">
-  <main id="main" class="mx-auto max-w-3xl px-4 py-10">
-    <h1 class="mb-6 text-3xl font-bold">Blog</h1>
+  <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
+    <h1 class="mb-12 text-4xl font-bold md:text-5xl">Blog</h1>
     <ul class="flex flex-col gap-6">
       {posts.map((post) => (
         <li class="rounded-2xl bg-sumi-900/[0.03] p-5 transition hover:-translate-y-1 hover:bg-washi hover:shadow-md">

@@ -21,9 +21,9 @@ const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'tru
 const content = getDisplayContent(data, 'content_standard', 'content_leicht_lesen', leichtLesenActive);
 ---
 <BaseLayout title={data.title} active="events">
-  <main id="main" class="mx-auto max-w-3xl px-4 py-10">
+  <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
     <article>
-      <h1 class="mb-2 text-3xl font-bold">{data.title}</h1>
+      <h1 class="mb-3 text-4xl font-bold md:text-5xl">{data.title}</h1>
       <time datetime={data.published_at} class="mb-6 block text-sm text-sumi-600">
         {new Date(data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
       </time>

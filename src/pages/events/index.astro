@@ -7,8 +7,8 @@ const events = (await getCollection('events'))
   .sort((a, b) => new Date(a.data.start_date).getTime() - new Date(b.data.start_date).getTime());
 ---
 <BaseLayout title="Veranstaltungen" active="events">
-  <main id="main" class="mx-auto max-w-3xl px-4 py-10">
-    <h1 class="mb-6 text-3xl font-bold">Veranstaltungen</h1>
+  <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
+    <h1 class="mb-12 text-4xl font-bold md:text-5xl">Veranstaltungen</h1>
     {events.length > 0 ? (
       <ul class="flex flex-col gap-6">
         {events.map((event) => (

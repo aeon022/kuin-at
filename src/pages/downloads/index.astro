@@ -14,8 +14,8 @@ const withFiles = await Promise.all(
 const downloads = withFiles.filter((d) => d.fileMedia);
 ---
 <BaseLayout title="Downloads" active="downloads">
-  <main id="main" class="mx-auto max-w-3xl px-4 py-10">
-    <h1 class="mb-6 text-3xl font-bold">Downloads</h1>
+  <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
+    <h1 class="mb-12 text-4xl font-bold md:text-5xl">Downloads</h1>
     <ul class="flex flex-col gap-4">
       {downloads.map((d) => (
         <li class="flex items-baseline justify-between gap-4 rounded-2xl bg-sumi-900/[0.03] p-5">
