@@ -5,8 +5,16 @@ plan (read this first for any "why"): `docs/superpowers/plans/2026-09-14-kuin-re
 Spec: `agent.md`.
 
 ## Status
-- **Current task:** Task 1 done, starting Task 2.
+- **Current task:** all 13 tasks complete. The final whole-branch code review
+  passed; its critical/important findings were fixed in this session (blog
+  500s, missing `.prose` typography, dead Leicht-Lesen toggle, missing footer,
+  embedded legacy WP media URLs, CMS-data hardening on all content routes).
+  The site is being prepared for launch.
 - **Blockers:** none.
+- **Deployment note:** `content.pod` must be deployed alongside `dist/`. The
+  Node adapter loads it from `./content.pod` relative to the server process's
+  working directory, and the file is gitignored — so it is *not* carried by a
+  `git push`/CI checkout. Whoever deploys has to copy or mount it explicitly.
 - **Execution mode:** subagent-driven (user chose this explicitly). No git worktree — repo had zero commits so there was nothing to isolate from; working directly in `/Users/gweiher/Sites/kuin.at` on branch `build/kuin-relaunch` (created in Task 1, not on a `main`/default branch).
 
 ## Key decisions (don't re-derive these — grounded in actual files, not guesses)
@@ -167,22 +175,29 @@ Spec: `agent.md`.
       admin. Contact block (Anita Brodtrager / office@kuin.at) is already
       hardcoded into the Kontakt route — no action needed there.
 - [ ] **Inline images in migrated blog post bodies have empty `alt=""`**
-      (found during Task 12's review, 2026-09-14) — these are WordPress
-      Gutenberg `wp-block-image` figures embedded directly in a post's
-      `content_standard` HTML, separate from the post's cover image
-      (which does get a real alt or a `[ALT-TEXT TODO]` placeholder via
-      Task 8/9). One spot-checked post (`kuin-spaziergang`) alone has 137
-      such tags. agent.md requires alt text on every image without
-      exception — this is a real gap, not a false alarm. Fixing it needs
-      either: (a) manually adding alt text per-image via the Orbiter
-      admin's rich-text editor for each of the 25 migrated blog posts, or
-      (b) a small follow-up script that walks each blog entry's
-      `content_standard`, finds `<img alt="">` tags, and replaces the
-      empty attribute with a visible `[ALT-TEXT TODO]` placeholder (same
-      pattern already used everywhere else in this migration) so the gap
-      is at least visible instead of silently shipping empty alts. Not
-      addressed by any task in the current 13-task plan — flag to the
-      client and decide before launch.
+      (found during Task 12's review, **corrected 2026-09-14 after the final
+      review**) — these are WordPress Gutenberg `wp-block-image` figures
+      embedded directly in a post's `content_standard` HTML, separate from
+      the post's cover image (which does get a real alt or a `[ALT-TEXT TODO]`
+      placeholder via Task 8/9). **Corrected exposure: exactly 1 empty `alt=""`
+      occurrence is in published content** (blog post `programm-2026`), not
+      the ~137 originally implied. The 137-image post `kuin-spaziergang` is a
+      **draft**, and `orbiter:collections` only ever serves `status:
+      'published'` entries (verified in
+      `node_modules/@a83/orbiter-integration/src/index.js:220`), so none of
+      those are live. Counted directly against `content.pod`, published vs.
+      draft. Still a real gap — agent.md requires alt text on every image —
+      but a one-image one right now: fix `programm-2026`'s inline image via
+      the Orbiter admin, and fix `kuin-spaziergang`'s 137 before publishing it.
+
+## Post-review fix wave (2026-09-14)
+
+- Legacy WP media URLs rewritten: `scripts/migrate/fix-legacy-media-urls.ts`
+  ran against `content.pod` and replaced **209 embedded
+  `https://kuin.at/wp-content/uploads/...` references across 26 entries**
+  (pages `der-verein`, `kuin`, `landing` + 23 blog posts) with
+  `/orbiter/media/<id>`; a re-query confirms **0 legacy URLs remain**. The
+  script is idempotent and safe to re-run after any future migration.
 
 ## Migration review report (full, from the real `npm run migrate` run, 2026-09-14)
 
