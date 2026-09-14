@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+@theme {
+  --color-bg: #fdfcfb;
+  --color-ink: #2b2420;
+
+  --color-rose-500: #cc5972;
+  --color-rose-700: #7a2f42;
+
+  --color-teal-500: #65bec2;
+  --color-teal-700: #1f5a5c;
+
+  --color-slate-500: #566d8f;
+  --color-slate-700: #32415a;
+
+  --font-sans: "system-ui", "Segoe UI", sans-serif;
+  --radius-md: 0.5rem;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-teal-700);
+  outline-offset: 2px;
+}
