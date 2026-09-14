@@ -96,11 +96,37 @@ Spec: `agent.md`.
   (orchestrator) to wire an alt-text resolver from the media migration step
   into the extractor. Plan is now internally consistent at 13 tasks.
 - 2026-09-14 — Task 1: Astro + Tailwind v4 + Zod + Nano Stores + Orbiter scaffolded. `npm run build` green.
+- 2026-09-14 — Task 9: migration orchestrator (`scripts/migrate/run.ts`) implemented
+  and run for real against `import-source/`. Real counts: **207 original media
+  files** uploaded (971 total media-extension files in `uploads/` minus 764
+  WP-generated resize variants like `-150x150`/`-300x212` — the plan's
+  "~764 original files" estimate had this backwards; 207 is the correct
+  original count, cross-checked file-by-file), **13 pages** migrated (11
+  published with real Oxygen-extracted content, 2 drafts — `landing-479`
+  aka "Landing #3" and `privacy-policy` — flagged for review as planned),
+  **25 blog posts** migrated. Spot-checked `kontakt` and `impressum` page
+  content against the live kuin.at site — address, phone, email, and ZVR
+  number match exactly. `npm run build` still green. 226 items landed in the
+  review report (full list below).
+  While wiring it up, found and fixed two real bugs in the orchestrator's
+  media-to-post join (not in Tasks 4-8's code): attachment `guid` values are
+  often pretty-permalink or `?attachment_id=N` URLs rather than the raw
+  upload path, so matching alt text and blog cover images by `guid` silently
+  missed the very attachments that *did* have legacy alt text (0/207 alt
+  matches, 3/4 thumbnailed blog posts got no cover image). Switched both
+  lookups to the `_wp_attached_file` postmeta key, which always holds the
+  real relative path — recovered 14 real alt texts and 4/4 blog cover images.
+  Also handled a genuine WP data quirk not covered by the brief's example
+  code: two pages ("Landing", published, and "Landing #3", draft) share the
+  post_name `landing` — WP allows this across statuses but Orbiter enforces
+  unique slugs, so the draft is auto-renamed to `landing-479` with a review
+  note.
 
 ## Remaining manual work (fills in as migration runs — empty until Task 9)
 
-- [ ] Fill in `[ALT-TEXT TODO]` placeholders across migrated media (the exact
-      list prints at the end of `npm run migrate` — paste it here after running).
+- [ ] Fill in `[ALT-TEXT TODO]` placeholders across migrated media — 193 media
+      files have no alt text in the legacy WP data (full filename list in the
+      migration review report below; rerun `npm run migrate` to reproduce).
 - [ ] Rewrite Oxygen-only pages flagged `needsReview` by `transformPage`.
 - [ ] Populate Partners, Events, Archive collections manually via the Orbiter
       admin (`localhost:4322`) — no legacy source data for these.
@@ -112,3 +138,235 @@ Spec: `agent.md`.
       directly into the Kontakt page's rich-text content via the Orbiter
       admin. Contact block (Anita Brodtrager / office@kuin.at) is already
       hardcoded into the Kontakt route — no action needed there.
+
+## Migration review report (full, from the real `npm run migrate` run, 2026-09-14)
+
+```
+=== Migration report: 226 items need manual follow-up ===
+ - media: KUIN-Logo.svg — no alt text in legacy data
+ - media: KUIN-NEWSLETTER-JAeNNER-MAeRZ-2025.pdf — no alt text in legacy data
+ - media: Kultur-inklusiv-April-bis-Juni-2024.pdf — no alt text in legacy data
+ - media: Logo-KUIN.svg — no alt text in legacy data
+ - media: NEWSLETTER-APRIL-2020-1.pdf — no alt text in legacy data
+ - media: NEWSLETTER-APRIL-2020.pdf — no alt text in legacy data
+ - media: NEWSLETTER-AUGUST-2020-1.pdf — no alt text in legacy data
+ - media: NEWSLETTER-AUGUST-2020-2.pdf — no alt text in legacy data
+ - media: NEWSLETTER-AUGUST-2020.pdf — no alt text in legacy data
+ - media: NEWSLETTER-DEZEMBER-2019.pdf — no alt text in legacy data
+ - media: NEWSLETTER-DEZEMBER-2020.pdf — no alt text in legacy data
+ - media: NEWSLETTER-FEBRUAR-2020.pdf — no alt text in legacy data
+ - media: NEWSLETTER-FEBRUAR-MAeRZ-2024.pdf — no alt text in legacy data
+ - media: NEWSLETTER-JAeNNER-2020.pdf — no alt text in legacy data
+ - media: NEWSLETTER-JULI-2020-1.pdf — no alt text in legacy data
+ - media: NEWSLETTER-JULI-2020.pdf — no alt text in legacy data
+ - media: NEWSLETTER-JUNI-2020-1.pdf — no alt text in legacy data
+ - media: NEWSLETTER-JUNI-2020.pdf — no alt text in legacy data
+ - media: NEWSLETTER-JUNI-JULI-2023.pdf — no alt text in legacy data
+ - media: NEWSLETTER-MAI-2020-1.pdf — no alt text in legacy data
+ - media: NEWSLETTER-MAI-2020.pdf — no alt text in legacy data
+ - media: NEWSLETTER-MAeRZ-2020.pdf — no alt text in legacy data
+ - media: NEWSLETTER-OKTOBER-2020.pdf — no alt text in legacy data
+ - media: NEWSLETTER-SEPTEMBER-2020.pdf — no alt text in legacy data
+ - media: NEWSLETTER-SEPTEMBER-DEZEMBER-2024-TP.pdf — no alt text in legacy data
+ - media: KUIN-Manifest.pdf — no alt text in legacy data
+ - media: Akademie-Graz.png — no alt text in legacy data
+ - media: Bruecke-Logo-Transparent.svg — no alt text in legacy data
+ - media: Bruecke-Logo.svg — no alt text in legacy data
+ - media: Foto-10.jpg — no alt text in legacy data
+ - media: Foto-100.jpg — no alt text in legacy data
+ - media: Foto-101.jpg — no alt text in legacy data
+ - media: Foto-102.jpg — no alt text in legacy data
+ - media: Foto-103.jpg — no alt text in legacy data
+ - media: Foto-104.jpg — no alt text in legacy data
+ - media: Foto-105.jpg — no alt text in legacy data
+ - media: Foto-106.jpg — no alt text in legacy data
+ - media: Foto-107.jpg — no alt text in legacy data
+ - media: Foto-108.jpg — no alt text in legacy data
+ - media: Foto-109.jpg — no alt text in legacy data
+ - media: Foto-11.jpg — no alt text in legacy data
+ - media: Foto-110.jpg — no alt text in legacy data
+ - media: Foto-111.jpg — no alt text in legacy data
+ - media: Foto-112.jpg — no alt text in legacy data
+ - media: Foto-113.jpg — no alt text in legacy data
+ - media: Foto-114.jpg — no alt text in legacy data
+ - media: Foto-115.jpg — no alt text in legacy data
+ - media: Foto-116.jpg — no alt text in legacy data
+ - media: Foto-117.jpg — no alt text in legacy data
+ - media: Foto-118.jpg — no alt text in legacy data
+ - media: Foto-119.jpg — no alt text in legacy data
+ - media: Foto-12.jpg — no alt text in legacy data
+ - media: Foto-120.jpg — no alt text in legacy data
+ - media: Foto-121.jpg — no alt text in legacy data
+ - media: Foto-122.jpg — no alt text in legacy data
+ - media: Foto-123.jpg — no alt text in legacy data
+ - media: Foto-124.jpg — no alt text in legacy data
+ - media: Foto-125.jpg — no alt text in legacy data
+ - media: Foto-126.jpg — no alt text in legacy data
+ - media: Foto-127.jpg — no alt text in legacy data
+ - media: Foto-128.jpg — no alt text in legacy data
+ - media: Foto-129.jpg — no alt text in legacy data
+ - media: Foto-13.jpg — no alt text in legacy data
+ - media: Foto-130.jpg — no alt text in legacy data
+ - media: Foto-131.jpg — no alt text in legacy data
+ - media: Foto-132.jpg — no alt text in legacy data
+ - media: Foto-133.jpg — no alt text in legacy data
+ - media: Foto-134.jpg — no alt text in legacy data
+ - media: Foto-135.jpg — no alt text in legacy data
+ - media: Foto-136.jpg — no alt text in legacy data
+ - media: Foto-137.jpg — no alt text in legacy data
+ - media: Foto-14.jpg — no alt text in legacy data
+ - media: Foto-15.jpg — no alt text in legacy data
+ - media: Foto-16.jpg — no alt text in legacy data
+ - media: Foto-17.jpg — no alt text in legacy data
+ - media: Foto-18.jpg — no alt text in legacy data
+ - media: Foto-19.jpg — no alt text in legacy data
+ - media: Foto-2.jpg — no alt text in legacy data
+ - media: Foto-20.jpg — no alt text in legacy data
+ - media: Foto-21.jpg — no alt text in legacy data
+ - media: Foto-22.jpg — no alt text in legacy data
+ - media: Foto-23.jpg — no alt text in legacy data
+ - media: Foto-24.jpg — no alt text in legacy data
+ - media: Foto-25.jpg — no alt text in legacy data
+ - media: Foto-26.jpg — no alt text in legacy data
+ - media: Foto-27.jpg — no alt text in legacy data
+ - media: Foto-28.jpg — no alt text in legacy data
+ - media: Foto-29.jpg — no alt text in legacy data
+ - media: Foto-3.jpg — no alt text in legacy data
+ - media: Foto-30.jpg — no alt text in legacy data
+ - media: Foto-31.jpg — no alt text in legacy data
+ - media: Foto-32.jpg — no alt text in legacy data
+ - media: Foto-33.jpg — no alt text in legacy data
+ - media: Foto-34.jpg — no alt text in legacy data
+ - media: Foto-35.jpg — no alt text in legacy data
+ - media: Foto-36.jpg — no alt text in legacy data
+ - media: Foto-37.jpg — no alt text in legacy data
+ - media: Foto-38.jpg — no alt text in legacy data
+ - media: Foto-39.jpg — no alt text in legacy data
+ - media: Foto-4.jpg — no alt text in legacy data
+ - media: Foto-40.jpg — no alt text in legacy data
+ - media: Foto-41.jpg — no alt text in legacy data
+ - media: Foto-42.jpg — no alt text in legacy data
+ - media: Foto-43.jpg — no alt text in legacy data
+ - media: Foto-44.jpg — no alt text in legacy data
+ - media: Foto-45.jpg — no alt text in legacy data
+ - media: Foto-46.jpg — no alt text in legacy data
+ - media: Foto-47.jpg — no alt text in legacy data
+ - media: Foto-48.jpg — no alt text in legacy data
+ - media: Foto-49.jpg — no alt text in legacy data
+ - media: Foto-5.jpg — no alt text in legacy data
+ - media: Foto-50.jpg — no alt text in legacy data
+ - media: Foto-51.jpg — no alt text in legacy data
+ - media: Foto-52.jpg — no alt text in legacy data
+ - media: Foto-53.jpg — no alt text in legacy data
+ - media: Foto-54.jpg — no alt text in legacy data
+ - media: Foto-55.jpg — no alt text in legacy data
+ - media: Foto-56.jpg — no alt text in legacy data
+ - media: Foto-57.jpg — no alt text in legacy data
+ - media: Foto-58.jpg — no alt text in legacy data
+ - media: Foto-59.jpg — no alt text in legacy data
+ - media: Foto-6.jpg — no alt text in legacy data
+ - media: Foto-60.jpg — no alt text in legacy data
+ - media: Foto-61.jpg — no alt text in legacy data
+ - media: Foto-62.jpg — no alt text in legacy data
+ - media: Foto-63.jpg — no alt text in legacy data
+ - media: Foto-64.jpg — no alt text in legacy data
+ - media: Foto-65.jpg — no alt text in legacy data
+ - media: Foto-66.jpg — no alt text in legacy data
+ - media: Foto-67.jpg — no alt text in legacy data
+ - media: Foto-68.jpg — no alt text in legacy data
+ - media: Foto-69.jpg — no alt text in legacy data
+ - media: Foto-7.jpg — no alt text in legacy data
+ - media: Foto-70.jpg — no alt text in legacy data
+ - media: Foto-71.jpg — no alt text in legacy data
+ - media: Foto-72.jpg — no alt text in legacy data
+ - media: Foto-73.jpg — no alt text in legacy data
+ - media: Foto-74.jpg — no alt text in legacy data
+ - media: Foto-75.jpg — no alt text in legacy data
+ - media: Foto-76.jpg — no alt text in legacy data
+ - media: Foto-77.jpg — no alt text in legacy data
+ - media: Foto-78.jpg — no alt text in legacy data
+ - media: Foto-79.jpg — no alt text in legacy data
+ - media: Foto-8.jpg — no alt text in legacy data
+ - media: Foto-80.jpg — no alt text in legacy data
+ - media: Foto-81.jpg — no alt text in legacy data
+ - media: Foto-82.jpg — no alt text in legacy data
+ - media: Foto-83.jpg — no alt text in legacy data
+ - media: Foto-84.jpg — no alt text in legacy data
+ - media: Foto-85.jpg — no alt text in legacy data
+ - media: Foto-86.jpg — no alt text in legacy data
+ - media: Foto-87.jpg — no alt text in legacy data
+ - media: Foto-88.jpg — no alt text in legacy data
+ - media: Foto-89.jpg — no alt text in legacy data
+ - media: Foto-9.jpg — no alt text in legacy data
+ - media: Foto-90.jpg — no alt text in legacy data
+ - media: Foto-91.jpg — no alt text in legacy data
+ - media: Foto-92.jpg — no alt text in legacy data
+ - media: Foto-93.jpg — no alt text in legacy data
+ - media: Foto-94.jpg — no alt text in legacy data
+ - media: Foto-95.jpg — no alt text in legacy data
+ - media: Foto-96.jpg — no alt text in legacy data
+ - media: Foto-97.jpg — no alt text in legacy data
+ - media: Foto-98.jpg — no alt text in legacy data
+ - media: Foto-99.jpg — no alt text in legacy data
+ - media: Foto.jpg — no alt text in legacy data
+ - media: Fride-und-Fred.svg — no alt text in legacy data
+ - media: Graz-Museum.png — no alt text in legacy data
+ - media: Graz-Museum.svg — no alt text in legacy data
+ - media: KUIN-Beitrittsformular-Mitgliedschaft-2025.pdf — no alt text in legacy data
+ - media: KunstUniGraz.svg — no alt text in legacy data
+ - media: KunsthausGraz.svg — no alt text in legacy data
+ - media: SL.svg — no alt text in legacy data
+ - media: Universalmuseum-Joanneum.svg — no alt text in legacy data
+ - media: Valley@1x-10.0s-1830px-361px.svg — no alt text in legacy data
+ - media: Valley@1x-10.0s-1830px-372px.svg — no alt text in legacy data
+ - media: Valley@1x-100.0s-1943px-590px.svg — no alt text in legacy data
+ - media: Valley@1x-50.0s-1808px-600px.svg — no alt text in legacy data
+ - media: Valley@1x-50.0s-1943px-590px.svg — no alt text in legacy data
+ - media: axe.svg — no alt text in legacy data
+ - media: inTakt.svg — no alt text in legacy data
+ - media: logo-lebensgross-black.svg — no alt text in legacy data
+ - media: mezzanin-theater.svg — no alt text in legacy data
+ - media: pupella.svg — no alt text in legacy data
+ - media: salon-stolz.svg — no alt text in legacy data
+ - media: schauspielhaus.svg — no alt text in legacy data
+ - media: Graz-Logo_mitfreundlicherunterstuetzung-1_farbe_.png — no alt text in legacy data
+ - media: KUIN-NEWSLETTER-APRIL-JUNI-2025.pdf — no alt text in legacy data
+ - media: KUIN-Jahresbericht-2025.pdf — no alt text in legacy data
+ - media: KUIN-NEWSLETTER-APRIL-JUNI-2026.pdf — no alt text in legacy data
+ - media: KUIN-NEWSLETTER-JULI-SEPTEMBER-2026.pdf — no alt text in legacy data
+ - media: KUIN-Programm-2026.jpg — no alt text in legacy data
+ - media: Kultur-Inklusiv-eu-proof-of-consent-Feber-27-2025.pdf — no alt text in legacy data
+ - pages/privacy-policy: content needs manual review (no Oxygen data, or non-publish status)
+ - pages/galerie: dynamic post grid widget skipped (superseded by the new /blog route)
+ - pages/archiv: dynamic post grid widget skipped (superseded by the new /blog route)
+ - pages/landing-479: slug collided with another page's "landing" — auto-renamed, verify/fix manually
+ - pages/landing-479: content needs manual review (no Oxygen data, or non-publish status)
+ - pages/cookie-richtlinie-eu: shortcode found, not rendered — needs manual re-implementation: [cmplz-document type=”cookie-statement” region=”eu”]
+ - pages/datenschutzerklaerung-eu: shortcode found, not rendered — needs manual re-implementation: [cmplz-document type="privacy-statement" region="eu"]
+ - pages/veranstaltungen: dynamic post grid widget skipped (superseded by the new /blog route)
+ - blog/newsletter-2019: content or cover image needs manual review
+ - blog/newsletter-jaenner-2020: content or cover image needs manual review
+ - blog/newsletter-februar-2020: content or cover image needs manual review
+ - blog/newsletter-maerz-2020: content or cover image needs manual review
+ - blog/newsletter-april-2020: content or cover image needs manual review
+ - blog/newsletter-mai-2020: content or cover image needs manual review
+ - blog/newsletter-juni-2020: content or cover image needs manual review
+ - blog/newsletter-juli-2020: content or cover image needs manual review
+ - blog/newsletter-august-2020: content or cover image needs manual review
+ - blog/newsletter-september-2020: content or cover image needs manual review
+ - blog/newsletter-oktober-2020: content or cover image needs manual review
+ - blog/newsletter-dezember-2020: content or cover image needs manual review
+ - blog/newsletter-juni-juli-2023: content or cover image needs manual review
+ - blog/newsletter-februar-maerz-2024: content or cover image needs manual review
+ - blog/newsletter-april-bis-juni-2024: content or cover image needs manual review
+ - blog/newsletter-september-bis-dezember-2024: content or cover image needs manual review
+ - blog/newsletter-jaenner-bis-maerz-2025: content or cover image needs manual review
+ - blog/newsletter-april-bis-juni-2025: content or cover image needs manual review
+ - blog/newsletter-april-bis-juni-2025-2: content or cover image needs manual review
+ - blog/newsletter-april-bis-juni-2025-2-2: content or cover image needs manual review
+ - blog/newsletter-april-bis-juni-2025-2-3: content or cover image needs manual review
+ - partners: no structured legacy data — add manually from partner logo SVGs in import-source/uploads/2025/02/
+ - events: the WP 'Veranstaltungen' page was an intro page only (migrated into Pages) — add individual Events manually
+ - archive: the WP 'Archiv' page was an intro page only (migrated into Pages) — add individual year galleries manually
+ - downloads: only KUIN-Manifest.pdf found as a clear download — verify others manually
+```
