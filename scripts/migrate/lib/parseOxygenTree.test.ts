@@ -39,6 +39,17 @@ test('falls back to a visible placeholder alt when the resolver returns null', (
   assert.match(html, /alt="\[ALT-TEXT TODO/);
 });
 
+test('resolves an image_type "2" media-library reference via attachment_url, not just src', () => {
+  const json = tree([
+    { id: 1, name: 'ct_image', options: { original: {
+      image_type: '2', attachment_size: 'full', attachment_id: 457,
+      attachment_url: 'https://kuin.at/wp-content/uploads/2025/02/Akademie-Graz.png',
+    } } },
+  ]);
+  const { html } = extractOxygenContent(json, (src) => (src.includes('Akademie-Graz') ? 'Logo Akademie Graz' : null));
+  assert.equal(html, '<img src="https://kuin.at/wp-content/uploads/2025/02/Akademie-Graz.png" alt="Logo Akademie Graz" />');
+});
+
 test('renders a link_button as an anchor with its url and label', () => {
   const json = tree([{ id: 1, name: 'ct_link_button', options: { ct_content: 'Über uns', original: { url: 'https://kuin.at/der-verein/', target: '' } } }]);
   const { html } = extractOxygenContent(json, () => null);

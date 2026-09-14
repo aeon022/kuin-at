@@ -86,7 +86,15 @@ export function extractOxygenContent(
       return content !== undefined ? content : children;
     }
     if (name === 'ct_image') {
-      const src = typeof original.src === 'string' ? original.src : '';
+      // Oxygen's image component has two reference modes: image_type "1"
+      // stores a direct URL in `src`; image_type "2" references the WP
+      // media library and stores the resolved URL in `attachment_url`
+      // instead. Both must be checked — a real "Netzwerk" partner-logo
+      // section (16 images, all image_type "2") was silently dropped
+      // before this fix because only `src` was read.
+      const src = typeof original.src === 'string' ? original.src
+        : typeof original.attachment_url === 'string' ? original.attachment_url
+        : '';
       if (!src) return children;
       const alt = resolveImageAlt(src) ?? '[ALT-TEXT TODO: Bild manuell beschreiben]';
       return `<img src="${escapeAttr(src)}" alt="${escapeAttr(alt)}" />`;
