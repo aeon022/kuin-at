@@ -1,31 +1,111 @@
 ---
+// Client request 2026-09: "Archiv | 3 Unterkategorien: Veranstaltungen |
+// Newsletter | Jahresberichte".
+//
+// Judgment call on "Veranstaltungen": this section keeps rendering the
+// `archive` collection (year galleries) rather than querying past `events`.
+// The client described the archive as "Die vergangenen Events werden mit
+// Fotos dann im Archiv angezeigt" — photo galleries of past events, which is
+// exactly what ArchiveSchema models (title, year, description, images with
+// alt text). Individual past `events` entries stay listed on /events; if the
+// client later wants them pulled in here automatically, filter `events` by
+// `end_date < now` and render them alongside the galleries.
+//
+// "Jahresberichte" reuses the existing `downloads` collection — annual reports
+// are PDFs, and a dedicated Orbiter collection for them would need its own
+// schema/plan task. The client adds each report as a Downloads entry; worth
+// revisiting only if the volume grows enough to need its own collection.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'orbiter:collections';
-import { ArchiveSchema } from '../../schemas';
+import { getMediaItem } from 'orbiter:media';
+import { ArchiveSchema, DownloadSchema } from '../../schemas';
 import { parseEntries } from '../../lib/content';
 
 const archives = parseEntries('archive', await getCollection('archive'), ArchiveSchema)
   .map((e) => e.data)
   .sort((a, b) => b.year - a.year);
+
+// The 25 migrated blog posts are the newsletter archive (their slugs are
+// literally `newsletter-*`), so they are listed here as well as on /blog.
+const newsletters = (await getCollection('blog'))
+  .filter((p) => p.data.published_at)
+  .sort((a, b) => new Date(b.data.published_at).getTime() - new Date(a.data.published_at).getTime());
+
+const reports = await Promise.all(
+  parseEntries('downloads', await getCollection('downloads'), DownloadSchema)
+    .map(async (e) => ({ ...e.data, fileMedia: await getMediaItem(e.data.file) })),
+);
+const resolvedReports = reports.filter((r) => r.fileMedia);
 ---
 <BaseLayout title="Archiv" active="archiv">
   <main class="mx-auto max-w-5xl px-4 py-10">
-    <h1 class="mb-6 text-3xl font-bold">Archiv — Rückblicke</h1>
-    {archives.map((archive) => (
-      <section class="mb-10">
-        <h2 class="mb-2 text-xl font-semibold">{archive.title} ({archive.year})</h2>
-        {archive.description && <p class="mb-4 text-slate-700">{archive.description}</p>}
-        <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {archive.images.map((img) => (
+    <h1 class="mb-8 text-3xl font-bold">Archiv — Rückblicke</h1>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-semibold">Veranstaltungen</h2>
+      {archives.length > 0 ? (
+        archives.map((archive) => (
+          <section class="mb-10">
+            <h3 class="mb-2 text-xl font-semibold">{archive.title} ({archive.year})</h3>
+            {archive.description && <p class="mb-4 text-slate-700">{archive.description}</p>}
+            <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {archive.images.map((img) => (
+                <li>
+                  <figure>
+                    <img src={img.image_url} alt={img.alt_text} class="rounded-md" loading="lazy" />
+                    {img.caption && <figcaption class="mt-1 text-sm text-slate-700">{img.caption}</figcaption>}
+                  </figure>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      ) : (
+        <p class="text-slate-700"><em>Derzeit sind keine vergangenen Veranstaltungen archiviert.</em></p>
+      )}
+    </section>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-semibold">Newsletter</h2>
+      {newsletters.length > 0 ? (
+        <ul class="flex flex-col gap-4">
+          {newsletters.map((post) => (
             <li>
-              <figure>
-                <img src={img.image_url} alt={img.alt_text} class="rounded-md" loading="lazy" />
-                {img.caption && <figcaption class="mt-1 text-sm text-slate-700">{img.caption}</figcaption>}
-              </figure>
+              <article>
+                <h3 class="text-lg font-semibold">
+                  <a href={`/blog/${post.slug}`} class="text-teal-700 underline">{post.data.title}</a>
+                </h3>
+                <time datetime={post.data.published_at} class="text-sm text-slate-700">
+                  {new Date(post.data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </time>
+              </article>
             </li>
           ))}
         </ul>
-      </section>
-    ))}
+      ) : (
+        <p class="text-slate-700"><em>Derzeit sind keine Newsletter archiviert.</em></p>
+      )}
+    </section>
+
+    <section>
+      <h2 class="mb-4 text-2xl font-semibold">Jahresberichte</h2>
+      {resolvedReports.length > 0 ? (
+        <ul class="flex flex-col gap-4">
+          {resolvedReports.map((r) => (
+            <li class="flex items-baseline justify-between gap-4 border-b border-slate-500/20 pb-4">
+              <div>
+                <p class="font-medium">{r.title}</p>
+                {r.description && <p class="text-sm text-slate-700">{r.description}</p>}
+              </div>
+              <a href={r.fileMedia?.url} class="shrink-0 rounded-md border border-teal-700 px-3 py-1 text-sm text-teal-700">
+                Herunterladen
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="text-slate-700"><em>Derzeit sind keine Jahresberichte veröffentlicht.</em></p>
+      )}
+    </section>
   </main>
 </BaseLayout>

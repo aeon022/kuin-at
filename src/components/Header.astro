@@ -5,7 +5,10 @@ const { active } = Astro.props;
 const links = [
   { href: '/', label: 'Start', id: 'home' },
   { href: '/blog', label: 'Blog', id: 'blog' },
-  { href: '/events', label: 'Veranstaltungen', id: 'events' },
+  // Client request 2026-09: "Veranstaltungen" becomes the "Aktuell" hub,
+  // which splits into Veranstaltungen + Newsletter. Nav id stays 'events'
+  // so /events and /events/[slug] keep highlighting this item.
+  { href: '/aktuell', label: 'Aktuell', id: 'events' },
   { href: '/archiv', label: 'Archiv', id: 'archiv' },
   { href: '/partner', label: 'Partner', id: 'partner' },
   { href: '/der-verein', label: 'Über uns', id: 'ueber-uns' },

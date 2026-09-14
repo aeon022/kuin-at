@@ -168,6 +168,26 @@ Spec: `agent.md`.
       `logo` field to the resulting media id).
 - [ ] Verify Downloads beyond `KUIN-Manifest.pdf` (only clear candidate found
       in `import-source/uploads/`).
+- [ ] **Partner-Logos (client mail, "DRINGEND"):** Oper Graz is **done** —
+      added as a published `partners` entry (`oper-graz`) with the real logo
+      from `import-source/mail/OperGraz_Logo_SCHWARZ_RGB.png` and alt text
+      "Logo der Oper Graz" via `scripts/migrate/add-partner-logos.ts`.
+      **Sunny's Liederlade** and **Klavierhaus Fiedler** are still open: the
+      client has not supplied logo files for either. Once a file arrives, add
+      it to the `PARTNERS` array in that script and re-run (it's idempotent),
+      or add the entry by hand in the Orbiter admin.
+- [ ] **Jahresberichte:** `/archiv`'s third section renders the existing
+      `downloads` collection — the client adds each annual report as a
+      Downloads entry via the Orbiter admin. If the volume ever grows past a
+      handful, a dedicated `reports` collection (with a `year` field for
+      sorting) would be worth a proper schema task.
+- [ ] **Galerie:** the client asked for Galerie to be removed. The new site
+      never linked it — `grep -rni "galerie" src/` returns nothing, and no
+      migrated page/blog body links to it either. The migrated page entry
+      `pages/galerie` is still **published**, so `/galerie` is reachable by
+      direct URL and appears in Orbiter's generated sitemap. Deleting content
+      is the client's call: unpublish it in the Orbiter admin to remove it
+      fully (the historical content stays in the pod).
 - [ ] **Kontakt page (user request 2026-09-14):** add board members to the
       Partners collection with `is_board_member: true` so the live-pulled
       list on the Kontakt page (Task 12) isn't empty; add a board photo
@@ -198,6 +218,19 @@ Spec: `agent.md`.
   (pages `der-verein`, `kuin`, `landing` + 23 blog posts) with
   `/orbiter/media/<id>`; a re-query confirms **0 legacy URLs remain**. The
   script is idempotent and safe to re-run after any future migration.
+
+- Client-requested IA changes (mail thread in `import-source/mail/`):
+  nav item "Veranstaltungen" → **"Aktuell"** (`/aktuell`), a small hub page
+  with the two requested categories (Veranstaltungen → `/events`,
+  Newsletter → `/blog`); `/archiv` restructured into the three requested
+  sections (Veranstaltungen | Newsletter | Jahresberichte).
+  **Judgment call:** the "Veranstaltungen" archive section keeps rendering the
+  `archive` collection (year galleries with photos) rather than querying past
+  `events`, because the client described the archive as past events shown
+  *with photos* — which is exactly what `ArchiveSchema` models. Past `events`
+  entries remain listed on `/events`.
+- Oper Graz added as a published partner with its real logo (see remaining
+  manual work above).
 
 ## Migration review report (full, from the real `npm run migrate` run, 2026-09-14)
 
