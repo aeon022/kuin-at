@@ -1503,12 +1503,24 @@ async function main() {
   console.log('→ migrating media');
   const mediaIdByFilename = new Map<string, string>();
   const altByFilename = new Map<string, string>();
+  // Attachment guids are unreliable for this join — many use pretty
+  // permalinks or `?attachment_id=N` rather than the raw upload URL (and,
+  // confirmed against the real dump, it's exactly the attachments with real
+  // legacy alt text that use this guid style — a naive `guid.endsWith(...)`
+  // join silently misses all of them). The `_wp_attached_file` postmeta
+  // always holds the real relative upload path, so match on that instead.
+  const attachmentByFilename = new Map<string, (typeof posts)[number]>();
+  for (const p of posts) {
+    if (p.postType !== 'attachment') continue;
+    const attachedFile = (postmeta.get(p.id) ?? []).find((m) => m.key === '_wp_attached_file')?.value;
+    if (attachedFile) attachmentByFilename.set(path.basename(attachedFile), p);
+  }
   for (const filePath of collectOriginalMediaFiles(UPLOADS_DIR)) {
     const filename = path.basename(filePath);
     const ext = path.extname(filename).toLowerCase();
     const mime = MIME_BY_EXT[ext] ?? 'application/octet-stream';
     const data = readFileSync(filePath);
-    const attachmentPost = posts.find((p) => p.postType === 'attachment' && p.guid.endsWith(filename));
+    const attachmentPost = attachmentByFilename.get(filename);
     const alt = attachmentPost ? resolveAltText(attachmentPost.id, filename, postmeta) : '[ALT-TEXT TODO: Bild manuell beschreiben]';
     if (alt.startsWith('[ALT-TEXT')) needsReview.push(`media: ${filename} — no alt text in legacy data`);
     const id = randomUUID();
@@ -1528,10 +1540,21 @@ async function main() {
 
   console.log('→ migrating pages (extracting real content from Oxygen builder JSON)');
   let pageCount = 0;
+  const usedPageSlugs = new Set<string>();
   for (const post of posts.filter((p) => p.postType === 'page')) {
     if (!post.postName) continue;
     const oxygenJson = (postmeta.get(post.id) ?? []).find((m) => m.key === '_ct_builder_json')?.value;
-    const { slug, data, needsReview: flagged, notes } = transformPage(post, oxygenJson, resolveImageAltBySrc);
+    let { slug, data, needsReview: flagged, notes } = transformPage(post, oxygenJson, resolveImageAltBySrc);
+    // WP allows the same post_name across posts with different statuses —
+    // confirmed in the real dump: id 20 "Landing" (published) and id 479
+    // "Landing #3" (draft) both have post_name 'landing'. Orbiter enforces
+    // a unique slug per collection, so disambiguate and flag for review.
+    if (usedPageSlugs.has(slug)) {
+      const original = slug;
+      slug = `${slug}-${post.id}`;
+      needsReview.push(`pages/${slug}: slug collided with another page's "${original}" — auto-renamed, verify/fix manually`);
+    }
+    usedPageSlugs.add(slug);
     db.createEntry('pages', slug, data, post.postStatus === 'publish' ? 'published' : 'draft');
     pageCount++;
     for (const note of notes) needsReview.push(`pages/${slug}: ${note}`);
@@ -1543,8 +1566,10 @@ async function main() {
   let blogCount = 0;
   for (const post of posts.filter((p) => p.postType === 'post')) {
     const thumbMeta = (postmeta.get(post.id) ?? []).find((m) => m.key === '_thumbnail_id');
-    const thumbPost = thumbMeta ? posts.find((p) => p.id === thumbMeta.value) : undefined;
-    const coverImageId = thumbPost ? mediaIdByFilename.get(path.basename(thumbPost.guid)) ?? null : null;
+    // Same guid unreliability as the media-alt join above — resolve the
+    // thumbnail attachment's real filename via _wp_attached_file.
+    const attachedFile = thumbMeta ? (postmeta.get(thumbMeta.value) ?? []).find((m) => m.key === '_wp_attached_file')?.value : undefined;
+    const coverImageId = attachedFile ? mediaIdByFilename.get(path.basename(attachedFile)) ?? null : null;
     const result = transformBlogPost(post, coverImageId);
     if (!result) continue;
     db.createEntry('blog', result.slug, result.data, post.postStatus === 'publish' ? 'published' : 'draft');
@@ -1577,7 +1602,7 @@ main();
 - [ ] **Step 3: Run it against the real data**
 
 Run: `npm run migrate`
-Expected: creates `content.pod`, prints media/page/blog counts matching the real dump (~764 original media files after variant filtering, 13 pages, 25 posts). Of the 13 pages, 11 published ones get real extracted body content from Oxygen (not placeholders) — spot-check a couple against the live site at kuin.at to confirm the text actually matches; the `Privacy Policy` and `Landing #3` drafts are expected to show in the review list (non-publish status). No uncaught exceptions.
+Expected: creates `content.pod`, prints media/page/blog counts matching the real dump — **207 original media files** (971 total files in `uploads/`, 764 of which are WordPress-generated resize variants correctly filtered out — verified by hand during a real run: every "variant" filename has a same-named-without-suffix original next to it, 971 = 207 + 764 exactly), 13 pages, 25 posts. Of the 13 pages, 11 published ones get real extracted body content from Oxygen (not placeholders) — spot-check a couple against the live site at kuin.at to confirm the text actually matches; the `Privacy Policy` and `Landing #3` drafts are expected to show in the review list (non-publish status), and `Landing #3` additionally triggers the slug-collision handling above since it shares `post_name = 'landing'` with the real published Landing page. No uncaught exceptions.
 
 - [ ] **Step 4: Append the real counts to `stage.md`'s Log section**, then commit.
 
