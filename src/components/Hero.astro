@@ -304,9 +304,16 @@ const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 
   render(0);
 
-  if (sumi && matcha && magentaDark && magentaLight && magenta && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  // Checked once per frame rather than once at load, so the header's
+  // "Bewegung reduzieren" toggle (Header.astro's a11y panel) can pause
+  // this mid-session too — a one-time check at script load would only
+  // ever catch the OS-level prefers-reduced-motion setting, not a later
+  // manual toggle. The rAF loop itself keeps running either way (cheap);
+  // it just skips mutating the DOM while reduced motion is active.
+  if (sumi && matcha && magentaDark && magentaLight && magenta) {
     function tick(now: number) {
-      render(now / 1000);
+      const reduced = document.documentElement.hasAttribute('data-reduce-motion') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduced) render(now / 1000);
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);

@@ -15,9 +15,19 @@ interface Props { title: string; description?: string; active?: string }
 const { title, description = 'Kultur Inklusiv Graz — Kunst und Kultur barrierefrei erleben.', active } = Astro.props;
 
 const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
+const fontSizeStep = Astro.cookies.get('kuin-font-size')?.value;
+const contrastActive = Astro.cookies.get('kuin-contrast')?.value === 'true';
+const reduceMotionActive = Astro.cookies.get('kuin-reduce-motion')?.value === 'true';
 ---
 <!doctype html>
-<html lang="de" class="scroll-smooth" data-ll={leichtLesenActive ? 'true' : undefined}>
+<html
+  lang="de"
+  class="scroll-smooth"
+  data-ll={leichtLesenActive ? 'true' : undefined}
+  data-font-size={fontSizeStep === '1' || fontSizeStep === '2' ? fontSizeStep : undefined}
+  data-contrast={contrastActive ? 'true' : undefined}
+  data-reduce-motion={reduceMotionActive ? 'true' : undefined}
+>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />

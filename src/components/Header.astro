@@ -38,8 +38,9 @@ const links: { href: string; label: string; id: string; children?: { href: strin
     {logo && <img src={logo.url} alt="KUIN — Kultur Inklusiv" class="h-9 w-auto md:h-10" />}
   </a>
 
-  <div class="flex items-center gap-3 md:gap-8">
-    <nav aria-label="Hauptnavigation" class="hidden gap-8 font-medium text-sumi-600 md:flex">
+  <div class="flex items-center gap-3 md:gap-6">
+    <nav id="main-nav" aria-label="Hauptnavigation" class="relative hidden gap-1 font-medium text-sumi-600 md:flex">
+      <span id="nav-indicator" class="pointer-events-none absolute top-0 left-0 -z-10 h-full rounded-full bg-kuin-magenta/10 opacity-0 transition-[transform,width,opacity] duration-300 ease-out"></span>
       {links.map((link) => (
         link.children ? (
           <div class="group relative">
@@ -47,7 +48,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
               href={link.href}
               aria-current={active === link.id ? 'page' : undefined}
               aria-haspopup="true"
-              class="flex items-center gap-1 rounded-full px-3 py-1.5 transition-colors hover:bg-kuin-magenta/10 hover:text-kuin-magenta aria-[current=page]:bg-kuin-magenta/10 aria-[current=page]:font-semibold aria-[current=page]:text-kuin-dark"
+              class="flex items-center gap-1 rounded-full px-3 py-1.5 transition-colors hover:text-kuin-magenta aria-[current=page]:font-semibold aria-[current=page]:text-kuin-dark"
             >
               {link.label}
               <svg class="h-3 w-3 text-sumi-400 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -68,7 +69,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
           <a
             href={link.href}
             aria-current={active === link.id ? 'page' : undefined}
-            class="rounded-full px-3 py-1.5 transition-colors hover:bg-kuin-magenta/10 hover:text-kuin-magenta aria-[current=page]:bg-kuin-magenta/10 aria-[current=page]:font-semibold aria-[current=page]:text-kuin-dark"
+            class="rounded-full px-3 py-1.5 transition-colors hover:text-kuin-magenta aria-[current=page]:font-semibold aria-[current=page]:text-kuin-dark"
           >
             {link.label}
           </a>
@@ -78,25 +79,81 @@ const links: { href: string; label: string; id: string; children?: { href: strin
 
     <div class="hidden h-6 w-px bg-sumi-400/30 md:block"></div>
 
-    <!-- Leicht Lesen Toggle -->
-    <button id="ll-toggle" aria-pressed="false" class="group flex items-center gap-3 rounded-full border border-sumi-400/10 bg-white px-4 py-2 shadow-sm transition-all duration-300 hover:border-kuin-magenta/30 hover:shadow-md">
-      <span id="ll-track" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-sumi-400/25 transition-colors duration-300">
-        <span id="ll-thumb" class="inline-block h-5 w-5 translate-x-0.5 transform rounded-full bg-white shadow transition-transform duration-300"></span>
-      </span>
-      <span class="hidden text-sm font-medium text-sumi-900 transition-colors group-hover:text-kuin-magenta sm:inline">Leicht Lesen</span>
-    </button>
+    <!-- Trigger cluster: Leicht-Lesen switch, search, mobile menu — one
+         shared pill with dividers instead of three separate floating
+         circles, so it reads as one toolbar. -->
+    <div class="flex items-center rounded-full border border-sumi-400/10 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
+      <!-- Leicht Lesen Toggle -->
+      <button id="ll-toggle" aria-pressed="false" class="group flex h-10 items-center gap-2.5 rounded-full px-3.5 transition-colors duration-300 sm:px-4">
+        <span id="ll-track" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-sumi-400/25 transition-colors duration-300">
+          <span id="ll-thumb" class="inline-block h-5 w-5 translate-x-0.5 transform rounded-full bg-white shadow transition-transform duration-300"></span>
+        </span>
+        <span class="hidden text-sm font-medium text-sumi-900 transition-colors group-hover:text-kuin-magenta sm:inline">Leicht Lesen</span>
+      </button>
 
-    <!-- Kuroko Trigger -->
-    <button id="cmd-trigger" aria-label="Menü und Suche" class="flex h-10 w-10 items-center justify-center rounded-full bg-sumi-400/10 text-sumi-600 transition-colors duration-300 hover:bg-kuin-magenta hover:text-white">
-      <svg class="h-4 w-4 md:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-      <span class="hidden text-sm font-medium md:block">⌘K</span>
-    </button>
+      <div class="h-6 w-px bg-sumi-400/15"></div>
 
-    <!-- Mobile menu toggle -->
-    <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Hauptmenü öffnen" class="flex h-10 w-10 items-center justify-center rounded-full bg-sumi-400/10 text-sumi-600 transition-colors duration-300 hover:bg-kuin-magenta hover:text-white md:hidden">
-      <svg id="nav-toggle-icon-open" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-      <svg id="nav-toggle-icon-close" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-    </button>
+      <!-- Barrierefreiheits-Panel trigger -->
+      <div class="relative">
+        <button id="a11y-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="a11y-panel" aria-label="Barrierefreiheits-Optionen" class="flex h-10 items-center rounded-full px-3.5 text-sumi-600 transition-colors duration-300 hover:text-kuin-magenta sm:px-4">
+          <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="4.5" r="1.6" fill="currentColor" stroke="none" />
+            <path d="M11.2 6v5l3.3 2.2M11.2 11H7M13.6 12.5l2.2 6.5M9.5 22a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+          </svg>
+        </button>
+        <div id="a11y-panel" hidden class="absolute top-full right-0 z-20 mt-3 w-72 rounded-2xl border border-sumi-400/10 bg-white p-5 shadow-xl">
+          <p class="mb-3 text-xs font-bold tracking-widest text-sumi-400 uppercase">Barrierefreiheit</p>
+
+          <div class="mb-4">
+            <p class="mb-2 text-sm font-medium text-sumi-900">Textgröße</p>
+            <div class="flex gap-2" role="group" aria-label="Textgröße wählen">
+              <button type="button" data-font-size-btn="0" class="a11y-size-btn flex-1 rounded-xl border border-sumi-400/20 py-2 text-sm font-semibold text-sumi-600 transition-colors hover:border-kuin-magenta/40">A</button>
+              <button type="button" data-font-size-btn="1" class="a11y-size-btn flex-1 rounded-xl border border-sumi-400/20 py-2 text-base font-semibold text-sumi-600 transition-colors hover:border-kuin-magenta/40">A</button>
+              <button type="button" data-font-size-btn="2" class="a11y-size-btn flex-1 rounded-xl border border-sumi-400/20 py-2 text-lg font-semibold text-sumi-600 transition-colors hover:border-kuin-magenta/40">A</button>
+            </div>
+          </div>
+
+          <div class="mb-4 flex items-center justify-between gap-4">
+            <span class="text-sm font-medium text-sumi-900">Hoher Kontrast</span>
+            <button id="contrast-toggle" type="button" role="switch" aria-checked="false" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-sumi-400/25 transition-colors duration-300">
+              <span id="contrast-thumb" class="inline-block h-5 w-5 translate-x-0.5 transform rounded-full bg-white shadow transition-transform duration-300"></span>
+            </button>
+          </div>
+
+          <div class="mb-4 flex items-center justify-between gap-4">
+            <span class="text-sm font-medium text-sumi-900">Bewegung reduzieren</span>
+            <button id="motion-toggle" type="button" role="switch" aria-checked="false" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-sumi-400/25 transition-colors duration-300">
+              <span id="motion-thumb" class="inline-block h-5 w-5 translate-x-0.5 transform rounded-full bg-white shadow transition-transform duration-300"></span>
+            </button>
+          </div>
+
+          <!-- Placeholder target (no dedicated statement page exists yet)
+               — same /kontakt link Footer.astro's own "Barrierefreiheit"
+               item already uses, so this isn't a second, different guess
+               at where that content should live. -->
+          <a href="/kontakt" class="block border-t border-sumi-400/10 pt-3 text-sm font-medium text-magenta-dark underline transition-colors hover:text-kuin-magenta">
+            Erklärung zur Barrierefreiheit
+          </a>
+        </div>
+      </div>
+
+      <div class="h-6 w-px bg-sumi-400/15"></div>
+
+      <!-- Kuroko Trigger -->
+      <button id="cmd-trigger" aria-label="Menü und Suche" class="group flex h-10 items-center gap-2 rounded-full px-3.5 text-sumi-600 transition-colors duration-300 hover:text-kuin-magenta sm:px-4">
+        <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        <span class="hidden text-sm font-medium text-sumi-400 transition-colors group-hover:text-kuin-magenta md:inline">Suchen</span>
+        <kbd class="hidden rounded-md border border-sumi-400/20 bg-sumi-400/5 px-1.5 py-0.5 font-sans text-xs font-semibold text-sumi-400 md:inline">/</kbd>
+      </button>
+
+      <div class="h-6 w-px bg-sumi-400/15 md:hidden"></div>
+
+      <!-- Mobile menu toggle -->
+      <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Hauptmenü öffnen" class="flex h-10 w-10 items-center justify-center rounded-full text-sumi-600 transition-colors duration-300 hover:text-kuin-magenta md:hidden">
+        <svg id="nav-toggle-icon-open" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        <svg id="nav-toggle-icon-close" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -129,6 +186,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
 
 <script>
   import { leichtLesen } from '../store/leichtLesen';
+  import { fontSize, highContrast, reduceMotion, type FontSizeStep } from '../store/accessibility';
 
   const llToggle = document.getElementById('ll-toggle') as HTMLButtonElement;
   const llTrack = document.getElementById('ll-track') as HTMLSpanElement;
@@ -187,4 +245,118 @@ const links: { href: string; label: string; id: string; children?: { href: strin
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !mobileNav.hidden) setNavOpen(false);
   });
+
+  // Sliding nav indicator — one pill that moves to whichever top-level
+  // link is hovered/focused, falling back to the current page's link on
+  // mouseleave. Positioned via measured pixel rects (getBoundingClientRect)
+  // rather than CSS, since "which link" changes at runtime; `transform`
+  // for the X move (compositor-friendly) plus a `width` transition for
+  // the resize between differently-sized labels.
+  const mainNav = document.getElementById('main-nav') as HTMLElement | null;
+  const indicator = document.getElementById('nav-indicator') as HTMLElement | null;
+
+  if (mainNav && indicator) {
+    // Only direct children (top-level link, or the "Über uns" dropdown's
+    // own trigger link) — not the dropdown's nested Vorstand/Team links.
+    const topLevelLinks = Array.from(mainNav.querySelectorAll(':scope > a, :scope > div > a')) as HTMLAnchorElement[];
+
+    function moveIndicatorTo(el: HTMLElement) {
+      if (!mainNav || !indicator) return;
+      const navRect = mainNav.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      indicator.style.width = `${elRect.width}px`;
+      indicator.style.transform = `translateX(${elRect.left - navRect.left}px)`;
+      indicator.style.opacity = '1';
+    }
+
+    function resetIndicator() {
+      const activeLink = mainNav?.querySelector('a[aria-current="page"]') as HTMLElement | null;
+      if (activeLink) moveIndicatorTo(activeLink);
+      else if (indicator) indicator.style.opacity = '0';
+    }
+
+    topLevelLinks.forEach((link) => {
+      link.addEventListener('mouseenter', () => moveIndicatorTo(link));
+      link.addEventListener('focus', () => moveIndicatorTo(link));
+    });
+    mainNav.addEventListener('mouseleave', resetIndicator);
+    window.addEventListener('resize', resetIndicator);
+
+    resetIndicator();
+  }
+
+  // Barrierefreiheits-Panel — same hydrate-from-server-attribute pattern
+  // as Leicht Lesen above, times three (font size, contrast, motion).
+  const a11yTrigger = document.getElementById('a11y-trigger') as HTMLButtonElement;
+  const a11yPanel = document.getElementById('a11y-panel') as HTMLElement;
+  const sizeButtons = Array.from(document.querySelectorAll('[data-font-size-btn]')) as HTMLButtonElement[];
+  const contrastToggle = document.getElementById('contrast-toggle') as HTMLButtonElement;
+  const contrastThumb = document.getElementById('contrast-thumb') as HTMLSpanElement;
+  const motionToggle = document.getElementById('motion-toggle') as HTMLButtonElement;
+  const motionThumb = document.getElementById('motion-thumb') as HTMLSpanElement;
+
+  function setA11yPanelOpen(open: boolean) {
+    a11yTrigger.setAttribute('aria-expanded', String(open));
+    a11yPanel.hidden = !open;
+  }
+
+  a11yTrigger.addEventListener('click', () => setA11yPanelOpen(a11yPanel.hidden));
+  document.addEventListener('click', (e) => {
+    if (!a11yPanel.hidden && !a11yPanel.contains(e.target as Node) && e.target !== a11yTrigger && !a11yTrigger.contains(e.target as Node)) {
+      setA11yPanelOpen(false);
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !a11yPanel.hidden) {
+      setA11yPanelOpen(false);
+      a11yTrigger.focus();
+    }
+  });
+
+  function renderFontSize(step: FontSizeStep) {
+    root.toggleAttribute('data-font-size', step !== '0');
+    if (step === '0') root.removeAttribute('data-font-size');
+    else root.setAttribute('data-font-size', step);
+    sizeButtons.forEach((btn) => {
+      const isActive = btn.dataset.fontSizeBtn === step;
+      btn.classList.toggle('border-kuin-magenta', isActive);
+      btn.classList.toggle('bg-kuin-magenta/10', isActive);
+      btn.classList.toggle('text-kuin-dark', isActive);
+    });
+    document.cookie = `kuin-font-size=${step}; path=/; max-age=31536000; samesite=lax`;
+  }
+  fontSize.set((root.getAttribute('data-font-size') as FontSizeStep | null) ?? '0');
+  renderFontSize(fontSize.get());
+  fontSize.listen(renderFontSize);
+  sizeButtons.forEach((btn) => {
+    btn.addEventListener('click', () => fontSize.set(btn.dataset.fontSizeBtn as FontSizeStep));
+  });
+
+  function renderContrast(active: boolean) {
+    root.toggleAttribute('data-contrast', active);
+    contrastToggle.setAttribute('aria-checked', String(active));
+    contrastToggle.classList.toggle('bg-kuin-magenta', active);
+    contrastToggle.classList.toggle('bg-sumi-400/25', !active);
+    contrastThumb.classList.toggle('translate-x-[22px]', active);
+    contrastThumb.classList.toggle('translate-x-0.5', !active);
+    document.cookie = `kuin-contrast=${active}; path=/; max-age=31536000; samesite=lax`;
+  }
+  highContrast.set(root.hasAttribute('data-contrast'));
+  renderContrast(highContrast.get());
+  highContrast.listen(renderContrast);
+  contrastToggle.addEventListener('click', () => highContrast.set(!highContrast.get()));
+
+  function renderReduceMotion(active: boolean) {
+    root.toggleAttribute('data-reduce-motion', active);
+    motionToggle.setAttribute('aria-checked', String(active));
+    motionToggle.classList.toggle('bg-kuin-magenta', active);
+    motionToggle.classList.toggle('bg-sumi-400/25', !active);
+    motionThumb.classList.toggle('translate-x-[22px]', active);
+    motionThumb.classList.toggle('translate-x-0.5', !active);
+    document.cookie = `kuin-reduce-motion=${active}; path=/; max-age=31536000; samesite=lax`;
+  }
+  reduceMotion.set(root.hasAttribute('data-reduce-motion'));
+  renderReduceMotion(reduceMotion.get());
+  reduceMotion.listen(renderReduceMotion);
+  motionToggle.addEventListener('click', () => reduceMotion.set(!reduceMotion.get()));
 </script>

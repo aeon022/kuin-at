@@ -114,6 +114,40 @@ h1, h2, h3, h4 {
   transition: opacity 700ms ease;
 }
 
+/* Barrierefreiheits-Panel (Header.astro): Textgröße, Kontrast, Bewegung —
+   same server-rendered-attribute-from-cookie pattern as [data-ll] above,
+   so there's no flash before Header.astro's script runs. */
+:root[data-font-size="1"] { font-size: 112.5%; }
+:root[data-font-size="2"] { font-size: 125%; }
+
+/* Tailwind v4 utilities read the theme's `--color-*` custom properties at
+   paint time (not baked-in hex), so overriding them here cascades into
+   every existing `text-sumi-600`/`bg-washi`/etc. utility already on the
+   page — no separate "high contrast" class needed on each element. */
+:root[data-contrast] {
+  --color-washi: #ffffff;
+  --color-sumi-100: #000000;
+  --color-sumi-200: #000000;
+  --color-sumi-400: #1a1a1a;
+  --color-sumi-600: #000000;
+}
+:root[data-contrast] a { text-decoration: underline; }
+
+/* `animation-play-state` (not `animation: none`) so CSS-driven loops
+   (hero ink drift, ring spin, nav-indicator slide) freeze in whatever
+   position they're already in instead of snapping to their 0% frame.
+   `transition-duration` near-zero (not `transition: none`) is the
+   standard reduced-motion trick — it wins the cascade without deleting
+   the `transition-property` a more specific rule further down might
+   still need. JS-driven rAF loops (Hero.astro's shape morph) check this
+   same attribute once per frame — see Hero.astro's tick(). */
+:root[data-reduce-motion] *,
+:root[data-reduce-motion] *::before,
+:root[data-reduce-motion] *::after {
+  animation-play-state: paused !important;
+  transition-duration: 0.001ms !important;
+}
+
 /* Dual-rendered Standard/Leicht-Lesen content (ProseSwap.astro, and any
    hand-written pair of `.ll-standard`/`.ll-easy` siblings): both variants
    sit in the same CSS grid cell so the container's height tracks whichever

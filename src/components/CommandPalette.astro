@@ -4,6 +4,9 @@
 // here the list is generated at build time from the real Orbiter content so
 // search still works on every page, using the exact same row markup.
 import { getCollection } from 'orbiter:collections';
+import { getMediaItem } from 'orbiter:media';
+
+const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 
 const staticRoutes = [
   { title: 'Start', href: '/', type: 'nav' },
@@ -31,12 +34,12 @@ const META = {
   nav: { icon: '🧭', label: 'Seite' },
   blog: { icon: '📰', label: 'Beitrag' },
   event: { icon: '📅', label: 'Event' },
-  action: { icon: '⚙️', label: 'Aktion' },
 };
 ---
-<dialog id="cmd-palette" class="top-20 m-auto w-full max-w-2xl border-0 bg-transparent p-0 z-50">
+<dialog id="cmd-palette" class="top-20 m-auto w-full max-w-2xl rounded-3xl border-0 bg-transparent p-0 z-50 overflow-hidden">
   <div id="cmd-container" class="scale-95 transform overflow-hidden rounded-3xl border border-sumi-400/10 bg-white opacity-0 shadow-2xl transition-all duration-300">
     <div class="flex items-center gap-4 border-b border-sumi-400/10 bg-washi/50 p-6">
+      {logo && <img src={logo.url} alt="" class="h-6 w-auto shrink-0" aria-hidden="true" />}
       <svg class="h-6 w-6 shrink-0 text-kuin-magenta" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
@@ -46,6 +49,34 @@ const META = {
     </div>
     <ul id="cmd-results" role="listbox" aria-label="Ergebnisse" class="max-h-[50vh] space-y-1 overflow-y-auto p-2"></ul>
     <p id="cmd-empty" class="hidden px-6 py-8 text-center text-sumi-600">Keine Ergebnisse.</p>
+
+    <!-- Barrierefreiheits-Aktionen: always visible (not filtered by the
+         search query, not scrolled away with the results list) — the
+         point of a footer instead of list rows is that these are visible
+         the instant the palette opens, no typing or scrolling needed. -->
+    <div id="cmd-actions-footer" class="flex items-center justify-center gap-1 border-t border-sumi-400/10 bg-washi/60 px-3 py-2.5">
+      <button type="button" id="cmd-action-ll" title="Leicht Lesen umschalten" aria-label="Leicht Lesen umschalten" class="cmd-footer-btn flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-sumi-600 transition-colors hover:bg-kuin-magenta hover:text-white">Aa</button>
+      <button type="button" id="cmd-action-contrast" title="Hoher Kontrast umschalten" aria-label="Hoher Kontrast umschalten" class="cmd-footer-btn flex h-9 w-9 items-center justify-center rounded-full text-sumi-600 transition-colors hover:bg-kuin-magenta hover:text-white">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18Z" fill="currentColor" stroke="none" /></svg>
+      </button>
+      <button type="button" id="cmd-action-motion" title="Bewegung reduzieren umschalten" aria-label="Bewegung reduzieren umschalten" class="cmd-footer-btn flex h-9 w-9 items-center justify-center rounded-full text-sumi-600 transition-colors hover:bg-kuin-magenta hover:text-white">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><rect x="9.5" y="8.5" width="2" height="7" rx="0.5" fill="currentColor" stroke="none" /><rect x="13.5" y="8.5" width="2" height="7" rx="0.5" fill="currentColor" stroke="none" /></svg>
+      </button>
+
+      <div class="mx-1 h-5 w-px bg-sumi-400/15"></div>
+
+      <button type="button" id="cmd-action-font-smaller" title="Textgröße verkleinern" aria-label="Textgröße verkleinern" class="cmd-footer-btn flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-sumi-600 transition-colors hover:bg-kuin-magenta hover:text-white">A−</button>
+      <button type="button" id="cmd-action-font-bigger" title="Textgröße vergrößern" aria-label="Textgröße vergrößern" class="cmd-footer-btn flex h-9 w-9 items-center justify-center rounded-full text-base font-bold text-sumi-600 transition-colors hover:bg-kuin-magenta hover:text-white">A+</button>
+
+      <div class="mx-1 h-5 w-px bg-sumi-400/15"></div>
+
+      <button type="button" id="cmd-action-a11y-panel" title="Barrierefreiheits-Optionen öffnen" aria-label="Barrierefreiheits-Optionen öffnen" class="cmd-footer-btn flex h-9 w-9 items-center justify-center rounded-full text-sumi-600 transition-colors hover:bg-kuin-magenta hover:text-white">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="4.5" r="1.6" fill="currentColor" stroke="none" />
+          <path d="M11.2 6v5l3.3 2.2M11.2 11H7M13.6 12.5l2.2 6.5M9.5 22a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+        </svg>
+      </button>
+    </div>
   </div>
 </dialog>
 
@@ -57,10 +88,6 @@ const META = {
   const input = document.getElementById('cmd-input');
   const resultsEl = document.getElementById('cmd-results');
   const emptyEl = document.getElementById('cmd-empty');
-
-  const actions = [
-    { title: 'Leicht Lesen umschalten', type: 'action', run: () => document.getElementById('ll-toggle')?.click() },
-  ];
 
   let activeIndex = 0;
   let current = [];
@@ -100,20 +127,19 @@ const META = {
 
   function activate(item) {
     close();
-    if (item.run) item.run();
-    else if (item.href) location.href = item.href;
+    if (item.href) location.href = item.href;
   }
 
   function filter(query) {
     const q = query.trim().toLowerCase();
-    const all = [...actions, ...index];
-    render(q ? all.filter((item) => item.title.toLowerCase().includes(q)) : all);
+    render(q ? index.filter((item) => item.title.toLowerCase().includes(q)) : index);
   }
 
   function open() {
     dialog.showModal();
     input.value = '';
     filter('');
+    syncFooter();
     requestAnimationFrame(() => {
       container.classList.remove('scale-95', 'opacity-0');
       container.classList.add('scale-100', 'opacity-100');
@@ -162,4 +188,40 @@ const META = {
     e.preventDefault();
     close();
   });
+
+  // Accessibility footer — deliberately kept OUTSIDE the searchable/
+  // filterable results list (see filter() above) and doesn't close the
+  // palette on click, unlike activate(): these are toggles someone likely
+  // wants to flip more than one of in a row (e.g. contrast AND reduced
+  // motion), so closing after every click would mean reopening for each.
+  // Just clicks the real button elsewhere on the page (same targets the
+  // header's own controls use) rather than duplicating their toggle
+  // logic/cookie-writing here.
+  document.getElementById('cmd-action-ll')?.addEventListener('click', () => { document.getElementById('ll-toggle')?.click(); syncFooter(); });
+  document.getElementById('cmd-action-contrast')?.addEventListener('click', () => { document.getElementById('contrast-toggle')?.click(); syncFooter(); });
+  document.getElementById('cmd-action-motion')?.addEventListener('click', () => { document.getElementById('motion-toggle')?.click(); syncFooter(); });
+  document.getElementById('cmd-action-a11y-panel')?.addEventListener('click', () => document.getElementById('a11y-trigger')?.click());
+
+  function stepFontSize(delta) {
+    const current = Number(document.documentElement.getAttribute('data-font-size') || '0');
+    const next = Math.max(0, Math.min(2, current + delta));
+    document.querySelector(`[data-font-size-btn="${next}"]`)?.click();
+  }
+  document.getElementById('cmd-action-font-smaller')?.addEventListener('click', () => stepFontSize(-1));
+  document.getElementById('cmd-action-font-bigger')?.addEventListener('click', () => stepFontSize(1));
+
+  // Footer buttons reflect whether their setting is currently on — synced
+  // inside open() itself (not just the trigger's click handler) so it
+  // also runs when "/" or ⌘K opens the palette, not only a mouse click on
+  // the header's search button.
+  function footerToggle(btnId, active) {
+    const btn = document.getElementById(btnId);
+    btn?.classList.toggle('bg-kuin-magenta/10', active);
+    btn?.classList.toggle('text-kuin-dark', active);
+  }
+  function syncFooter() {
+    footerToggle('cmd-action-ll', document.body.classList.contains('is-leicht-lesen'));
+    footerToggle('cmd-action-contrast', document.documentElement.hasAttribute('data-contrast'));
+    footerToggle('cmd-action-motion', document.documentElement.hasAttribute('data-reduce-motion'));
+  }
 </script>
