@@ -11,10 +11,10 @@
 // client later wants them pulled in here automatically, filter `events` by
 // `end_date < now` and render them alongside the galleries.
 //
-// "Jahresberichte" reuses the existing `downloads` collection — annual reports
-// are PDFs, and a dedicated Orbiter collection for them would need its own
-// schema/plan task. The client adds each report as a Downloads entry; worth
-// revisiting only if the volume grows enough to need its own collection.
+// "Jahresberichte" reuses the existing `downloads` collection, filtered to
+// category:"jahresbericht" (see DownloadSchema) — /downloads itself shows the
+// full unfiltered list (all categories), so this section only ever shows the
+// subset that's actually a yearly report instead of duplicating everything.
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'orbiter:collections';
 import { getMediaItem } from 'orbiter:media';
@@ -25,13 +25,19 @@ const archives = parseEntries('archive', await getCollection('archive'), Archive
   .sort((a, b) => b.data.year - a.data.year);
 
 // The 25 migrated blog posts are the newsletter archive (their slugs are
-// literally `newsletter-*`), so they are listed here as well as on /blog.
+// literally `newsletter-*`) — same list as /blog. Shown here as a short
+// preview plus an expandable drawer for the rest, instead of duplicating
+// the full 25-item wall of links that /blog already owns.
+const NEWSLETTER_PREVIEW = 5;
 const newsletters = (await getCollection('blog'))
   .filter((p) => p.data.published_at)
   .sort((a, b) => new Date(b.data.published_at).getTime() - new Date(a.data.published_at).getTime());
+const newsletterPreview = newsletters.slice(0, NEWSLETTER_PREVIEW);
+const newsletterRest = newsletters.slice(NEWSLETTER_PREVIEW);
 
 const reports = await Promise.all(
   parseEntries('downloads', await getCollection('downloads'), DownloadSchema)
+    .filter((e) => e.data.category === 'jahresbericht')
     .map(async (e) => ({ ...e.data, fileMedia: await getMediaItem(e.data.file) })),
 );
 const resolvedReports = reports.filter((r) => r.fileMedia);
@@ -68,20 +74,46 @@ const resolvedReports = reports.filter((r) => r.fileMedia);
     <section class="mb-20">
       <h2 class="mb-4 text-2xl font-semibold">Newsletter</h2>
       {newsletters.length > 0 ? (
-        <ul class="flex flex-col gap-4">
-          {newsletters.map((post) => (
-            <li class="rounded-2xl bg-sumi-900/[0.03] p-4 transition hover:-translate-y-1 hover:bg-washi hover:shadow-md">
-              <article>
-                <h3 class="text-lg font-semibold">
-                  <a href={`/blog/${post.slug}`} class="text-magenta-dark underline hover:text-kuin-magenta">{post.data.title}</a>
-                </h3>
-                <time datetime={post.data.published_at} class="ll-fade text-sm text-sumi-600">
-                  {new Date(post.data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
-                </time>
-              </article>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul class="flex flex-col gap-4">
+            {newsletterPreview.map((post) => (
+              <li class="rounded-2xl bg-sumi-900/[0.03] p-4 transition hover:-translate-y-1 hover:bg-washi hover:shadow-md">
+                <article>
+                  <h3 class="text-lg font-semibold">
+                    <a href={`/blog/${post.slug}`} class="text-magenta-dark underline hover:text-kuin-magenta">{post.data.title}</a>
+                  </h3>
+                  <time datetime={post.data.published_at} class="ll-fade text-sm text-sumi-600">
+                    {new Date(post.data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </time>
+                </article>
+              </li>
+            ))}
+          </ul>
+          {newsletterRest.length > 0 && (
+            <details class="group mt-4">
+              <summary class="cursor-pointer list-none text-sm font-semibold text-magenta-dark hover:text-kuin-magenta">
+                <span class="inline-flex items-center gap-1.5">
+                  Ältere Newsletter anzeigen ({newsletterRest.length})
+                  <span class="transition-transform group-open:rotate-180">▾</span>
+                </span>
+              </summary>
+              <ul class="mt-4 flex flex-col gap-4">
+                {newsletterRest.map((post) => (
+                  <li class="rounded-2xl bg-sumi-900/[0.03] p-4 transition hover:-translate-y-1 hover:bg-washi hover:shadow-md">
+                    <article>
+                      <h3 class="text-lg font-semibold">
+                        <a href={`/blog/${post.slug}`} class="text-magenta-dark underline hover:text-kuin-magenta">{post.data.title}</a>
+                      </h3>
+                      <time datetime={post.data.published_at} class="ll-fade text-sm text-sumi-600">
+                        {new Date(post.data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
+                      </time>
+                    </article>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+        </>
       ) : (
         <p class="text-sumi-600"><em>Derzeit sind keine Newsletter archiviert.</em></p>
       )}
@@ -104,7 +136,10 @@ const resolvedReports = reports.filter((r) => r.fileMedia);
           ))}
         </ul>
       ) : (
-        <p class="text-sumi-600"><em>Derzeit sind keine Jahresberichte veröffentlicht.</em></p>
+        <a href="/downloads" class="group flex items-center justify-between gap-4 rounded-2xl bg-sumi-900/[0.03] p-5 transition hover:-translate-y-1 hover:bg-washi hover:shadow-md">
+          <p class="text-sumi-600">Noch keine Jahresberichte veröffentlicht — alle Formulare &amp; Dokumente gibt es unter Downloads.</p>
+          <span class="shrink-0 font-semibold text-magenta-dark group-hover:text-kuin-magenta">Zu Downloads →</span>
+        </a>
       )}
     </section>
   </main>
