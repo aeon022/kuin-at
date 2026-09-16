@@ -21,24 +21,26 @@ const preview = latest?.images.slice(0, 2) ?? [];
     <h2 class="show-on-ll font-ll text-4xl font-bold text-sumi-900">Bilder von alten Spaziergängen</h2>
   </header>
 
-  <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-    {preview.map((img) => (
-      <a href="/blog/kuin-spaziergang" class="group block cursor-pointer">
-        <article>
-          <div class="relative mb-4 aspect-[4/3] overflow-hidden rounded-2xl bg-sumi-100">
-            <img src={img.image_url} alt={img.alt_text} class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0" />
-          </div>
-          <div class="relative-container h-[60px]">
-            <div class="hide-on-ll">
-              <h3 class="font-sans text-lg font-semibold text-sumi-900">{latest.title}</h3>
-              <p class="text-sm text-sumi-400">{latest.year}</p>
+  {latest && (
+    <>
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {preview.map((img) => (
+          <a href="/blog/kuin-spaziergang" class="group block cursor-pointer">
+            <div class="relative aspect-[4/3] overflow-hidden rounded-2xl bg-sumi-100">
+              <img src={img.image_url} alt={img.alt_text} class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0" />
             </div>
-            <div class="show-on-ll rounded-xl border-l-4 border-kuin-magenta bg-kuin-soft p-4">
-              <h3 class="text-lg font-bold">Spaziergang {latest.year}</h3>
-            </div>
-          </div>
-        </article>
+          </a>
+        ))}
+      </div>
+      <a href="/blog/kuin-spaziergang" class="group -mt-4 block">
+        <div class="hide-on-ll">
+          <h3 class="font-sans text-lg font-semibold text-sumi-900 group-hover:text-kuin-magenta">{latest.title}</h3>
+          <p class="text-sm text-sumi-400">{latest.year}</p>
+        </div>
+        <div class="show-on-ll rounded-xl border-l-4 border-kuin-magenta bg-kuin-soft p-4">
+          <h3 class="text-lg font-bold">Spaziergang {latest.year}</h3>
+        </div>
       </a>
-    ))}
-  </div>
+    </>
+  )}
 </section>
