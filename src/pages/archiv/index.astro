@@ -15,15 +15,14 @@
 // are PDFs, and a dedicated Orbiter collection for them would need its own
 // schema/plan task. The client adds each report as a Downloads entry; worth
 // revisiting only if the volume grows enough to need its own collection.
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'orbiter:collections';
 import { getMediaItem } from 'orbiter:media';
 import { ArchiveSchema, DownloadSchema } from '../../schemas';
 import { parseEntries } from '../../lib/content';
 
 const archives = parseEntries('archive', await getCollection('archive'), ArchiveSchema)
-  .map((e) => e.data)
-  .sort((a, b) => b.year - a.year);
+  .sort((a, b) => b.data.year - a.data.year);
 
 // The 25 migrated blog posts are the newsletter archive (their slugs are
 // literally `newsletter-*`), so they are listed here as well as on /blog.
@@ -37,36 +36,30 @@ const reports = await Promise.all(
 );
 const resolvedReports = reports.filter((r) => r.fileMedia);
 ---
-<BaseLayout title="Archiv" active="archiv">
+<Layout title="Archiv" active="archiv">
   <main id="main" class="mx-auto max-w-5xl px-4 py-16 md:py-24">
     <h1 class="mb-16 text-4xl font-bold md:text-5xl">Archiv — Rückblicke</h1>
 
     <section class="mb-20">
       <h2 class="mb-4 text-2xl font-semibold">Veranstaltungen</h2>
       {archives.length > 0 ? (
-        archives.map((archive) => (
-          <section class="mb-10">
-            <h3 class="mb-2 text-xl font-semibold">{archive.title} ({archive.year})</h3>
-            {archive.description && <p class="mb-4 text-sumi-600">{archive.description}</p>}
-            <ul class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {archive.images.map((img) => (
-                <li class="group">
-                  <figure>
-                    <div class="aspect-[4/3] overflow-hidden rounded-2xl bg-sumi-900/5">
-                      <img
-                        src={img.image_url}
-                        alt={img.alt_text}
-                        loading="lazy"
-                        class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
-                      />
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {archives.map(({ slug, data: archive }) => (
+            <a href={`/archiv/${slug}`} class="group block">
+              <article>
+                <div class="grid grid-cols-2 gap-1 overflow-hidden rounded-2xl bg-sumi-900/5">
+                  {archive.images.slice(0, 4).map((img) => (
+                    <div class="aspect-square overflow-hidden">
+                      <img src={img.image_url} alt="" loading="lazy" class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0" />
                     </div>
-                    {img.caption && <figcaption class="mt-3 text-sm text-sumi-600">{img.caption}</figcaption>}
-                  </figure>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))
+                  ))}
+                </div>
+                <h3 class="mt-4 text-xl font-semibold group-hover:text-kuin-magenta">{archive.title} ({archive.year})</h3>
+                <p class="text-sm text-sumi-600">{archive.images.length} Fotos</p>
+              </article>
+            </a>
+          ))}
+        </div>
       ) : (
         <p class="text-sumi-600"><em>Derzeit sind keine vergangenen Veranstaltungen archiviert.</em></p>
       )}
@@ -115,4 +108,4 @@ const resolvedReports = reports.filter((r) => r.fileMedia);
       )}
     </section>
   </main>
-</BaseLayout>
+</Layout>

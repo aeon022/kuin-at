@@ -1,8 +1,8 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Layout from '../../layouts/Layout.astro';
 import { getEntry } from 'orbiter:collections';
-import { getDisplayContent } from '../../lib/content';
 import { EventSchema } from '../../schemas';
+import ProseSwap from '../../components/ProseSwap.astro';
 
 const { slug } = Astro.params;
 const entry = await getEntry('events', slug!);
@@ -15,27 +15,51 @@ if (!parsed.success) {
   return Astro.redirect('/404');
 }
 const data = parsed.data;
-const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
-const content = getDisplayContent(data, 'description_standard', 'description_leicht_lesen', leichtLesenActive);
+const startDate = new Date(data.start_date);
+const endDate = new Date(data.end_date);
+const timeRange = `${startDate.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' })}–${endDate.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' })} Uhr`;
 ---
-<BaseLayout title={data.title} active="events">
-  <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
-    <article>
-      <h1 class="mb-3 text-4xl font-bold md:text-5xl">{data.title}</h1>
-      <p class="mb-1 text-sumi-600">
-        <time datetime={data.start_date}>{new Date(data.start_date).toLocaleString('de-AT')}</time>
-        {' – '}
-        <time datetime={data.end_date}>{new Date(data.end_date).toLocaleString('de-AT')}</time>
-      </p>
-      <p class="mb-6 text-sumi-600">{data.location}</p>
-      {data.accessibility_features.length > 0 && (
-        <ul class="mb-6 flex flex-wrap gap-2">
-          {data.accessibility_features.map((f) => (
-            <li class="rounded-2xl border border-matcha-dark bg-matcha/10 px-3 py-1 text-sm text-matcha-dark">{f}</li>
-          ))}
-        </ul>
-      )}
-      <div class="prose" set:html={content} />
+<Layout title={data.title} active="events">
+  <main id="main" class="mx-auto max-w-3xl space-y-8 px-6 py-16 md:px-12 md:py-24">
+    <a href="/events" class="inline-flex items-center gap-2 text-sm font-semibold text-sumi-600 transition-colors hover:text-kuin-magenta">
+      ← Alle Veranstaltungen
+    </a>
+
+    <article class="rounded-[2.5rem] border border-sumi-400/10 bg-white/50 p-8 backdrop-blur-sm md:p-12">
+      <div class="mb-8 inline-flex items-center gap-3 rounded-full bg-kuin-magenta/10 px-4 py-1.5 text-xs font-bold tracking-widest text-kuin-dark uppercase">
+        <span class="h-1.5 w-1.5 rounded-full bg-kuin-magenta"></span> Veranstaltung
+      </div>
+
+      <div class="flex flex-col items-start gap-8 md:flex-row md:gap-16">
+        <div class="shrink-0 pt-2">
+          <span class="block font-serif text-6xl font-bold tracking-tighter text-sumi-900">{startDate.getDate()}.</span>
+          <span class="mt-2 block font-sans text-sm font-semibold tracking-widest text-sumi-400 uppercase">
+            {startDate.toLocaleDateString('de-AT', { month: 'long', year: 'numeric' })}
+          </span>
+        </div>
+
+        <div class="flex-1 space-y-6">
+          <h1 class="font-serif text-4xl font-bold text-sumi-900 md:text-5xl">{data.title}</h1>
+
+          <div class="flex items-center gap-3 font-medium text-sumi-900">
+            <svg class="h-5 w-5 shrink-0 text-kuin-magenta" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            {data.location}
+          </div>
+          <p class="text-sm font-semibold tracking-widest text-sumi-400 uppercase">{timeRange}</p>
+
+          {data.accessibility_features.length > 0 && (
+            <ul class="flex flex-wrap gap-2 border-t border-sumi-400/10 pt-6" aria-label="Barrierefreiheit">
+              {data.accessibility_features.map((f) => (
+                <li class="rounded-full border border-matcha-700/20 bg-matcha-100 px-4 py-1.5 text-sm font-semibold text-matcha-900">{f}</li>
+              ))}
+            </ul>
+          )}
+
+          <div class="border-t border-sumi-400/10 pt-6">
+            <ProseSwap standard={data.description_standard} leicht={data.description_leicht_lesen} />
+          </div>
+        </div>
+      </div>
     </article>
   </main>
-</BaseLayout>
+</Layout>

@@ -1,0 +1,314 @@
+---
+// Hero.astro — layout/classes derive from mockup.html §1, with client
+// modernization requests (2026-09) on top:
+// - Logo moved to Header.astro (real wordmark, not generated text) —
+//   dropped the awkward standalone logo that used to sit alone below the
+//   buttons here.
+// - A moving visual: the real KUIN logo, with a morphing/spinning ink
+//   badge behind it (client request 2026-09 — explicitly the logo, in
+//   the hero, not a loose decorative blob and not the small header logo;
+//   both of those were tried first and rejected). Shared morph math
+//   (`smoothPath`/`blobPoints`) lives in `src/lib/blobMorph.ts`.
+//   Several rounds of a plain decorative blob here hit the same
+//   hard-edge bug in different disguises, always traced back to either
+//   `filter: blur()` bleeding past its own box under `overflow-hidden`,
+//   or a square SVG viewBox forced via `preserveAspectRatio="slice"` to
+//   cover a non-square container, which crops the sides by exactly how
+//   much the aspect ratios differ. Fix used here (still holds): the
+//   badge's own wrapper is `aspect-square` (never a non-square box), so
+//   the default `preserveAspectRatio` (`xMidYMid meet`) maps the viewBox
+//   1:1 with no crop, no stretch, no distortion.
+//   2026-09 follow-up (client reference: a big soft single-color
+//   "Gradient Morphing Blob" CodePen): bigger, drifts further, and is now
+//   explicitly allowed to sit partially behind the text column — earlier
+//   rounds deliberately kept it clear of the text to protect contrast,
+//   but the client wants the background-blob look even where it
+//   overlaps. Checked contrast at the overlap after resizing (see
+//   `hero-logo-ink-group`/`-drift` below) rather than skipping the check
+//   just because it was asked for — still worth confirming text stays
+//   legible on a site about accessibility.
+// - Bigger, higher-contrast buttons (was "fad").
+// Both Standard and Leicht-Lesen text are always in the DOM;
+// .show-on-ll/.hide-on-ll (global.css) plus body.is-leicht-lesen (toggled
+// by Header.astro) decide which is visible. The Standard paragraph is the
+// real WordPress intro sentence (verbatim, from the migrated
+// "landing"/"der-verein" pages in content.pod) — not pulled from a page's
+// `content_standard` at runtime since this hero is static markup, not a
+// CMS entry. The Leicht-Lesen version is an accessible rewrite of that
+// same real sentence, authored here for the same reason.
+import { getMediaItem } from 'orbiter:media';
+const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
+---
+<section class="breathing-element relative max-w-6xl overflow-hidden">
+  <div class="hero-logo-stage pointer-events-none absolute top-1/2 right-[8%] -z-10 hidden aspect-square w-[55%] max-w-[14rem] -translate-y-1/2 xl:block xl:max-w-sm" aria-hidden="true">
+    <!-- The blob lives in its own, bigger box so it can be enlarged
+         independently of the logo/ring, which stay at the stage's own
+         size. Growing a container is the one size lever that's actually
+         free (relative viewBox margins don't change), unlike pushing ink
+         radii closer to the viewBox's own edge — see the render()
+         comment below.
+         How big the box can safely get is capped by how much room is
+         actually free around the stage inside the outer <section>'s
+         overflow-hidden clip, and that room is NOT the same on every
+         side — measured directly (getBoundingClientRect) rather than
+         assumed:
+         - Vertical: the section is much shorter than it is wide relative
+           to the stage, so `top`/`bottom` only have ~90px of slack each
+           before hitting the clip (a uniform inset sized for horizontal
+           room went negative — clipped — top and bottom).
+         - Horizontal LEFT: hundreds of px free (the text column doesn't
+           reach anywhere near this edge), essentially unconstrained.
+         - Horizontal RIGHT: the tightest of all. First fix moved the
+           stage itself further from the section's right edge
+           (`right-[22%]`) to make room — but the stage carries the LOGO
+           too, and that shift dragged the opaque logo left far enough to
+           sit on top of real paragraph words (confirmed via screenshot:
+           "Kultur Inklusiv" overlapping "Teilhabe als"/"Inklusion als").
+           Reverted the stage back to `right-[8%]` (the last position
+           confirmed clear of text) and instead made the wrap's OWN
+           left/right insets asymmetric — big on the left (uses the free
+           room), small on the right (respects the ~85px actually
+           available there) — rather than moving the stage at all.
+         Each side therefore has its own inset (`-top`/`-bottom`/`-left`/
+         `-right`, not the symmetric `-inset-x`/`-inset-y` shorthand), and
+         `preserveAspectRatio="none"` on the SVG below maps the full
+         0–100 viewBox independently per axis regardless of the resulting
+         non-square, non-centered box (`"none"` stretches, it never crops
+         — no "slice" cropping risk). Re-verify with the same rect
+         comparison — section vs. stage vs. wrap, at rest AND across the
+         roam animation's full cycle, AND stage-left vs. paragraph text —
+         if the stage's size/position or these insets change again. -->
+    <div class="hero-blob-wrap absolute -top-[15%] -bottom-[15%] -left-[18%] -right-[16%]">
+      <svg class="hero-blob-svg absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <defs>
+          <radialGradient id="hero-blob-fill-sumi" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="30">
+            <stop offset="0%" style="stop-color: var(--color-sumi-600); stop-opacity: 0.32" />
+            <stop offset="40%" style="stop-color: var(--color-sumi-600); stop-opacity: 0.22" />
+            <stop offset="75%" style="stop-color: var(--color-sumi-600); stop-opacity: 0.08" />
+            <stop offset="100%" style="stop-color: var(--color-sumi-600); stop-opacity: 0" />
+          </radialGradient>
+          <radialGradient id="hero-blob-fill-matcha" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="27">
+            <stop offset="0%" style="stop-color: var(--color-matcha-dark); stop-opacity: 0.3" />
+            <stop offset="40%" style="stop-color: var(--color-matcha-dark); stop-opacity: 0.2" />
+            <stop offset="75%" style="stop-color: var(--color-matcha-dark); stop-opacity: 0.07" />
+            <stop offset="100%" style="stop-color: var(--color-matcha-dark); stop-opacity: 0" />
+          </radialGradient>
+          <radialGradient id="hero-blob-fill-magenta" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="36">
+            <stop offset="0%" style="stop-color: var(--color-kuin-magenta); stop-opacity: 0.5" />
+            <stop offset="40%" style="stop-color: var(--color-kuin-magenta); stop-opacity: 0.34" />
+            <stop offset="75%" style="stop-color: var(--color-kuin-magenta); stop-opacity: 0.12" />
+            <stop offset="100%" style="stop-color: var(--color-kuin-magenta); stop-opacity: 0" />
+          </radialGradient>
+          <radialGradient id="hero-blob-fill-magenta-light" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="32">
+            <stop offset="0%" style="stop-color: var(--color-magenta-light); stop-opacity: 0.3" />
+            <stop offset="40%" style="stop-color: var(--color-magenta-light); stop-opacity: 0.2" />
+            <stop offset="75%" style="stop-color: var(--color-magenta-light); stop-opacity: 0.07" />
+            <stop offset="100%" style="stop-color: var(--color-magenta-light); stop-opacity: 0" />
+          </radialGradient>
+          <radialGradient id="hero-blob-fill-magenta-dark" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="24">
+            <stop offset="0%" style="stop-color: var(--color-magenta-dark); stop-opacity: 0.28" />
+            <stop offset="40%" style="stop-color: var(--color-magenta-dark); stop-opacity: 0.18" />
+            <stop offset="75%" style="stop-color: var(--color-magenta-dark); stop-opacity: 0.06" />
+            <stop offset="100%" style="stop-color: var(--color-magenta-dark); stop-opacity: 0" />
+          </radialGradient>
+          <filter id="hero-blob-soften" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="1.5" />
+          </filter>
+        </defs>
+        <g class="hero-blob-group" filter="url(#hero-blob-soften)">
+          <path id="hero-blob-sumi" class="hero-blob-shape" fill="url(#hero-blob-fill-sumi)" />
+          <path id="hero-blob-matcha" class="hero-blob-shape" fill="url(#hero-blob-fill-matcha)" />
+          <path id="hero-blob-magenta-dark" class="hero-blob-shape" fill="url(#hero-blob-fill-magenta-dark)" />
+          <path id="hero-blob-magenta-light" class="hero-blob-shape" fill="url(#hero-blob-fill-magenta-light)" />
+          <path id="hero-blob-magenta" class="hero-blob-shape" fill="url(#hero-blob-fill-magenta)" />
+        </g>
+      </svg>
+    </div>
+    <!-- Ring + logo: unchanged size, own SVG so enlarging the blob above
+         never touches them. -->
+    <svg class="hero-logo-ring absolute inset-0 h-full w-full" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="hero-logo-ink-ring-gradient" gradientUnits="userSpaceOnUse" x1="6" y1="50" x2="94" y2="50">
+          <stop offset="0%" style="stop-color: var(--color-kuin-magenta)" />
+          <stop offset="50%" style="stop-color: var(--color-magenta-light)" />
+          <stop offset="100%" style="stop-color: var(--color-matcha-dark)" />
+        </linearGradient>
+      </defs>
+      <g class="hero-logo-ink-ring-group">
+        <circle cx="50" cy="50" r="46" fill="none" stroke="url(#hero-logo-ink-ring-gradient)" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="110 179" />
+      </g>
+    </svg>
+    {logo && <img src={logo.url} alt="" class="relative z-10 h-full w-full object-contain p-16 md:p-20" />}
+  </div>
+
+  <div class="max-w-2xl space-y-10">
+    <h1 class="breathing-element relative-container h-[200px] md:h-[240px]">
+      <!-- Standard -->
+      <span class="hide-on-ll block w-full font-serif text-6xl leading-[1.05] font-bold tracking-tight text-sumi-900 md:text-[5.5rem]">
+        Kultur ohne <br />
+        <span class="font-medium text-sumi-600 italic">Hindernisse.</span>
+      </span>
+      <!-- Leicht Lesen -->
+      <span class="show-on-ll font-ll block w-full text-5xl leading-[1.1] font-bold tracking-tight text-sumi-900 md:text-[5rem]">
+        Kultur für <span class="text-kuin-magenta underline decoration-[10px] underline-offset-8">alle.</span>
+      </span>
+    </h1>
+
+    <div class="breathing-element relative-container h-[180px] max-w-2xl">
+      <!-- Standard -->
+      <p class="hide-on-ll font-sans text-xl leading-[1.7] font-light text-sumi-600">
+        Das Projekt „Kultur Inklusiv" hat das Ziel, kulturelle Teilhabe als universelles Menschenrecht zu fördern und Inklusion als selbstverständliches Element des kulturellen Lebens zu etablieren.
+      </p>
+      <!-- Leicht Lesen -->
+      <div class="show-on-ll font-ll rounded-r-2xl border-l-8 border-kuin-magenta bg-kuin-soft p-6 text-2xl leading-[1.8] text-sumi-900 md:p-8">
+        Kultur Inklusiv setzt sich dafür ein, dass alle Menschen Kunst und Kultur erleben können.<br />
+        Kultur ist ein Recht für alle Menschen.<br />
+        Inklusion soll ganz normal sein.<br />
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-4">
+      <a href="/der-verein" class="rounded-2xl bg-magenta-dark px-8 py-4 text-lg font-semibold text-washi shadow-lg shadow-magenta-dark/20 transition hover:-translate-y-1 hover:bg-kuin-magenta hover:shadow-xl">
+        Über uns
+      </a>
+      <a href="/aktuell" class="rounded-2xl border-2 border-sumi-900/15 px-8 py-4 text-lg font-semibold text-sumi-900 transition hover:-translate-y-1 hover:border-sumi-900/30 hover:bg-sumi-900/5">
+        Aktuelles
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-logo-ink-shape {
+    mix-blend-mode: multiply;
+  }
+  /* Two independent motions layered: the wrapper drifts a real distance
+     across the hero (the "moving like a background blob" ask), while the
+     ink shapes inside keep their own smaller in-place wobble (the morph).
+     Kept as separate elements/animations rather than one combined
+     transform so the wrapper's drift range can be tuned for "how far it
+     roams" without touching the morph's own feel, and vice versa. */
+  /* Amplitude kept conservative (scaled for a bigger box than this one
+     used to be) so the ABSOLUTE drift distance stays well inside the
+     margin measured in the comment above, rather than re-computing a
+     "just barely fits" number every time the box size changes. */
+  .hero-blob-wrap {
+    animation: hero-blob-roam 46s ease-in-out infinite alternate;
+  }
+  .hero-blob-group {
+    animation: hero-blob-drift 40s ease-in-out infinite alternate;
+    transform-origin: 50px 50px;
+  }
+  .hero-logo-ink-ring-group {
+    transform-origin: 50px 50px;
+    animation: hero-logo-ink-spin 18s linear infinite;
+  }
+  @keyframes hero-blob-roam {
+    0% { transform: translate(1.8%, -2.4%); }
+    50% { transform: translate(-3%, 1.8%); }
+    100% { transform: translate(-1.2%, 3%); }
+  }
+  @keyframes hero-blob-drift {
+    0% { transform: translate(1.5%, -1%) rotate(0deg) scale(1); }
+    50% { transform: translate(-1.5%, 1.5%) rotate(5deg) scale(1.06); }
+    100% { transform: translate(-2%, -1%) rotate(-5deg) scale(0.94); }
+  }
+  @keyframes hero-logo-ink-spin {
+    to { transform: rotate(360deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-blob-wrap,
+    .hero-blob-group,
+    .hero-logo-ink-ring-group {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { smoothPath, blobPoints, heartPoint, type Point } from '../lib/blobMorph';
+
+  // Max reach per layer (base + ampA + ampB) plus the blur's spread stays
+  // well under the viewBox's own edge (50) — same margin discipline as
+  // every earlier round. `heartScale` is sized the same way: heartPoint's
+  // own curve reaches ~17 units at scale 1 (checked: x maxes at 16, y at
+  // 17), so dividing each layer's existing safe reach by 17 keeps the
+  // heart shape within the exact same margin, never closer to the edge
+  // than the organic blob already was. `circleR` reuses each layer's own
+  // organic base radius — already proven safe on its own (that's the
+  // "resting" radius before any wobble amplitude is added).
+  const sumi = document.getElementById('hero-blob-sumi') as SVGPathElement | null;
+  const matcha = document.getElementById('hero-blob-matcha') as SVGPathElement | null;
+  const magentaDark = document.getElementById('hero-blob-magenta-dark') as SVGPathElement | null;
+  const magentaLight = document.getElementById('hero-blob-magenta-light') as SVGPathElement | null;
+  const magenta = document.getElementById('hero-blob-magenta') as SVGPathElement | null;
+
+  type Shape = 'organic' | 'heart' | 'circle';
+  const SHAPES: Shape[] = ['organic', 'heart', 'circle'];
+
+  type Layer = {
+    el: SVGPathElement | null;
+    count: number;
+    base: number; ampA: number; ampB: number; freqA: number; freqB: number; phase: number;
+    heartScale: number;
+    circleR: number;
+  };
+
+  const layers: Layer[] = [
+    { el: sumi, count: 14, base: 24, ampA: 6, ampB: 3, freqA: 0.16, freqB: 0.27, phase: 1.8, heartScale: 33 / 17, circleR: 24 },
+    { el: matcha, count: 13, base: 21, ampA: 5, ampB: 3, freqA: 0.14, freqB: 0.24, phase: 3.4, heartScale: 29 / 17, circleR: 21 },
+    { el: magentaDark, count: 12, base: 18, ampA: 4.5, ampB: 2.5, freqA: 0.21, freqB: 0.33, phase: 5.1, heartScale: 25 / 17, circleR: 18 },
+    { el: magentaLight, count: 15, base: 26, ampA: 5, ampB: 3, freqA: 0.11, freqB: 0.2, phase: 2.6, heartScale: 34 / 17, circleR: 26 },
+    { el: magenta, count: 16, base: 30, ampA: 6, ampB: 3, freqA: 0.19, freqB: 0.3, phase: 0, heartScale: 39 / 17, circleR: 30 },
+  ];
+
+  function shapePoints(shape: Shape, L: Layer, t: number): Point[] {
+    if (shape === 'organic') return blobPoints(50, 50, L.count, L.base, L.ampA, L.ampB, L.freqA, L.freqB, L.phase, t);
+    if (shape === 'circle') {
+      const pts: Point[] = [];
+      for (let i = 0; i < L.count; i++) {
+        const a = (i / L.count) * Math.PI * 2;
+        pts.push([50 + L.circleR * Math.cos(a), 50 + L.circleR * Math.sin(a)]);
+      }
+      return pts;
+    }
+    const pts: Point[] = [];
+    for (let i = 0; i < L.count; i++) pts.push(heartPoint(50, 50, L.heartScale, i, L.count));
+    return pts;
+  }
+
+  // Cycles organic -> heart -> circle -> heart -> organic (ping-pong, so
+  // there's no jump-cut wraparound). Cosine easing within each
+  // transition segment means it naturally spends more of the timeline
+  // near each pure shape than mid-blend, without needing explicit
+  // "hold" segments.
+  const CYCLE_SECONDS = 42;
+
+  function render(t: number) {
+    const twoWay = CYCLE_SECONDS * 2;
+    const cyc = t % twoWay;
+    const p = cyc <= CYCLE_SECONDS ? cyc / CYCLE_SECONDS : 2 - cyc / CYCLE_SECONDS; // 0..1..0
+    const phase = p * 2; // 0..2 across the 2 transitions between 3 shapes
+    const idx = Math.min(Math.floor(phase), 1);
+    const local = phase - idx;
+    const ease = (1 - Math.cos(Math.PI * local)) / 2;
+
+    for (const L of layers) {
+      if (!L.el) continue;
+      const from = shapePoints(SHAPES[idx], L, t);
+      const to = shapePoints(SHAPES[idx + 1], L, t);
+      const blended: Point[] = from.map((pt, i) => [pt[0] + (to[i][0] - pt[0]) * ease, pt[1] + (to[i][1] - pt[1]) * ease]);
+      L.el.setAttribute('d', smoothPath(blended));
+    }
+  }
+
+  render(0);
+
+  if (sumi && matcha && magentaDark && magentaLight && magenta && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    function tick(now: number) {
+      render(now / 1000);
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+</script>

@@ -1,0 +1,85 @@
+---
+// EventCard.astro — mockup.html §2 "NÄCHSTER WALK" markup/classes, filled
+// with the real next Orbiter event instead of the mockup's placeholder
+// ("Museum der Wahrnehmung") — that was invented content, not real.
+import { getCollection } from 'orbiter:collections';
+import { EventSchema } from '../schemas';
+import { parseEntries } from '../lib/content';
+
+const now = Date.now();
+const nextEvent = parseEntries('events', await getCollection('events'), EventSchema)
+  .filter((e) => new Date(e.data.start_date).getTime() >= now)
+  .sort((a, b) => new Date(a.data.start_date).getTime() - new Date(b.data.start_date).getTime())[0];
+
+const startDate = nextEvent ? new Date(nextEvent.data.start_date) : null;
+const endDate = nextEvent ? new Date(nextEvent.data.end_date) : null;
+const timeRange = startDate && endDate
+  ? `${startDate.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' })}–${endDate.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' })} Uhr`
+  : '';
+---
+<section id="walks" class="breathing-element group relative max-w-5xl">
+  <!-- Decor -->
+  <div class="absolute inset-0 -z-10 -rotate-1 transform rounded-[2.5rem] border border-sumi-400/5 bg-white transition-transform duration-500 group-hover:-rotate-2 group-hover:shadow-xl"></div>
+
+  <div class="relative rounded-[2.5rem] border border-sumi-400/10 bg-white/50 p-8 backdrop-blur-sm md:p-12">
+    {nextEvent && startDate ? (
+      <>
+        <div class="hide-on-ll mb-10 inline-flex items-center gap-3 rounded-full bg-kuin-magenta/10 px-4 py-1.5 text-xs font-bold tracking-widest text-kuin-dark uppercase">
+          <span class="h-1.5 w-1.5 rounded-full bg-kuin-magenta"></span> Aktueller Walk
+        </div>
+
+        <article class="flex flex-col items-start gap-8 md:flex-row md:gap-16">
+          <div class="hide-on-ll shrink-0 pt-2">
+            <span class="block font-serif text-6xl font-bold tracking-tighter text-sumi-900">{startDate.getDate()}.</span>
+            <span class="mt-2 block font-sans text-sm font-semibold tracking-widest text-sumi-400 uppercase">
+              {startDate.toLocaleDateString('de-AT', { month: 'long' })}
+            </span>
+          </div>
+
+          <div class="breathing-element relative-container min-h-[300px] flex-1 space-y-6">
+            <h2 class="breathing-element mb-6 font-serif text-4xl font-bold text-sumi-900 md:text-5xl">
+              <a href={`/events/${nextEvent.slug}`} class="hover:text-kuin-magenta">{nextEvent.data.title}</a>
+            </h2>
+
+            <!-- Standard: time + Treffpunkt only — the description lives on
+                 the event's own page, one click away. -->
+            <div class="hide-on-ll space-y-6">
+              <div class="flex items-center gap-3 font-medium text-sumi-900">
+                <svg class="h-5 w-5 text-kuin-magenta" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                {nextEvent.data.location}
+              </div>
+              <p class="text-sm font-semibold tracking-widest text-sumi-400 uppercase">{timeRange}</p>
+              {nextEvent.data.accessibility_features.length > 0 && (
+                <ul class="flex flex-wrap gap-2 border-t border-sumi-400/10 pt-4" aria-label="Barrierefreiheit">
+                  {nextEvent.data.accessibility_features.map((f) => (
+                    <li class="rounded-full border border-matcha-700/20 bg-matcha-100 px-4 py-1.5 text-sm font-semibold text-matcha-900">{f}</li>
+                  ))}
+                </ul>
+              )}
+              <a href={`/events/${nextEvent.slug}`} class="inline-flex items-center gap-2 font-semibold text-kuin-magenta transition-colors hover:text-kuin-dark">
+                Details ansehen <span class="transition-transform group-hover:translate-x-1">→</span>
+              </a>
+            </div>
+
+            <!-- Leicht Lesen -->
+            <div class="show-on-ll font-ll rounded-r-2xl border-l-8 border-kuin-magenta bg-kuin-soft p-6 text-xl leading-[1.8] text-sumi-900 md:p-8">
+              <strong>Wann:</strong> {startDate.toLocaleDateString('de-AT', { day: 'numeric', month: 'long' })}, {timeRange}<br />
+              <strong>Wo:</strong> {nextEvent.data.location.replace(/^Treffpunkt:\s*/i, '')}
+              {nextEvent.data.accessibility_features.length > 0 && (
+                <>
+                  <br /><br />
+                  {nextEvent.data.accessibility_features.map((f) => <>{f}<br /></>)}
+                </>
+              )}
+              <a href={`/events/${nextEvent.slug}`} class="mt-4 inline-block rounded-xl border-2 border-kuin-magenta bg-white px-6 py-3 font-bold text-kuin-dark">
+                Mehr erfahren
+              </a>
+            </div>
+          </div>
+        </article>
+      </>
+    ) : (
+      <p class="text-center text-sumi-600"><em>Derzeit sind keine Veranstaltungen geplant.</em></p>
+    )}
+  </div>
+</section>

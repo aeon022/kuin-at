@@ -1,18 +1,24 @@
 @import "tailwindcss";
 
-/* Playful Minimalism — see design-konzept.md. Kuin-Magenta (#cc5972) is
-   the real legacy brand color (verified in the WP export's nav-menu
-   customizer settings), too light for AAA text at any size (checked:
-   3.8:1 on washi, 4.0:1 even with white text) — reserved for decorative/
-   large-scale use (buttons' resting fill excepted, see magenta-dark),
-   borders, tints, and the focus ring. magenta-dark and matcha-dark are
-   derived, AAA-verified (≥7:1 on washi) text-safe siblings. */
+/* Playful Minimalism — see design-konzept.md / mockup.html. kuin-magenta
+   is the exact mockup/legacy brand value (#e3006b) — used for decorative/
+   large-scale use, borders, tints, and the focus ring, same as the mockup.
+   magenta-dark and matcha-dark are the pre-existing AAA-verified (≥7:1 on
+   washi) text-safe siblings other routes rely on for body text; kuin-dark
+   and matcha-900/700/100 are the mockup's own additional tokens, added
+   alongside rather than replacing them so nothing else on the site breaks. */
 @theme {
   --color-washi: #faf9f5;
-  --color-sumi-900: #1c1c1c;
-  --color-sumi-600: #4a4a4a;
 
-  --color-kuin-magenta: #cc5972;
+  --color-sumi-100: #e6e6e6;
+  --color-sumi-200: #cccccc;
+  --color-sumi-400: #858585;
+  --color-sumi-600: #4a4a4a;
+  --color-sumi-900: #1c1c1c;
+
+  --color-kuin-magenta: #e3006b;
+  --color-kuin-dark: #b30054;
+  --color-kuin-soft: #fde8f0;
   --color-magenta-dark: #7a2f42;
   --color-magenta-soft: #fde8f0;
   /* AAA-safe on dark backgrounds only (9.1:1 on sumi-900) — magenta-dark
@@ -21,13 +27,56 @@
 
   --color-matcha: #8a9a5b;
   --color-matcha-dark: #4d5930;
+  --color-matcha-100: #eef1e6;
+  --color-matcha-700: #6b7a43;
+  --color-matcha-900: #4a542e;
 
-  --font-serif: "Playfair Display", Georgia, serif;
-  --font-sans: "Inter", "system-ui", "Segoe UI", sans-serif;
-  --font-ll: "Atkinson Hyperlegible", "system-ui", sans-serif;
-
-  --radius-md: 0.5rem;
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+  --font-ll: "Atkinson Hyperlegible", sans-serif;
 }
+
+/* Mockup's global chrome, ported verbatim (mockup.html <style>). */
+body { transition: background-color 0.8s ease, color 0.8s ease; }
+.breathing-element { transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* `transition` lives here, on the elements themselves — a `transition`
+   declared on an ancestor (e.g. `.breathing-element`) never applies to a
+   descendant's own property changes, so without this the mockup's original
+   rules (which never set `transition` on .show-on-ll/.hide-on-ll at all)
+   just snap instead of crossfading. */
+.show-on-ll, .hide-on-ll { transition: opacity 500ms ease, transform 500ms ease; }
+.show-on-ll { opacity: 0; position: absolute; pointer-events: none; transform: translateY(15px); }
+/* No `display` override here — the mockup's own rule forced `display: block`,
+   which (same specificity, later in the cascade) clobbers elements that are
+   themselves `inline-flex`/`flex`/etc. (e.g. the "Aktueller Walk" badge),
+   stretching them to full width. Each element's own Tailwind display
+   utility is authoritative; this class only ever needs to touch opacity/
+   transform/position. */
+.hide-on-ll { opacity: 1; transform: translateY(0); }
+
+body.is-leicht-lesen {
+  font-family: "Atkinson Hyperlegible", sans-serif !important;
+  font-size: 1.125rem;
+  line-height: 1.8;
+}
+body.is-leicht-lesen h1,
+body.is-leicht-lesen h2,
+body.is-leicht-lesen h3,
+body.is-leicht-lesen .font-serif,
+body.is-leicht-lesen .font-sans {
+  font-family: "Atkinson Hyperlegible", sans-serif !important;
+}
+body.is-leicht-lesen .hide-on-ll { opacity: 0; position: absolute; pointer-events: none; transform: translateY(-15px); }
+body.is-leicht-lesen .show-on-ll { opacity: 1; position: relative; pointer-events: auto; transform: translateY(0); display: block; }
+
+dialog::backdrop {
+  background: rgba(250, 249, 245, 0.85);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+
+.relative-container { position: relative; width: 100%; }
 
 body {
   font-family: var(--font-sans);
@@ -45,7 +94,7 @@ h1, h2, h3, h4 {
 }
 
 /* Leicht-Lesen mode: html[data-ll] is set server-side from the LL cookie
-   (BaseLayout.astro) so this applies from first paint, no flash. Switches
+   (Layout.astro) so this applies from first paint, no flash. Switches
    the whole page to Atkinson Hyperlegible, opens up leading/size, and
    gives read content a visual anchor — the "atmende UI" fading of
    secondary chrome (date badges, etc.) uses [data-ll] .ll-fade below. */
@@ -64,6 +113,24 @@ h1, h2, h3, h4 {
   pointer-events: none;
   transition: opacity 700ms ease;
 }
+
+/* Dual-rendered Standard/Leicht-Lesen content (ProseSwap.astro, and any
+   hand-written pair of `.ll-standard`/`.ll-easy` siblings): both variants
+   sit in the same CSS grid cell so the container's height tracks whichever
+   is taller, and toggling [data-ll] crossfades between them in place — no
+   page reload, no per-breakpoint magic heights. The compound selectors
+   (two classes) are there so this reliably beats `.prose`'s own transition
+   rule regardless of source order. */
+.ll-swap { display: grid; }
+.ll-swap > .ll-standard,
+.ll-swap > .ll-easy {
+  grid-area: 1 / 1;
+  transition: opacity 500ms ease, transform 500ms ease, line-height 300ms ease, font-size 300ms ease;
+}
+.ll-swap > .ll-standard { opacity: 1; transform: translateY(0); }
+.ll-swap > .ll-easy { opacity: 0; transform: translateY(12px); pointer-events: none; }
+[data-ll] .ll-swap > .ll-standard { opacity: 0; transform: translateY(-12px); pointer-events: none; }
+[data-ll] .ll-swap > .ll-easy { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
 /* Typography for CMS rich-text (`.prose`, used across all content routes).
    Hand-written instead of @tailwindcss/typography — "No Bloat": a

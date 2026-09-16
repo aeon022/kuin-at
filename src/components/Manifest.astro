@@ -1,0 +1,48 @@
+---
+// Manifest.astro — layout/classes 1:1 from mockup.html §4 "Unser Manifest".
+// The mockup's own invented body copy and quote ("Kultur Inklusiv entstand
+// aus einer einfachen Beobachtung...", "Barrierefreiheit ist kein
+// Extra-Feature...") are replaced with real excerpts (verbatim) from the
+// migrated /der-verein page in content.pod — "Kernziele" for the body,
+// "Projektkonzept" for the pull-quote, distinct from the sentence already
+// used in Hero.astro. The Leicht-Lesen text is an accessible rewrite of
+// those same real facts, same reasoning as Hero.astro. Both "#" links point
+// at the real /der-verein route instead of a dead anchor.
+---
+<section id="about" class="breathing-element max-w-3xl space-y-12 border-t border-sumi-400/10 pt-24">
+  <header class="relative-container h-[80px]">
+    <h2 class="hide-on-ll font-serif text-5xl font-bold text-sumi-900">Unser Manifest</h2>
+    <h2 class="show-on-ll font-ll border-l-8 border-kuin-magenta pl-6 text-4xl font-bold text-sumi-900">Wer wir sind</h2>
+  </header>
+
+  <div class="relative-container min-h-[400px]">
+    <!-- Standard Modus -->
+    <div class="hide-on-ll space-y-8">
+      <p class="font-sans text-xl leading-relaxed font-light text-sumi-600">
+        Das Projekt setzt sich für eine inklusive Kulturlandschaft ein, in der Kunst und Kultur für alle zugänglich sind. Dafür werden Kulturschaffende mit und ohne Behinderungen gefördert und barrierefreie Kulturformate entwickelt.
+      </p>
+      <blockquote class="my-12 border-l-4 border-kuin-magenta py-2 pl-8 font-serif text-3xl text-sumi-900 italic">
+        „Kultur Inklusiv" basiert auf der Überzeugung, dass Kultur durch die Begegnung und den Austausch von Menschen entsteht.
+      </blockquote>
+      <a href="/der-verein" class="group inline-flex items-center gap-3 font-sans font-semibold text-kuin-magenta transition-colors hover:text-kuin-dark">
+        Ganzes Manifest lesen
+        <span class="transition-transform group-hover:translate-x-1">→</span>
+      </a>
+    </div>
+
+    <!-- Leicht Lesen -->
+    <div class="show-on-ll space-y-6 rounded-2xl bg-white p-8 text-xl leading-[2] text-sumi-900 shadow-sm">
+      <p>
+        Menschen mit und ohne Behinderung sollen gemeinsam Kultur erleben.<br />
+        Und Kultur gemeinsam gestalten.
+      </p>
+      <p>
+        Dafür fördern wir Kulturschaffende mit und ohne Behinderung.<br />
+        Und wir schaffen barrierefreie Kulturangebote.
+      </p>
+      <a href="/der-verein" class="mt-8 inline-block rounded-xl border-2 border-kuin-magenta bg-kuin-soft px-6 py-3 font-bold text-kuin-dark">
+        Mehr über uns lesen
+      </a>
+    </div>
+  </div>
+</section>

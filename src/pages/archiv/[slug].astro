@@ -1,0 +1,46 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getEntry } from 'orbiter:collections';
+import { ArchiveSchema } from '../../schemas';
+
+const { slug } = Astro.params;
+const entry = await getEntry('archive', slug!);
+if (!entry) return Astro.redirect('/404');
+
+const parsed = ArchiveSchema.safeParse(entry.data);
+if (!parsed.success) {
+  console.warn(`archive/${slug}: invalid entry data, redirecting to /404`, parsed.error.issues);
+  return Astro.redirect('/404');
+}
+const data = parsed.data;
+---
+<Layout title={`${data.title} (${data.year})`} active="archiv">
+  <main id="main" class="mx-auto max-w-5xl space-y-8 px-4 py-16 md:py-24">
+    <a href="/archiv" class="inline-flex items-center gap-2 text-sm font-semibold text-sumi-600 transition-colors hover:text-kuin-magenta">
+      ← Archiv
+    </a>
+
+    <header>
+      <h1 class="text-4xl font-bold text-sumi-900 md:text-5xl">{data.title} <span class="text-sumi-400">({data.year})</span></h1>
+      {data.description && <p class="mt-4 max-w-2xl text-lg leading-relaxed text-sumi-600">{data.description}</p>}
+    </header>
+
+    <ul class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {data.images.map((img) => (
+        <li class="group">
+          <figure>
+            <div class="aspect-[4/3] overflow-hidden rounded-2xl bg-sumi-900/5">
+              <img
+                src={img.image_url}
+                alt={img.alt_text}
+                loading="lazy"
+                class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
+              />
+            </div>
+            {img.caption && <figcaption class="mt-3 text-sm text-sumi-600">{img.caption}</figcaption>}
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </main>
+</Layout>

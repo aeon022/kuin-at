@@ -1,8 +1,8 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCollection, getEntry } from 'orbiter:collections';
-import { getDisplayContent, parseEntries } from '../lib/content';
-import { PageSchema, PartnerSchema } from '../schemas';
+import Layout from '../layouts/Layout.astro';
+import { getEntry } from 'orbiter:collections';
+import { PageSchema } from '../schemas';
+import ProseSwap from '../components/ProseSwap.astro';
 
 const { slug } = Astro.params;
 const entry = await getEntry('pages', slug!);
@@ -15,18 +15,13 @@ if (!parsed.success) {
   return Astro.redirect('/404');
 }
 const data = parsed.data;
-const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
-const content = getDisplayContent(data, 'content_standard', 'content_leicht_lesen', leichtLesenActive);
 
-// The Kontakt page additionally shows the board and a named contact for
-// inquiries — requested directly by the client, not derivable from the
-// legacy WP data. Board names are pulled live from Partners
-// (is_board_member) rather than hardcoded, so the list stays correct as
-// the board changes; the contact name/email is fixed on this one page.
+// The Kontakt page additionally shows a named contact for inquiries —
+// requested directly by the client, not derivable from the legacy WP
+// data. Real board members now live on /der-verein/vorstand (the
+// `people` collection, category "vorstand") — linked from here instead
+// of duplicated, so there's one source of truth for who's on the board.
 const isKontakt = slug === 'kontakt';
-const board = isKontakt
-  ? parseEntries('partners', await getCollection('partners'), PartnerSchema).map((e) => e.data).filter((p) => p.is_board_member)
-  : [];
 
 // Highlight the matching nav item for the two Pages entries that have one
 // (Header.astro's link ids: 'ueber-uns' for /der-verein, 'kontakt' for
@@ -34,26 +29,58 @@ const board = isKontakt
 const navIdBySlug: Record<string, string> = { 'der-verein': 'ueber-uns', kontakt: 'kontakt' };
 const active = navIdBySlug[slug!];
 ---
-<BaseLayout title={data.title} description={data.seo_description} active={active}>
+<Layout title={data.title} description={data.seo_description} active={active}>
   <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
     <h1 class="mb-8 text-4xl font-bold text-sumi-900 md:text-5xl">{data.title}</h1>
-    <article class="prose" set:html={content} />
+    <ProseSwap standard={data.content_standard} leicht={data.content_leicht_lesen} />
 
     {isKontakt && (
       <section class="mt-10 border-t border-sumi-900/10 pt-8">
         <h2 class="mb-4 text-xl font-semibold text-sumi-900">Vorstand</h2>
-        {board.length > 0 ? (
-          <ul class="mb-6 flex flex-wrap gap-x-6 gap-y-1">
-            {board.map((p) => <li>{p.name}</li>)}
-          </ul>
-        ) : (
-          <p class="mb-6 text-sumi-600"><em>[TODO: Vorstandsmitglieder in der Partners-Collection als is_board_member eintragen — ein Vorstandsfoto kann direkt im Rich-Text-Editor dieser Seite ergänzt werden.]</em></p>
-        )}
+        <p class="mb-6 text-sumi-600">
+          Den Vorstand stellen wir auf <a href="/der-verein/vorstand" class="text-magenta-dark underline hover:text-kuin-magenta">der Vorstandsseite</a> vor.
+        </p>
         <p class="text-sumi-900">
           Für Anfragen wenden Sie sich bitte an <strong>Anita Brodtrager</strong>:
           {' '}<a href="mailto:office@kuin.at" class="text-magenta-dark underline hover:text-kuin-magenta">office@kuin.at</a>
         </p>
       </section>
+
+      <section class="mt-10 border-t border-sumi-900/10 pt-8">
+        <h2 class="mb-4 text-xl font-semibold text-sumi-900">Schreib uns</h2>
+        <form
+          data-form-id="kontakt"
+          action={`${import.meta.env.PUBLIC_ORBITER_ADMIN_URL}/api/form/kontakt`}
+          method="POST"
+          class="max-w-xl space-y-4"
+        >
+          <input type="text" name="_honeypot" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div>
+            <label for="kontakt-name" class="mb-1 block text-sm font-medium text-sumi-900">Name</label>
+            <input id="kontakt-name" name="name" type="text" required class="w-full rounded-xl border border-sumi-900/15 bg-white px-4 py-2.5 text-sumi-900 outline-none" />
+          </div>
+          <div>
+            <label for="kontakt-email" class="mb-1 block text-sm font-medium text-sumi-900">E-Mail</label>
+            <input id="kontakt-email" name="email" type="email" required class="w-full rounded-xl border border-sumi-900/15 bg-white px-4 py-2.5 text-sumi-900 outline-none" />
+          </div>
+          <div>
+            <label for="kontakt-message" class="mb-1 block text-sm font-medium text-sumi-900">Nachricht</label>
+            <textarea id="kontakt-message" name="message" required rows="5" class="w-full rounded-xl border border-sumi-900/15 bg-white px-4 py-2.5 text-sumi-900 outline-none"></textarea>
+          </div>
+          <button type="submit" class="rounded-2xl bg-magenta-dark px-6 py-3 font-medium text-washi transition hover:-translate-y-1 hover:bg-kuin-magenta">
+            Absenden
+          </button>
+          <p data-form-status hidden></p>
+        </form>
+      </section>
     )}
   </main>
-</BaseLayout>
+</Layout>
+
+{isKontakt && (
+  <script>
+    import { wireOrbiterForm } from '../lib/orbiterForm';
+    const form = document.querySelector('form[data-form-id="kontakt"]');
+    if (form instanceof HTMLFormElement) wireOrbiterForm(form);
+  </script>
+)}

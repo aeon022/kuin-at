@@ -1,0 +1,44 @@
+---
+// ArchiveGallery.astro — mockup.html §3 "Das Archiv" markup/classes, filled
+// with the real `archive` collection entry (scripts/migrate/add-archive-entry.ts):
+// two of the 137 real WordPress photos from "3. Spaziergang" (12. Jänner
+// 2025, see that entry's description for the real recap), linking through
+// to the full recap at blog/kuin-spaziergang. Reading from the same
+// collection /archiv itself uses, rather than hardcoding media ids here,
+// so editing the entry via the Orbiter admin updates both places.
+import { getCollection } from 'orbiter:collections';
+import { ArchiveSchema } from '../schemas';
+import { parseEntries } from '../lib/content';
+
+const [latest] = parseEntries('archive', await getCollection('archive'), ArchiveSchema)
+  .map((e) => e.data)
+  .sort((a, b) => b.year - a.year);
+const preview = latest?.images.slice(0, 2) ?? [];
+---
+<section id="archiv" class="breathing-element space-y-12">
+  <header class="relative-container h-[80px]">
+    <h2 class="hide-on-ll font-serif text-4xl font-bold text-sumi-900">Das Archiv</h2>
+    <h2 class="show-on-ll font-ll text-4xl font-bold text-sumi-900">Bilder von alten Spaziergängen</h2>
+  </header>
+
+  <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+    {preview.map((img) => (
+      <a href="/blog/kuin-spaziergang" class="group block cursor-pointer">
+        <article>
+          <div class="relative mb-4 aspect-[4/3] overflow-hidden rounded-2xl bg-sumi-100">
+            <img src={img.image_url} alt={img.alt_text} class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0" />
+          </div>
+          <div class="relative-container h-[60px]">
+            <div class="hide-on-ll">
+              <h3 class="font-sans text-lg font-semibold text-sumi-900">{latest.title}</h3>
+              <p class="text-sm text-sumi-400">{latest.year}</p>
+            </div>
+            <div class="show-on-ll rounded-xl border-l-4 border-kuin-magenta bg-kuin-soft p-4">
+              <h3 class="text-lg font-bold">Spaziergang {latest.year}</h3>
+            </div>
+          </div>
+        </article>
+      </a>
+    ))}
+  </div>
+</section>

@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Layout from '../../layouts/Layout.astro';
 import { getEntry } from 'orbiter:collections';
 import { getMediaItem } from 'orbiter:media';
-import { getDisplayContent } from '../../lib/content';
 import { BlogPostSchema } from '../../schemas';
+import ProseSwap from '../../components/ProseSwap.astro';
 
 const { slug } = Astro.params;
 const entry = await getEntry('blog', slug!);
@@ -17,11 +17,12 @@ if (!parsed.success) {
 }
 const data = parsed.data;
 const coverImage = data.cover_image ? await getMediaItem(data.cover_image) : null;
-const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
-const content = getDisplayContent(data, 'content_standard', 'content_leicht_lesen', leichtLesenActive);
 ---
-<BaseLayout title={data.title} active="events">
-  <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
+<Layout title={data.title} active="events">
+  <main id="main" class="mx-auto max-w-3xl space-y-6 px-4 py-16 md:py-24">
+    <a href="/blog" class="inline-flex items-center gap-2 text-sm font-semibold text-sumi-600 transition-colors hover:text-kuin-magenta">
+      ← Alle Beiträge
+    </a>
     <article>
       <h1 class="mb-3 text-4xl font-bold md:text-5xl">{data.title}</h1>
       <time datetime={data.published_at} class="mb-6 block text-sm text-sumi-600">
@@ -30,7 +31,7 @@ const content = getDisplayContent(data, 'content_standard', 'content_leicht_lese
       {coverImage && (
         <img src={coverImage.url} alt={coverImage.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="mb-6 rounded-2xl" />
       )}
-      <div class="prose" set:html={content} />
+      <ProseSwap standard={data.content_standard} leicht={data.content_leicht_lesen} />
     </article>
   </main>
-</BaseLayout>
+</Layout>

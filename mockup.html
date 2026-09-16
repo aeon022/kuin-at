@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KUIN - Kultur Inklusiv (Full Mockup)</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,500&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            washi: '#faf9f5',
+            sumi: { 100: '#e6e6e6', 400: '#858585', 600: '#4a4a4a', 900: '#1c1c1c' },
+            kuin: { magenta: '#e3006b', dark: '#b30054', soft: '#fde8f0' },
+            matcha: { 100: '#eef1e6', 700: '#6b7a43', 900: '#4a542e' }
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+            ll: ['"Atkinson Hyperlegible"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* View Transition & Breathing UI */
+    body { transition: background-color 0.8s ease, color 0.8s ease; }
+    .breathing-element { transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    /* Standard Modus */
+    .show-on-ll { opacity: 0; position: absolute; pointer-events: none; transform: translateY(15px); }
+    .hide-on-ll { opacity: 1; transform: translateY(0); display: block; }
+    
+    /* Leicht Lesen Modus */
+    body.is-leicht-lesen {
+      font-family: "Atkinson Hyperlegible", sans-serif !important;
+      font-size: 1.125rem;
+      line-height: 1.8;
+    }
+    
+    body.is-leicht-lesen h1, 
+    body.is-leicht-lesen h2, 
+    body.is-leicht-lesen h3, 
+    body.is-leicht-lesen .font-serif,
+    body.is-leicht-lesen .font-sans {
+      font-family: "Atkinson Hyperlegible", sans-serif !important;
+    }
+
+    body.is-leicht-lesen .hide-on-ll { opacity: 0; position: absolute; pointer-events: none; transform: translateY(-15px); }
+    body.is-leicht-lesen .show-on-ll { opacity: 1; position: relative; pointer-events: auto; transform: translateY(0); display: block; }
+    
+    /* Kuroko (Command Palette) */
+    dialog::backdrop {
+      background: rgba(250, 249, 245, 0.85);
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+    }
+
+    /* A11y Focus Rings */
+    *:focus-visible {
+      outline: none !important;
+      box-shadow: 0 0 0 4px #faf9f5, 0 0 0 8px #e3006b !important;
+      border-radius: 4px;
+    }
+    
+    /* Hide absolute elements properly without breaking layout flow */
+    .relative-container { position: relative; width: 100%; }
+  </style>
+</head>
+<body class="bg-washi text-sumi-900 font-sans antialiased min-h-screen selection:bg-kuin-magenta selection:text-washi overflow-x-hidden">
+
+  <!-- Skip Link -->
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-6 focus:left-6 focus:z-50 focus:px-6 focus:py-3 focus:bg-kuin-magenta focus:text-washi focus:font-bold rounded-lg shadow-2xl">
+    Zum Hauptinhalt springen
+  </a>
+
+  <!-- Header -->
+  <header class="w-full max-w-6xl mx-auto px-6 md:px-12 py-8 flex justify-between items-center breathing-element sticky top-0 bg-washi/90 backdrop-blur-md z-40 border-b border-sumi-400/10">
+    <a href="/" aria-label="Startseite" class="font-serif font-bold text-3xl tracking-tight text-sumi-900 hover:opacity-80 transition-opacity">
+      KUIN<span class="text-kuin-magenta">.</span>
+    </a>
+
+    <div class="flex items-center gap-4 md:gap-8">
+      <nav class="hidden md:flex gap-8 font-medium text-sumi-600">
+        <a href="#walks" class="hover:text-kuin-magenta transition-colors">Der Walk</a>
+        <a href="#archiv" class="hover:text-kuin-magenta transition-colors">Archiv</a>
+        <a href="#about" class="hover:text-kuin-magenta transition-colors">Über uns</a>
+      </nav>
+
+      <div class="w-px h-6 bg-sumi-400/30 hidden md:block"></div>
+
+      <!-- Leicht Lesen Toggle -->
+      <button id="ll-toggle" aria-pressed="false" class="group flex items-center gap-3 bg-white px-5 py-2.5 rounded-full shadow-sm border border-sumi-400/10 hover:border-kuin-magenta/30 hover:shadow-md transition-all duration-300">
+        <span class="relative flex h-3 w-3">
+          <span id="ll-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sumi-400 opacity-20"></span>
+          <span id="ll-indicator" class="relative inline-flex rounded-full h-3 w-3 bg-sumi-400 transition-colors duration-500"></span>
+        </span>
+        <span class="font-medium text-sm text-sumi-900 group-hover:text-kuin-magenta transition-colors">Leicht Lesen</span>
+      </button>
+
+      <!-- Kuroko Trigger -->
+      <button id="cmd-trigger" aria-label="Menü und Suche" class="flex items-center justify-center w-10 h-10 rounded-full bg-sumi-400/10 text-sumi-600 hover:bg-kuin-magenta hover:text-white transition-colors duration-300">
+        <svg class="w-4 h-4 md:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        <span class="hidden md:block font-medium text-sm">⌘K</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Command Palette Modal (Kuroko) -->
+  <dialog id="cmd-palette" class="p-0 border-0 bg-transparent w-full max-w-2xl m-auto top-20 z-50">
+    <div class="bg-white rounded-3xl shadow-2xl border border-sumi-400/10 overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="cmd-container">
+      <div class="p-6 border-b border-sumi-400/10 flex gap-4 items-center bg-washi/50">
+        <svg class="w-6 h-6 text-kuin-magenta" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        <input id="cmd-input" type="text" placeholder="Suchen oder Aktion wählen..." class="w-full text-2xl font-serif font-medium text-sumi-900 bg-transparent outline-none placeholder:text-sumi-400" autocomplete="off">
+        <button id="cmd-close" class="text-xs font-bold text-sumi-400 hover:text-sumi-900 bg-sumi-400/10 px-2 py-1 rounded">ESC</button>
+      </div>
+      <ul class="p-2 space-y-1 max-h-[50vh] overflow-y-auto">
+        <li class="p-4 hover:bg-kuin-soft rounded-2xl cursor-pointer flex items-center justify-between group transition-colors">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-kuin-magenta/10 flex items-center justify-center text-kuin-magenta group-hover:bg-kuin-magenta group-hover:text-white transition-colors">📅</div>
+            <span class="font-medium text-lg text-sumi-900 group-hover:text-kuin-dark">Nächster Spaziergang</span>
+          </div>
+          <span class="text-sumi-400 text-xs font-bold uppercase tracking-widest">Event</span>
+        </li>
+        <li class="p-4 hover:bg-kuin-soft rounded-2xl cursor-pointer flex items-center justify-between group transition-colors">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-sumi-400/10 flex items-center justify-center text-sumi-600 group-hover:bg-kuin-magenta group-hover:text-white transition-colors">📝</div>
+            <span class="font-medium text-lg text-sumi-900 group-hover:text-kuin-dark">Wie werde ich Mitglied?</span>
+          </div>
+          <span class="text-sumi-400 text-xs font-bold uppercase tracking-widest">Seite</span>
+        </li>
+      </ul>
+    </div>
+  </dialog>
+
+  <!-- Main Content -->
+  <main id="main" class="max-w-6xl mx-auto px-6 md:px-12 py-16 md:py-24 space-y-32 md:space-y-48 breathing-element">
+    
+    <!-- 1. HERO SECTION -->
+    <section class="space-y-10 breathing-element max-w-4xl">
+      <h1 class="breathing-element relative-container h-[200px] md:h-[240px]">
+        <!-- Standard -->
+        <span class="hide-on-ll font-serif text-6xl md:text-[5.5rem] font-bold tracking-tight leading-[1.05] text-sumi-900 block w-full">
+          Kultur ohne <br>
+          <span class="italic text-sumi-600 font-medium">Hindernisse.</span>
+        </span>
+        <!-- Leicht Lesen -->
+        <span class="show-on-ll font-ll text-5xl md:text-[5rem] font-bold tracking-tight leading-[1.1] text-sumi-900 block w-full">
+          Kultur für <span class="text-kuin-magenta underline decoration-[10px] underline-offset-8">alle.</span>
+        </span>
+      </h1>
+
+      <div class="breathing-element relative-container h-[180px] max-w-2xl">
+        <!-- Standard -->
+        <p class="hide-on-ll font-sans text-xl text-sumi-600 leading-[1.7] font-light">
+          Wir öffnen die Türen zur Grazer Kunst- und Kulturszene. Ein Netzwerk, das physische und unsichtbare Barrieren abbaut – durch gemeinsame Stadtexpeditionen und kompromissloses Design.
+        </p>
+        <!-- Leicht Lesen -->
+        <div class="show-on-ll font-ll text-2xl text-sumi-900 leading-[1.8] bg-kuin-soft border-l-8 border-kuin-magenta p-6 md:p-8 rounded-r-2xl">
+          Wir machen Kultur in Graz für alle zugänglich.<br>
+          Jeder Mensch soll Kunst erleben können.<br>
+          Dafür machen wir unsere Spaziergänge.<br>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. NÄCHSTER WALK -->
+    <section id="walks" class="breathing-element relative group max-w-5xl">
+      <!-- Decor -->
+      <div class="absolute inset-0 bg-white rounded-[2.5rem] transform -rotate-1 transition-transform duration-500 group-hover:-rotate-2 group-hover:shadow-xl -z-10 border border-sumi-400/5"></div>
+      
+      <div class="relative bg-white/50 backdrop-blur-sm p-8 md:p-12 rounded-[2.5rem] border border-sumi-400/10">
+        <div class="hide-on-ll inline-flex items-center gap-3 px-4 py-1.5 bg-kuin-magenta/10 text-kuin-dark rounded-full text-xs font-bold tracking-widest uppercase mb-10">
+          <span class="w-1.5 h-1.5 rounded-full bg-kuin-magenta"></span> Aktueller Walk
+        </div>
+
+        <article class="flex flex-col md:flex-row gap-8 md:gap-16 items-start">
+          <div class="shrink-0 pt-2 hide-on-ll">
+            <span class="block font-serif text-6xl font-bold text-sumi-900 tracking-tighter">24.</span>
+            <span class="block font-sans text-sm font-semibold text-sumi-400 uppercase tracking-widest mt-2">Oktober</span>
+          </div>
+
+          <div class="space-y-6 flex-1 breathing-element relative-container min-h-[300px]">
+            <h2 class="breathing-element mb-6">
+              <span class="hide-on-ll font-serif text-4xl md:text-5xl font-bold text-sumi-900">Museum der Wahrnehmung</span>
+              <span class="show-on-ll font-ll text-4xl md:text-5xl font-bold text-sumi-900">Ausflug: Museum der Wahrnehmung</span>
+            </h2>
+            
+            <!-- Standard -->
+            <div class="hide-on-ll space-y-6">
+              <p class="font-sans text-lg text-sumi-600 font-light leading-relaxed max-w-xl">
+                Ein Spaziergang durch die urbanen Schichten des Augartens. Wir erkunden die Architektur und die aktuelle Ausstellung.
+              </p>
+              <div class="flex items-center gap-3 text-sumi-900 font-medium">
+                <svg class="w-5 h-5 text-kuin-magenta" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                Treffpunkt: Augarten (stufenlos erreichbar)
+              </div>
+              <ul class="flex flex-wrap gap-2 pt-4 border-t border-sumi-400/10" aria-label="Barrierefreiheit">
+                <li class="bg-matcha-100 text-matcha-900 px-4 py-1.5 rounded-full text-sm font-semibold border border-matcha-700/20">ÖGS Dolmetsch</li>
+                <li class="bg-matcha-100 text-matcha-900 px-4 py-1.5 rounded-full text-sm font-semibold border border-matcha-700/20">Rollstuhlgerecht</li>
+              </ul>
+            </div>
+
+            <!-- Leicht Lesen -->
+            <div class="show-on-ll font-ll text-xl text-sumi-900 leading-[1.8] bg-kuin-soft border-l-8 border-kuin-magenta p-6 md:p-8 rounded-r-2xl">
+              <strong>Wann:</strong> 24. Oktober, um 14:00 Uhr.<br>
+              <strong>Wo:</strong> Augarten, Graz.<br><br>
+              Es gibt keine Treppen.<br>
+              Ein Gebärden-Dolmetscher ist dabei.
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 3. ARCHIV (Galerie) -->
+    <section id="archiv" class="space-y-12 breathing-element">
+      <header class="relative-container h-[80px]">
+        <h2 class="hide-on-ll font-serif text-4xl font-bold text-sumi-900">Das Archiv</h2>
+        <h2 class="show-on-ll font-ll text-4xl font-bold text-sumi-900">Bilder von alten Spaziergängen</h2>
+      </header>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Archiv Item 1 -->
+        <article class="group cursor-pointer">
+          <div class="aspect-[4/3] bg-sumi-100 rounded-2xl overflow-hidden relative mb-4">
+            <!-- Platzhalter für Orbiter Images -->
+            <img src="https://images.unsplash.com/photo-1518998053401-8789024c47ce?q=80&w=800&auto=format&fit=crop" alt="Menschengruppe besichtigt moderne Architektur" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+          </div>
+          <div class="relative-container h-[60px]">
+            <div class="hide-on-ll">
+              <h3 class="font-sans font-semibold text-lg text-sumi-900">Kunsthaus Graz</h3>
+              <p class="text-sm text-sumi-400">September 2025</p>
+            </div>
+            <div class="show-on-ll bg-kuin-soft p-4 rounded-xl border-l-4 border-kuin-magenta">
+              <h3 class="font-bold text-lg">Kunsthaus Graz</h3>
+            </div>
+          </div>
+        </article>
+        
+        <!-- Archiv Item 2 -->
+        <article class="group cursor-pointer">
+          <div class="aspect-[4/3] bg-sumi-100 rounded-2xl overflow-hidden relative mb-4">
+            <img src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=800&auto=format&fit=crop" alt="Ein Rollstuhlfahrer in einer Kunstgalerie vor einem Gemälde" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+          </div>
+          <div class="relative-container h-[60px]">
+            <div class="hide-on-ll">
+              <h3 class="font-sans font-semibold text-lg text-sumi-900">Alte Galerie</h3>
+              <p class="text-sm text-sumi-400">Juni 2025</p>
+            </div>
+            <div class="show-on-ll bg-kuin-soft p-4 rounded-xl border-l-4 border-kuin-magenta">
+              <h3 class="font-bold text-lg">Alte Galerie</h3>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 4. ÜBER UNS / MANIFEST -->
+    <section id="about" class="breathing-element max-w-3xl space-y-12 border-t border-sumi-400/10 pt-24">
+      <header class="relative-container h-[80px]">
+        <h2 class="hide-on-ll font-serif text-5xl font-bold text-sumi-900">Unser Manifest</h2>
+        <h2 class="show-on-ll font-ll text-4xl font-bold text-sumi-900 border-l-8 border-kuin-magenta pl-6">Wer wir sind</h2>
+      </header>
+
+      <div class="relative-container min-h-[400px]">
+        <!-- Standard Modus (Playfair + Inter) -->
+        <div class="hide-on-ll space-y-8">
+          <p class="font-sans text-xl text-sumi-600 font-light leading-relaxed">
+            Kultur Inklusiv entstand aus einer einfachen Beobachtung: Viele Kulturangebote schließen Menschen aus. Ob durch bauliche Hürden, komplexe Sprache oder fehlende Assistenzsysteme. Das Netzwerk arbeitet daran, diese unsichtbaren Mauern einzureißen.
+          </p>
+          <blockquote class="font-serif text-3xl text-sumi-900 italic border-l-4 border-kuin-magenta pl-8 my-12 py-2">
+            "Barrierefreiheit ist kein Extra-Feature, sondern die Voraussetzung für eine funktionierende Gesellschaft."
+          </blockquote>
+          <a href="#" class="inline-flex items-center gap-3 font-sans font-semibold text-kuin-magenta hover:text-kuin-dark transition-colors group">
+            Ganzes Manifest lesen 
+            <span class="group-hover:translate-x-1 transition-transform">→</span>
+          </a>
+        </div>
+
+        <!-- Leicht Lesen Modus (Atkinson) -->
+        <div class="show-on-ll space-y-6 text-xl text-sumi-900 leading-[2] bg-white p-8 rounded-2xl shadow-sm">
+          <p>
+            Oft ist Kultur nicht für alle Menschen gemacht.<br>
+            Manchmal gibt es Treppen ohne Aufzug.<br>
+            Manchmal ist die Sprache zu schwer.
+          </p>
+          <p>
+            Alle Menschen sollen in Graz Kultur erleben können.<br>
+            Daran arbeiten wir jeden Tag.
+          </p>
+          <a href="#" class="inline-block mt-8 bg-kuin-soft text-kuin-dark font-bold px-6 py-3 rounded-xl border-2 border-kuin-magenta">
+            Mehr über uns lesen
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. PARTNER / NETZWERK -->
+    <section id="partner" class="breathing-element border-t border-sumi-400/10 pt-24">
+      <h2 class="font-sans text-sm font-bold uppercase tracking-widest text-sumi-400 text-center mb-12">Unsere Partner & Träger</h2>
+      
+      <!-- Partner Grid (Kanso: Keine harten Boxen, nur sauberes Alignment) -->
+      <div class="flex flex-wrap justify-center gap-12 md:gap-24 opacity-60 hover:opacity-100 transition-opacity duration-500">
+        <div class="text-2xl font-serif font-bold text-sumi-400 grayscale">Lebenshilfe</div>
+        <div class="text-2xl font-serif font-bold text-sumi-400 grayscale">Diakonie</div>
+        <div class="text-2xl font-serif font-bold text-sumi-400 grayscale">Stadt Graz</div>
+        <div class="text-2xl font-serif font-bold text-sumi-400 grayscale">Caritas</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 6. FOOTER -->
+  <footer class="bg-sumi-900 text-washi pt-24 pb-12 mt-24 border-t-8 border-kuin-magenta">
+    <div class="max-w-6xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
+      
+      <div class="md:col-span-2 space-y-4">
+        <h2 class="font-serif text-3xl font-bold">KUIN.</h2>
+        <p class="font-sans text-sumi-400 font-light max-w-sm">Das Netzwerk für barrierefreie Kulturerlebnisse in Graz.</p>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="font-sans font-bold text-sm uppercase tracking-widest text-kuin-magenta">Kontakt</h3>
+        <ul class="space-y-2 font-sans font-light text-sumi-100">
+          <li><a href="mailto:hallo@kuin.at" class="hover:text-white transition-colors">hallo@kuin.at</a></li>
+          <li class="pt-4"><a href="#" class="hover:text-white transition-colors">Mitglied werden</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="font-sans font-bold text-sm uppercase tracking-widest text-kuin-magenta">Rechtliches</h3>
+        <ul class="space-y-2 font-sans font-light text-sumi-100">
+          <li><a href="#" class="hover:text-white transition-colors">Impressum</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Datenschutz</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Barrierefreiheit</a></li>
+        </ul>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Interaktivität -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Leicht Lesen Store Logic
+      const llToggle = document.getElementById('ll-toggle');
+      const llIndicator = document.getElementById('ll-indicator');
+      const llPing = document.getElementById('ll-ping');
+      
+      llToggle.addEventListener('click', () => {
+        document.body.classList.toggle('is-leicht-lesen');
+        const isActive = document.body.classList.contains('is-leicht-lesen');
+        
+        llToggle.setAttribute('aria-pressed', isActive);
+        
+        if (isActive) {
+          llIndicator.classList.replace('bg-sumi-400', 'bg-kuin-magenta');
+          llPing.classList.replace('bg-sumi-400', 'bg-kuin-magenta');
+        } else {
+          llIndicator.classList.replace('bg-kuin-magenta', 'bg-sumi-400');
+          llPing.classList.replace('bg-kuin-magenta', 'bg-sumi-400');
+        }
+      });
+
+      // Command Palette (Kuroko) Logic
+      const dialog = document.getElementById('cmd-palette');
+      const container = document.getElementById('cmd-container');
+      const trigger = document.getElementById('cmd-trigger');
+      const input = document.getElementById('cmd-input');
+      const closeBtn = document.getElementById('cmd-close');
+
+      const openDialog = () => {
+        dialog.showModal();
+        requestAnimationFrame(() => {
+          container.classList.remove('scale-95', 'opacity-0');
+          container.classList.add('scale-100', 'opacity-100');
+        });
+        setTimeout(() => input.focus(), 50);
+      };
+
+      const closeDialog = () => {
+        container.classList.remove('scale-100', 'opacity-100');
+        container.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => dialog.close(), 300);
+      };
+
+      trigger.addEventListener('click', openDialog);
+      closeBtn.addEventListener('click', closeDialog);
+      
+      dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) closeDialog();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          openDialog();
+        }
+        if (e.key === '/' && document.activeElement !== input) {
+          e.preventDefault();
+          openDialog();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

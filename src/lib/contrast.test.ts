@@ -12,7 +12,7 @@ test('contrastRatio of black on white is 21:1', () => {
 });
 
 test('brand body-text pairs meet WCAG AAA (>=7:1) for normal text', () => {
-  // ink on bg — primary reading pair used by BaseLayout
+  // ink on bg — primary reading pair used site-wide
   assert.ok(contrastRatio('#2b2420', '#fdfcfb') >= 7, 'ink on bg must be >= 7:1');
   // rose-700 (text-safe shade) on bg
   assert.ok(contrastRatio('#7a2f42', '#fdfcfb') >= 7, 'rose-700 on bg must be >= 7:1');

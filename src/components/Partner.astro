@@ -1,0 +1,35 @@
+---
+// Partner.astro — mockup.html §5 "Partner / Netzwerk" layout/classes, filled
+// with the real Orbiter partners collection (16 real organizations, real
+// logos migrated from WordPress) instead of the mockup's four invented
+// text wordmarks ("Lebenshilfe", "Diakonie", …). The mockup rendered plain
+// text since it had no logo assets to work with — here we have real logo
+// images, so each item is an <img> instead of a text label.
+import { getCollection } from 'orbiter:collections';
+import { getMediaItem } from 'orbiter:media';
+import { PartnerSchema } from '../schemas';
+import { parseEntries } from '../lib/content';
+
+const partners = parseEntries('partners', await getCollection('partners'), PartnerSchema).map((e) => e.data);
+const withLogos = await Promise.all(
+  partners.map(async (p) => ({ ...p, logoMedia: await getMediaItem(p.logo) })),
+);
+const network = withLogos.filter((p) => p.logoMedia);
+---
+<section id="partner" class="breathing-element border-t border-sumi-400/10 pt-24">
+  <h2 class="mb-12 text-center font-sans text-sm font-bold tracking-widest text-sumi-400 uppercase">Unsere Partner & Träger</h2>
+
+  <ul class="flex flex-wrap justify-center gap-12 opacity-60 transition-opacity duration-500 hover:opacity-100 md:gap-24">
+    {network.map((p) => (
+      <li class="flex items-center justify-center">
+        {p.website_url ? (
+          <a href={p.website_url} target="_blank" rel="noopener noreferrer" title={p.name} class="transition hover:-translate-y-1">
+            <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? p.name} class="h-10 w-auto object-contain grayscale transition hover:grayscale-0" />
+          </a>
+        ) : (
+          <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? p.name} class="h-10 w-auto object-contain grayscale" />
+        )}
+      </li>
+    ))}
+  </ul>
+</section>

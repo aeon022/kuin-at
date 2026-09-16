@@ -1,5 +1,11 @@
 # Projektkontext: kuin.at (Kultur Inklusiv) Relaunch
 
+## STRICT AGENT INSTRUCTIONS (ANTI-HALLUZINATION)
+1. **Design-Vorlagen (Mockup first):** Du darfst KEIN EIGENES DESIGN und KEINE EIGENEN LAYOUTS erfinden. Richte dich zu 100% nach den bereitgestellten HTML-Mockups oder den genauen Klassen aus `design-konzept.md`. Jede Abweichung vom vorgegebenen Design-System (Ma, Kanso) ist ein Fehler.
+2. **Tailwind v4 Zwang:** Die Nutzung einer `tailwind.config.js` ist strikt verboten. Alle Theme-Erweiterungen müssen über die `@theme` Direktive in der globalen CSS-Datei erfolgen.
+3. **Komponenten-Treue:** Wenn du ein HTML-Mockup in Astro-Komponenten zerlegst, darfst du keine HTML-Tags ändern, keine Tailwind-Klassen weglassen und keine künstlichen Wrapper-`<div>`s hinzufügen. Nutze striktes, semantisches HTML[cite: 1].
+
+
 ## Vision & Ziel
 Umbau der bestehenden WordPress/Oxygen-Website von "Kultur Inklusiv Graz" auf einen modernen, pfeilschnellen und 100% barrierefreien Tech-Stack. Die Website muss Inklusion atmen – sowohl technisch als auch inhaltlich. 
 

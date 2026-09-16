@@ -1,9 +1,8 @@
 ---
-// "Kuroko" — a lightweight command palette (design-konzept.md §5A).
-// Native <dialog> gives us a focus trap, Escape-to-close and an inert
-// backdrop for free — no modal library. Search is a plain substring
-// filter over a small, build-time index (well under 50 entries) — no
-// fuzzy-search dependency, "No Bloat".
+// CommandPalette.astro — markup/classes/ids 1:1 from mockup.html's "Kuroko"
+// dialog (§5A design-konzept.md). The mockup hardcodes two example rows;
+// here the list is generated at build time from the real Orbiter content so
+// search still works on every page, using the exact same row markup.
 import { getCollection } from 'orbiter:collections';
 
 const staticRoutes = [
@@ -28,8 +27,6 @@ const events = (await getCollection('events')).map((e) => ({ title: String(e.dat
 
 const index = [...staticRoutes, ...pages, ...posts, ...events];
 
-// icon + right-aligned category label per result type, matching the
-// mockup's row structure (icon badge + label, category tag on the right).
 const META = {
   nav: { icon: '🧭', label: 'Seite' },
   blog: { icon: '📰', label: 'Beitrag' },
@@ -37,45 +34,32 @@ const META = {
   action: { icon: '⚙️', label: 'Aktion' },
 };
 ---
-<!-- The trigger button lives in Header.astro (id="kuroko-trigger") so it
-     sits with the rest of the nav chrome; only the dialog + its script
-     are mounted here, once, in BaseLayout. The <dialog> itself is a bare
-     positioning shell — all visible chrome (rounded corners, shadow,
-     border, the open/close animation) lives on the inner container, same
-     split as the design mockup. -->
-<dialog id="kuroko" class="top-20 m-auto w-full max-w-2xl border-0 bg-transparent p-0 backdrop:bg-[rgba(250,249,245,0.85)] backdrop:backdrop-blur-md">
-  <div id="kuroko-container" class="scale-95 rounded-3xl border border-sumi-900/10 bg-white opacity-0 shadow-2xl transition-all duration-300">
-    <div class="flex items-center gap-4 border-b border-sumi-900/10 bg-washi/50 p-6">
+<dialog id="cmd-palette" class="top-20 m-auto w-full max-w-2xl border-0 bg-transparent p-0 z-50">
+  <div id="cmd-container" class="scale-95 transform overflow-hidden rounded-3xl border border-sumi-400/10 bg-white opacity-0 shadow-2xl transition-all duration-300">
+    <div class="flex items-center gap-4 border-b border-sumi-400/10 bg-washi/50 p-6">
       <svg class="h-6 w-6 shrink-0 text-kuin-magenta" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
-      <label for="kuroko-input" class="sr-only">Suche &amp; Aktionen</label>
-      <input
-        id="kuroko-input"
-        type="text"
-        autocomplete="off"
-        placeholder="Suchen oder Aktion wählen…"
-        class="w-full bg-transparent font-serif text-2xl font-medium text-sumi-900 outline-none placeholder:font-sans placeholder:text-base placeholder:text-sumi-600"
-      />
-      <button id="kuroko-close" type="button" class="shrink-0 rounded bg-sumi-900/10 px-2 py-1 text-xs font-bold text-sumi-600 hover:text-sumi-900">ESC</button>
+      <label for="cmd-input" class="sr-only">Suchen oder Aktion wählen</label>
+      <input id="cmd-input" type="text" placeholder="Suchen oder Aktion wählen..." autocomplete="off" class="w-full bg-transparent font-serif text-2xl font-medium text-sumi-900 outline-none placeholder:text-sumi-400" />
+      <button id="cmd-close" class="rounded bg-sumi-400/10 px-2 py-1 text-xs font-bold text-sumi-400 hover:text-sumi-900">ESC</button>
     </div>
-    <ul id="kuroko-results" role="listbox" aria-label="Ergebnisse" class="max-h-[50vh] space-y-1 overflow-y-auto p-2">
-    </ul>
-    <p id="kuroko-empty" class="hidden px-6 py-8 text-center text-sumi-600">Keine Ergebnisse.</p>
+    <ul id="cmd-results" role="listbox" aria-label="Ergebnisse" class="max-h-[50vh] space-y-1 overflow-y-auto p-2"></ul>
+    <p id="cmd-empty" class="hidden px-6 py-8 text-center text-sumi-600">Keine Ergebnisse.</p>
   </div>
 </dialog>
 
 <script define:vars={{ index, META }}>
-  const dialog = document.getElementById('kuroko');
-  const container = document.getElementById('kuroko-container');
-  const trigger = document.getElementById('kuroko-trigger');
-  const closeBtn = document.getElementById('kuroko-close');
-  const input = document.getElementById('kuroko-input');
-  const resultsEl = document.getElementById('kuroko-results');
-  const emptyEl = document.getElementById('kuroko-empty');
+  const dialog = document.getElementById('cmd-palette');
+  const container = document.getElementById('cmd-container');
+  const trigger = document.getElementById('cmd-trigger');
+  const closeBtn = document.getElementById('cmd-close');
+  const input = document.getElementById('cmd-input');
+  const resultsEl = document.getElementById('cmd-results');
+  const emptyEl = document.getElementById('cmd-empty');
 
   const actions = [
-    { title: 'Leicht Lesen umschalten', type: 'action', run: () => document.getElementById('leicht-lesen-toggle')?.click() },
+    { title: 'Leicht Lesen umschalten', type: 'action', run: () => document.getElementById('ll-toggle')?.click() },
   ];
 
   let activeIndex = 0;
@@ -90,15 +74,15 @@ const META = {
       const meta = META[item.type] ?? META.nav;
       const li = document.createElement('li');
       li.role = 'option';
-      li.id = `kuroko-option-${i}`;
+      li.id = `cmd-option-${i}`;
       li.setAttribute('aria-selected', String(i === activeIndex));
-      li.className = 'group flex cursor-pointer items-center justify-between rounded-2xl p-4 transition-colors' + (i === activeIndex ? ' bg-magenta-soft' : '');
+      li.className = 'group flex cursor-pointer items-center justify-between rounded-2xl p-4 transition-colors' + (i === activeIndex ? ' bg-kuin-soft' : '');
       li.innerHTML = `
         <span class="flex items-center gap-4">
-          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-kuin-magenta/10 text-lg">${meta.icon}</span>
-          <span class="text-lg font-medium text-sumi-900">${item.title}</span>
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-kuin-magenta/10 text-lg text-kuin-magenta transition-colors group-hover:bg-kuin-magenta group-hover:text-white">${meta.icon}</span>
+          <span class="text-lg font-medium text-sumi-900 group-hover:text-kuin-dark">${item.title}</span>
         </span>
-        <span class="text-xs font-bold tracking-widest text-sumi-600 uppercase">${meta.label}</span>
+        <span class="text-xs font-bold tracking-widest text-sumi-400 uppercase">${meta.label}</span>
       `;
       li.addEventListener('click', () => activate(item));
       li.addEventListener('mouseenter', () => setActive(i));
@@ -110,7 +94,7 @@ const META = {
     activeIndex = i;
     [...resultsEl.children].forEach((li, idx) => {
       li.setAttribute('aria-selected', String(idx === i));
-      li.classList.toggle('bg-magenta-soft', idx === i);
+      li.classList.toggle('bg-kuin-soft', idx === i);
     });
   }
 
@@ -134,7 +118,7 @@ const META = {
       container.classList.remove('scale-95', 'opacity-0');
       container.classList.add('scale-100', 'opacity-100');
     });
-    input.focus();
+    setTimeout(() => input.focus(), 50);
   }
 
   function close() {

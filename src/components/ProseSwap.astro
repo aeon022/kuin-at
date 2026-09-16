@@ -1,0 +1,12 @@
+---
+// Renders both the Standard and Leicht-Lesen rich-text variants of a field
+// so the toggle can crossfade between them client-side (see .ll-swap in
+// global.css) instead of reloading the page.
+interface Props { standard: string; leicht?: string; class?: string }
+const { standard, leicht, class: className } = Astro.props;
+const easy = leicht && leicht.trim().length > 0 ? leicht : standard;
+---
+<div class:list={['ll-swap', className]}>
+  <div class="ll-standard prose" set:html={standard} />
+  <div class="ll-easy prose" set:html={easy} />
+</div>

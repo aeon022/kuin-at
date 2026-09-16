@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "migrate": "node --import tsx scripts/migrate/run.ts"
+    "migrate": "node --import tsx scripts/migrate/run.ts",
+    "admin": "ORBITER_POD=\"$(pwd)/content.pod\" orbiter-admin"
   },
   "dependencies": {
     "@a83/orbiter-admin": "^0.3.81",

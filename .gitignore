@@ -5,3 +5,4 @@ content.pod
 *.pod
 import-source/
 orbiter-env.d.ts
+.env

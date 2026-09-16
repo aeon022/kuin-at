@@ -1,0 +1,34 @@
+---
+// PersonCard.astro — shared by /der-verein/vorstand and /der-verein/team.
+import { getMediaItem } from 'orbiter:media';
+import type { Person } from '../schemas';
+
+interface Props { person: Person }
+const { person } = Astro.props;
+const photo = await getMediaItem(person.photo);
+---
+<li class="flex flex-col items-center gap-3 rounded-2xl bg-sumi-900/[0.03] p-6 text-center transition hover:-translate-y-1">
+  {photo && (
+    <img
+      src={photo.url}
+      alt={photo.alt ?? `[ALT-TEXT TODO: Foto von ${person.name} beschreiben]`}
+      class="h-32 w-32 rounded-full object-cover grayscale transition hover:grayscale-0"
+    />
+  )}
+  <div>
+    <p class="font-semibold text-sumi-900">{person.name}</p>
+    <p class="text-sm text-sumi-600">{person.role}</p>
+  </div>
+  {person.bio && <p class="text-sm text-sumi-600">{person.bio}</p>}
+  {person.social_links.length > 0 && (
+    <ul class="flex flex-wrap justify-center gap-3">
+      {person.social_links.map((link) => (
+        <li>
+          <a href={link.url} target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-magenta-dark hover:text-kuin-magenta">
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</li>

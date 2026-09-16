@@ -1,0 +1,44 @@
+---
+// Footer.astro — 1:1 layout/classes from mockup.html §6. Rendered on every
+// page (via Layout.astro), so its two real-content swaps carry the same
+// exception as Header.astro: the real office@kuin.at address instead of the
+// mockup's placeholder "hallo@kuin.at", and "#" links pointed at the real
+// routes that already exist for them (/impressum, etc.) instead of dead
+// anchors. "Mitglied werden" links straight to the real membership
+// application PDF (scripts/migrate/add-membership-form.ts) rather than to
+// /kontakt as a stand-in.
+import { getEntry } from 'orbiter:collections';
+import { getMediaItem } from 'orbiter:media';
+
+const membershipForm = await getEntry('downloads', 'beitrittsformular-mitgliedschaft-2025');
+const membershipFile = membershipForm ? await getMediaItem(membershipForm.data.file as string) : null;
+---
+<footer class="mt-24 border-t-8 border-kuin-magenta bg-sumi-900 pt-24 pb-12 text-washi">
+  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 md:grid-cols-4 md:gap-8 md:px-12">
+
+    <div class="space-y-4 md:col-span-2">
+      <h2 class="font-serif text-3xl font-bold">KUIN.</h2>
+      <p class="max-w-sm font-sans font-light text-sumi-400">Das Netzwerk für barrierefreie Kulturerlebnisse in Graz.</p>
+    </div>
+
+    <div class="space-y-4">
+      <h3 class="font-sans text-sm font-bold tracking-widest text-kuin-magenta uppercase">Kontakt</h3>
+      <ul class="space-y-2 font-sans font-light text-sumi-100">
+        <li><a href="mailto:office@kuin.at" class="transition-colors hover:text-white">office@kuin.at</a></li>
+        {membershipFile && (
+          <li class="pt-4"><a href={membershipFile.url} class="transition-colors hover:text-white">Mitglied werden</a></li>
+        )}
+      </ul>
+    </div>
+
+    <div class="space-y-4">
+      <h3 class="font-sans text-sm font-bold tracking-widest text-kuin-magenta uppercase">Rechtliches</h3>
+      <ul class="space-y-2 font-sans font-light text-sumi-100">
+        <li><a href="/impressum" class="transition-colors hover:text-white">Impressum</a></li>
+        <li><a href="/datenschutzerklaerung-eu" class="transition-colors hover:text-white">Datenschutz</a></li>
+        <li><a href="/kontakt" class="transition-colors hover:text-white">Barrierefreiheit</a></li>
+      </ul>
+    </div>
+
+  </div>
+</footer>

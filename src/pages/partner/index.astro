@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'orbiter:collections';
 import { getMediaItem } from 'orbiter:media';
 import { PartnerSchema } from '../../schemas';
@@ -15,7 +15,7 @@ const resolved = withLogos.filter((p) => p.logoMedia);
 const board = resolved.filter((p) => p.is_board_member);
 const network = resolved.filter((p) => !p.is_board_member);
 ---
-<BaseLayout title="Partner & Netzwerk" active="partner">
+<Layout title="Partner & Netzwerk" active="partner">
   <main id="main" class="mx-auto max-w-5xl px-4 py-16 md:py-24">
     <h1 class="mb-16 text-4xl font-bold md:text-5xl">Partner & Netzwerk</h1>
 
@@ -39,7 +39,7 @@ const network = resolved.filter((p) => !p.is_board_member);
         {network.map((p) => (
           <li class="flex flex-col items-center gap-2 rounded-2xl bg-sumi-900/[0.03] p-6 transition hover:-translate-y-1">
             {p.website_url
-              ? <a href={p.website_url} rel="noopener"><img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain grayscale transition hover:grayscale-0" /></a>
+              ? <a href={p.website_url} target="_blank" rel="noopener noreferrer"><img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain grayscale transition hover:grayscale-0" /></a>
               : <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="h-16 object-contain grayscale transition hover:grayscale-0" />}
             <span class="text-sm">{p.name}</span>
           </li>
@@ -47,4 +47,4 @@ const network = resolved.filter((p) => !p.is_board_member);
       </ul>
     </section>
   </main>
-</BaseLayout>
+</Layout>
