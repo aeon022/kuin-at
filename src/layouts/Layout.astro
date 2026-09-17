@@ -18,15 +18,14 @@ const {
   title,
   description = 'Kultur Inklusiv Graz — Kunst und Kultur barrierefrei erleben.',
   active,
-  // No dedicated 1200×630 social-share image exists yet — the wordmark is
-  // a sane, always-available default (on-brand, real content) rather than
-  // shipping no og:image at all; swap per-page via the `image` prop once
-  // one exists.
+  // public/og-image.png: brand-gradient card with the (white/inverted)
+  // wordmark, generated from the same CMS logo — swap per-page via the
+  // `image` prop for pages that want their own (an event flyer, etc.).
   image,
 } = Astro.props;
 
 const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
-const ogImage = new URL(image ?? logo?.url ?? '/favicon.svg', Astro.site ?? Astro.url).toString();
+const ogImage = new URL(image ?? '/og-image.png', Astro.site ?? Astro.url).toString();
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
 
 const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
@@ -56,7 +55,15 @@ const themeAttr = themeCookie === 'light' || themeCookie === 'dark' ? themeCooki
   <link rel="canonical" href={canonicalURL} />
   <meta name="robots" content="index, follow" />
 
+  <!-- SVG primary (crisp at any size, modern browsers): the CMS wordmark
+       directly. /favicon.ico and /apple-touch-icon.png are pre-cropped
+       square PNGs (public/, generated from the same source logo) for
+       browsers/contexts that need a literal square — iOS home-screen
+       icons especially don't letterbox a non-square source the way an
+       SVG favicon does. -->
   {logo && <link rel="icon" type="image/svg+xml" href={logo.url} />}
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
   <!-- Open Graph / Twitter — og:url and canonical both resolve against
        `site` (astro.config.mjs: the real kuin.at), so these stay correct
@@ -68,6 +75,8 @@ const themeAttr = themeCookie === 'light' || themeCookie === 'dark' ? themeCooki
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonicalURL} />
   <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={`${title} · KUIN`} />
   <meta name="twitter:description" content={description} />

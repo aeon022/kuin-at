@@ -19,9 +19,9 @@ const supporters: Supporter[] = [
 <section id="unterstuetzer" class="breathing-element border-t border-sumi-400/10 pt-24">
   <h2 class="mb-12 text-center font-sans text-sm font-bold tracking-widest text-sumi-400 uppercase">Unsere Unterstützer</h2>
 
-  <ul class="flex flex-wrap items-center justify-center gap-8">
-    {supporters.map((s) => (
-      <li class="flex h-32 w-64 shrink-0 items-center justify-center rounded-xl bg-white p-6 shadow-sm">
+  <ul id="supporters-list" class="flex flex-wrap items-center justify-center gap-8">
+    {supporters.map((s, i) => (
+      <li data-reveal style={`transition-delay: ${Math.min(i, 10) * 60}ms`} class="reveal-item flex h-32 w-64 shrink-0 items-center justify-center rounded-xl bg-white p-6 opacity-0 translate-y-3 shadow-sm transition-[opacity,transform] duration-500 ease-out">
         {s.url ? (
           <a href={s.url} target="_blank" rel="noopener noreferrer" title={s.name} class="flex h-full w-full items-center justify-center transition hover:-translate-y-1">
             <img src={s.logo} alt={s.name} class="max-h-full max-w-full object-contain" />
@@ -33,3 +33,29 @@ const supporters: Supporter[] = [
     ))}
   </ul>
 </section>
+
+<script>
+  // Same scroll-reveal as Partner.astro — see that file's script comment
+  // for the reduced-motion/observer reasoning, identical here.
+  const reduced = document.documentElement.hasAttribute('data-reduce-motion') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const items = document.querySelectorAll('#supporters-list [data-reveal]');
+
+  if (reduced) {
+    items.forEach((el) => el.classList.remove('opacity-0', 'translate-y-3'));
+  } else if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove('opacity-0', 'translate-y-3');
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { rootMargin: '0px 0px -80px 0px' },
+    );
+    items.forEach((el) => observer.observe(el));
+  } else {
+    items.forEach((el) => el.classList.remove('opacity-0', 'translate-y-3'));
+  }
+</script>
