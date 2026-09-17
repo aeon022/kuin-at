@@ -33,12 +33,12 @@ const links: { href: string; label: string; id: string; children?: { href: strin
   { href: '/kontakt', label: 'Kontakt', id: 'kontakt' },
 ];
 ---
-<header class="breathing-element sticky top-0 z-40 mx-auto flex w-full max-w-6xl items-center justify-between border-b border-sumi-400/10 bg-washi/90 px-6 py-6 backdrop-blur-md md:px-12 md:py-8">
+<header class="breathing-element sticky top-0 z-40 mx-auto flex w-full max-w-7xl items-center justify-between border-b border-sumi-400/10 bg-washi/90 px-6 py-6 backdrop-blur-md md:px-12 md:py-8">
   <a href="/" aria-label="Startseite" class="shrink-0 transition-opacity hover:opacity-80">
     {logo && <img src={logo.url} alt="KUIN — Kultur Inklusiv" class="kuin-logo h-9 w-auto md:h-10" />}
   </a>
 
-  <div class="flex items-center gap-3 md:gap-6">
+  <div class="flex items-center gap-3 lg:gap-4">
     <nav id="main-nav" aria-label="Hauptnavigation" class="relative hidden gap-1 font-medium text-sumi-600 md:flex">
       <span id="nav-indicator" class="pointer-events-none absolute top-0 left-0 -z-10 h-full rounded-full bg-kuin-magenta/10 opacity-0 transition-[transform,width,opacity] duration-300 ease-out"></span>
       {links.map((link) => (
@@ -88,7 +88,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
         <span id="ll-track" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-sumi-400/25 transition-colors duration-300">
           <span id="ll-thumb" class="inline-block h-5 w-5 translate-x-0.5 transform rounded-full bg-white shadow transition-transform duration-300"></span>
         </span>
-        <span class="hidden text-sm font-medium text-sumi-900 transition-colors group-hover:text-kuin-magenta sm:inline">Leicht Lesen</span>
+        <span class="hidden text-sm font-medium text-sumi-900 transition-colors group-hover:text-kuin-magenta xl:inline">Leicht Lesen</span>
       </button>
 
       <div class="h-6 w-px bg-sumi-400/15"></div>
