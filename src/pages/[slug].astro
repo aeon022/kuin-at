@@ -80,7 +80,13 @@ const active = navIdBySlug[slug!];
 {isKontakt && (
   <script>
     import { wireOrbiterForm } from '../lib/orbiterForm';
-    const form = document.querySelector('form[data-form-id="kontakt"]');
-    if (form instanceof HTMLFormElement) wireOrbiterForm(form);
+    // /kontakt's own form-wiring script — same astro:page-load
+    // requirement as Hero.astro (see its script comment): without this,
+    // revisiting /kontakt a second time in the same session (client-side
+    // nav away and back) would leave the form unwired.
+    document.addEventListener('astro:page-load', () => {
+      const form = document.querySelector('form[data-form-id="kontakt"]');
+      if (form instanceof HTMLFormElement) wireOrbiterForm(form);
+    });
   </script>
 )}

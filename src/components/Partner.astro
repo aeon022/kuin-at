@@ -63,6 +63,10 @@ const logoScale: Record<string, string> = {
 </section>
 
 <script>
+  // Partner only exists on "/" — same astro:page-load requirement as
+  // Hero.astro (see its script comment): this whole block re-runs fresh
+  // on every navigation to "/", including the first.
+  document.addEventListener('astro:page-load', () => {
   // Scroll-reveal, one IntersectionObserver for the whole logo wall rather
   // than one per <li> — each item fades/rises in with a small stagger
   // (inline transition-delay set server-side above, capped at 10 items so
@@ -91,4 +95,5 @@ const logoScale: Record<string, string> = {
   } else {
     items.forEach((el) => el.classList.remove('opacity-0', 'translate-y-3'));
   }
+  });
 </script>

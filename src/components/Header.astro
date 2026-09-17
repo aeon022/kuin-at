@@ -33,7 +33,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
   { href: '/kontakt', label: 'Kontakt', id: 'kontakt' },
 ];
 ---
-<header class="breathing-element sticky top-0 z-40 mx-auto flex w-full max-w-7xl items-center justify-between border-b border-sumi-400/10 bg-washi/90 px-6 py-6 backdrop-blur-md md:px-12 md:py-8">
+<header transition:persist class="breathing-element sticky top-0 z-40 mx-auto flex w-full max-w-7xl items-center justify-between border-b border-sumi-400/10 bg-washi/90 px-6 py-6 backdrop-blur-md md:px-12 md:py-8">
   <a href="/" aria-label="Startseite" class="shrink-0 transition-opacity hover:opacity-80">
     {logo && <img src={logo.url} alt="KUIN — Kultur Inklusiv" class="kuin-logo h-9 w-auto md:h-10" />}
   </a>
@@ -183,7 +183,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
   </div>
 </header>
 
-<nav id="mobile-nav" aria-label="Hauptnavigation (mobil)" hidden class="border-b border-sumi-400/10 bg-washi px-6 py-4 md:hidden">
+<nav id="mobile-nav" transition:persist aria-label="Hauptnavigation (mobil)" hidden class="border-b border-sumi-400/10 bg-washi px-6 py-4 md:hidden">
   <ul class="flex flex-col gap-1">
     {links.map((link) => (
       <li>
@@ -318,6 +318,38 @@ const links: { href: string; label: string; id: string; children?: { href: strin
     window.addEventListener('resize', resetIndicator);
 
     resetIndicator();
+
+    // Page-transition support: <header> and #mobile-nav are both
+    // `transition:persist`ed (this whole script only ever runs once,
+    // on true first load), so they stop getting a fresh server-rendered
+    // aria-current from each new page's own `active` prop the way they
+    // did before View Transitions existed — has to be recomputed
+    // client-side on every navigation instead. Matches by longest
+    // prefix against each top-level link's own `.pathname` (not the
+    // `links` array from frontmatter — that's server-only, not
+    // available in this client script) so a nested route like
+    // /der-verein/vorstand still highlights "Über uns", same as the
+    // server-computed version did.
+    function syncActiveNav() {
+      const path = window.location.pathname;
+      const allTopLevel: HTMLAnchorElement[] = [
+        ...topLevelLinks,
+        ...(mobileNav ? (Array.from(mobileNav.querySelectorAll(':scope > ul > li > a')) as HTMLAnchorElement[]) : []),
+      ];
+      let best: HTMLAnchorElement | null = null;
+      for (const link of allTopLevel) {
+        const href = link.pathname;
+        const matches = href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
+        if (matches && (!best || href.length > best.pathname.length)) best = link;
+      }
+      allTopLevel.forEach((link) => link.removeAttribute('aria-current'));
+      if (best) {
+        const bestHref = best.pathname;
+        allTopLevel.filter((l) => l.pathname === bestHref).forEach((l) => l.setAttribute('aria-current', 'page'));
+      }
+      resetIndicator();
+    }
+    document.addEventListener('astro:page-load', syncActiveNav);
   }
 
   // Barrierefreiheits-Panel — same hydrate-from-server-attribute pattern

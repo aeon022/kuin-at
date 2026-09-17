@@ -251,6 +251,12 @@ const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 <script>
   import { smoothPath, blobPoints, heartPoint, type Point } from '../lib/blobMorph';
 
+  // Hero only exists on "/" — navigating away and back (client-side, via
+  // Astro's ClientRouter) destroys and recreates this whole script's DOM
+  // each time, so the init logic has to live in `astro:page-load` (fires
+  // on every navigation, including the first) rather than run once at
+  // module-eval time — see Layout.astro's <ClientRouter> comment for why.
+  document.addEventListener('astro:page-load', () => {
   // Max reach per layer (base + ampA + ampB) plus the blur's spread stays
   // well under the viewBox's own edge (50) — same margin discipline as
   // every earlier round. `heartScale` is sized the same way: heartPoint's
@@ -335,10 +341,19 @@ const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
   // it just skips mutating the DOM while reduced motion is active.
   if (sumi && matcha && magentaDark && magentaLight && magenta) {
     function tick(now: number) {
+      // Self-terminating: if this Hero instance's own DOM has been
+      // removed (navigated away from "/" via client-side routing), stop
+      // recursing instead of leaving an orphaned rAF loop running
+      // forever in the background — without this, a few home-page
+      // visits in one session would stack up multiple simultaneous
+      // loops all fighting over the same (now-detached, in the old
+      // loops' case) SVG elements.
+      if (!sumi || !document.body.contains(sumi)) return;
       const reduced = document.documentElement.hasAttribute('data-reduce-motion') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (!reduced) render(now / 1000);
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
   }
+  });
 </script>

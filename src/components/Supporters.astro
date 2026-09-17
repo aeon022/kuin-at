@@ -35,6 +35,10 @@ const supporters: Supporter[] = [
 </section>
 
 <script>
+  // Supporters only exists on "/" — same astro:page-load requirement as
+  // Hero.astro/Partner.astro (see Hero's script comment): re-runs fresh
+  // on every navigation to "/", including the first.
+  document.addEventListener('astro:page-load', () => {
   // Same scroll-reveal as Partner.astro — see that file's script comment
   // for the reduced-motion/observer reasoning, identical here.
   const reduced = document.documentElement.hasAttribute('data-reduce-motion') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -58,4 +62,5 @@ const supporters: Supporter[] = [
   } else {
     items.forEach((el) => el.classList.remove('opacity-0', 'translate-y-3'));
   }
+  });
 </script>

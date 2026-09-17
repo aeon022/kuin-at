@@ -57,6 +57,12 @@ const membershipFile = membershipForm ? await getMediaItem(membershipForm.data.f
 
 <script>
   import { wireOrbiterForm } from '../lib/orbiterForm';
-  const form = document.querySelector('form[data-form-id="newsletter"]');
-  if (form instanceof HTMLFormElement) wireOrbiterForm(form);
+  // MembershipCta only exists on "/" — same astro:page-load requirement
+  // as Hero.astro (see its script comment): re-runs fresh on every
+  // navigation to "/", including the first, so the form stays wired up
+  // after navigating away and back.
+  document.addEventListener('astro:page-load', () => {
+    const form = document.querySelector('form[data-form-id="newsletter"]');
+    if (form instanceof HTMLFormElement) wireOrbiterForm(form);
+  });
 </script>

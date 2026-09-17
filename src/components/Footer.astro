@@ -20,7 +20,7 @@ const membershipForm = await getEntry('downloads', 'beitrittsformular-mitgliedsc
 const membershipFile = membershipForm ? await getMediaItem(membershipForm.data.file as string) : null;
 const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 ---
-<footer class="mt-24 border-t-8 border-kuin-magenta bg-matcha-100 pt-24 pb-12 text-sumi-900">
+<footer transition:persist class="mt-24 border-t-8 border-kuin-magenta bg-matcha-100 pt-24 pb-12 text-sumi-900">
   <div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 md:grid-cols-4 md:gap-8 md:px-12">
 
     <div class="space-y-6 md:col-span-2">

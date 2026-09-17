@@ -12,6 +12,7 @@ import CommandPalette from '../components/CommandPalette.astro';
 import Footer from '../components/Footer.astro';
 import CookieNotice from '../components/CookieNotice.astro';
 import { getMediaItem } from 'orbiter:media';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props { title: string; description?: string; active?: string; image?: string }
 const {
@@ -85,6 +86,18 @@ const themeAttr = themeCookie === 'light' || themeCookie === 'dark' ? themeCooki
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,500&display=swap" rel="stylesheet" />
+
+  <!-- Client-side page transitions between routes. IMPORTANT: every inline
+       <script> sitewide had to move its init logic into an
+       `astro:page-load` listener for this — a module script only ever
+       executes once per browser session (module de-dup), so without that
+       change every toggle/form/palette would go dead after the first
+       client-side navigation. See each component's own script for the
+       same note. fallback="swap": browsers without native View
+       Transitions support (older Firefox) still get instant client-side
+       nav, just without the animation, rather than degrading to a full
+       page reload either way. -->
+  <ClientRouter fallback="swap" />
 </head>
 <body class:list={['bg-washi text-sumi-900 font-sans antialiased min-h-screen selection:bg-kuin-magenta selection:text-washi overflow-x-hidden', { 'is-leicht-lesen': leichtLesenActive }]}>
   <a href="#main" class="sr-only rounded-lg shadow-2xl focus:not-sr-only focus:absolute focus:top-6 focus:left-6 focus:z-50 focus:bg-kuin-magenta focus:px-6 focus:py-3 focus:font-bold focus:text-washi">
