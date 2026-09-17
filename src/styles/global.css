@@ -104,6 +104,40 @@ h1, h2, h3, h4 {
   font-family: var(--font-serif);
 }
 
+/* Page transitions (Layout.astro's <ClientRouter>). Astro's own default
+   crossfade uses `mix-blend-mode: plus-lighter`, which reads as almost
+   no transition at all on a light, mostly-white/text page like this one
+   — additive blending of two near-white snapshots barely changes
+   anything visually (client-reported: "fade isn't visible"). Plain
+   opacity + a small rise instead, which shows up regardless of how
+   light the page is. Respects both motion-reduction mechanisms this
+   site has — the OS setting (Astro's own viewtransitions.css already
+   guards `prefers-reduced-motion`) and the site's own manual
+   "Bewegung reduzieren" toggle, which needs its own guard here since
+   it's a data attribute, not something the OS media query can see. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+  animation-timing-function: ease-out;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  animation-name: kuin-fade-out;
+}
+::view-transition-new(root) {
+  animation-name: kuin-fade-in;
+}
+@keyframes kuin-fade-out {
+  to { opacity: 0; transform: translateY(-6px); }
+}
+@keyframes kuin-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+}
+:root[data-reduce-motion] ::view-transition-old(root),
+:root[data-reduce-motion] ::view-transition-new(root) {
+  animation: none !important;
+}
+
 /* Taktiles Fokus-Management — a massive, unmissable focus ring on every
    interactive element, one global rule rather than a Tailwind ring-*
    utility repeated everywhere. */
