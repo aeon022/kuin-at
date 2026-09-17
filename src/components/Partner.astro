@@ -17,17 +17,20 @@ const withLogos = await Promise.all(
 const network = withLogos.filter((p) => p.logoMedia);
 ---
 <section id="partner" class="breathing-element border-t border-sumi-400/10 pt-24">
-  <h2 class="mb-12 text-center font-sans text-sm font-bold tracking-widest text-sumi-400 uppercase">Unsere Partner & Träger</h2>
+  <h2 class="mb-12 text-center font-sans text-sm font-bold tracking-widest text-sumi-400 uppercase">Unsere Mitglieder</h2>
 
-  <!-- Fixed bounding box per logo (h-12 w-32), not `h-10 w-auto` — source
-       files vary wildly in internal padding (a tight icon mark vs. a wide
-       wordmark with lots of breathing room baked into the file), so equal
-       *height* alone still read as wildly different *sizes* (client
-       feedback). object-contain inside an equal box makes every logo
-       occupy the same footprint regardless of its own aspect ratio. -->
-  <ul class="flex flex-wrap items-center justify-center gap-x-12 gap-y-8 opacity-60 transition-opacity duration-500 hover:opacity-100 md:gap-x-20">
+  <!-- Fixed bounding box per logo (h-20 w-44, bumped up from h-12 w-32 —
+       client feedback: too small/hard to make out), not `h-10 w-auto` —
+       source files vary wildly in internal padding (a tight icon mark vs.
+       a wide wordmark with lots of breathing room baked into the file),
+       so equal *height* alone still read as wildly different *sizes*.
+       object-contain inside an equal box makes every logo occupy the same
+       footprint regardless of its own aspect ratio. Resting opacity also
+       raised (60% → 75%) — grayscale-at-60% was compounding the same
+       "hard to recognize" complaint on top of the size. -->
+  <ul class="flex flex-wrap items-center justify-center gap-x-12 gap-y-10 opacity-75 transition-opacity duration-500 hover:opacity-100 md:gap-x-20">
     {network.map((p) => (
-      <li class="flex h-12 w-32 shrink-0 items-center justify-center">
+      <li class="flex h-20 w-44 shrink-0 items-center justify-center">
         {p.website_url ? (
           <a href={p.website_url} target="_blank" rel="noopener noreferrer" title={p.name} class="flex h-full w-full items-center justify-center transition hover:-translate-y-1">
             <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? p.name} class="max-h-full max-w-full object-contain grayscale transition hover:grayscale-0" />
