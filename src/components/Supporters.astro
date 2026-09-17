@@ -1,0 +1,35 @@
+---
+// Supporters.astro — "Unsere Unterstützer" (client request 2026-09): a
+// separate logo wall from Partner.astro's "Unsere Mitglieder" — funders/
+// public backers rather than member organizations, so a distinct heading
+// and section rather than folding the Stadt Graz logo into the partners
+// list. Static local assets (public/logos/), not an Orbiter collection —
+// this is one logo today; a real CMS collection would be overkill for
+// that (YAGNI), but the array keeps adding a second one trivial.
+// The logo file itself is an opaque-white JPEG (no alpha) — on the
+// site's own washi background that's invisible, but under the dark-mode
+// toggle a stray white rectangle would look like a mistake, so each item
+// gets its own small white card to read as a deliberate "badge" in both
+// themes rather than a solid colour glitch.
+interface Supporter { name: string; logo: string; url?: string }
+const supporters: Supporter[] = [
+  { name: 'Stadt Graz', logo: '/logos/stadt-graz.jpg', url: 'https://www.graz.at' },
+];
+---
+<section id="unterstuetzer" class="breathing-element border-t border-sumi-400/10 pt-24">
+  <h2 class="mb-12 text-center font-sans text-sm font-bold tracking-widest text-sumi-400 uppercase">Unsere Unterstützer</h2>
+
+  <ul class="flex flex-wrap items-center justify-center gap-8">
+    {supporters.map((s) => (
+      <li class="flex h-32 w-64 shrink-0 items-center justify-center rounded-xl bg-white p-6 shadow-sm">
+        {s.url ? (
+          <a href={s.url} target="_blank" rel="noopener noreferrer" title={s.name} class="flex h-full w-full items-center justify-center transition hover:-translate-y-1">
+            <img src={s.logo} alt={s.name} class="max-h-full max-w-full object-contain" />
+          </a>
+        ) : (
+          <img src={s.logo} alt={s.name} class="max-h-full max-w-full object-contain" />
+        )}
+      </li>
+    ))}
+  </ul>
+</section>
