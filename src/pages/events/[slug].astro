@@ -20,12 +20,12 @@ const endDate = new Date(data.end_date);
 const timeRange = `${startDate.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' })}–${endDate.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' })} Uhr`;
 ---
 <Layout title={data.title} active="events">
-  <main id="main" class="mx-auto max-w-3xl space-y-8 px-6 py-16 md:px-12 md:py-24">
+  <main id="main" class="mx-auto max-w-6xl space-y-8 px-6 py-16 md:px-12 md:py-24">
     <a href="/events" class="inline-flex items-center gap-2 text-sm font-semibold text-sumi-600 transition-colors hover:text-kuin-magenta">
       ← Alle Veranstaltungen
     </a>
 
-    <article class="rounded-[2.5rem] border border-sumi-400/10 bg-white/50 p-8 backdrop-blur-sm md:p-12">
+    <article class="rounded-[2.5rem] border border-sumi-400/10 bg-surface/50 p-8 backdrop-blur-sm md:p-12">
       <div class="mb-8 inline-flex items-center gap-3 rounded-full bg-kuin-magenta/10 px-4 py-1.5 text-xs font-bold tracking-widest text-kuin-dark uppercase">
         <span class="h-1.5 w-1.5 rounded-full bg-kuin-magenta"></span> Veranstaltung
       </div>

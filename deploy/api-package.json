@@ -1,0 +1,9 @@
+{
+  "name": "kuin-orbiter-admin",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "@a83/orbiter-admin": "^0.3.81",
+    "fast-xml-parser": "^4.5.0"
+  }
+}

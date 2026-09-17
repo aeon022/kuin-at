@@ -1,44 +1,96 @@
 ---
-// Footer.astro — 1:1 layout/classes from mockup.html §6. Rendered on every
-// page (via Layout.astro), so its two real-content swaps carry the same
-// exception as Header.astro: the real office@kuin.at address instead of the
-// mockup's placeholder "hallo@kuin.at", and "#" links pointed at the real
-// routes that already exist for them (/impressum, etc.) instead of dead
-// anchors. "Mitglied werden" links straight to the real membership
-// application PDF (scripts/migrate/add-membership-form.ts) rather than to
-// /kontakt as a stand-in.
+// Footer.astro — layout/classes originally 1:1 from mockup.html §6, since
+// reworked (client request 2026-09): the mockup's near-black bg read as
+// harsh for a culture-inclusion nonprofit ("heller, freundlicher") and had
+// no logo at all (just a generated "KUIN." text mark). Now a light, warm
+// matcha tint instead of sumi-900 — the real wordmark works on it directly,
+// no inversion needed (that trick is reserved for the *dark-mode* toggle
+// below, which the wordmark genuinely does need — see .kuin-logo/
+// --logo-filter in global.css). The two real-content swaps from the
+// original mockup carry over unchanged: the real office@kuin.at address
+// instead of the mockup's placeholder "hallo@kuin.at", and "#" links
+// pointed at the real routes that already exist for them (/impressum, etc.)
+// instead of dead anchors. "Mitglied werden" links straight to the real
+// membership application PDF (scripts/migrate/add-membership-form.ts)
+// rather than to /kontakt as a stand-in.
 import { getEntry } from 'orbiter:collections';
 import { getMediaItem } from 'orbiter:media';
 
 const membershipForm = await getEntry('downloads', 'beitrittsformular-mitgliedschaft-2025');
 const membershipFile = membershipForm ? await getMediaItem(membershipForm.data.file as string) : null;
+const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 ---
-<footer class="mt-24 border-t-8 border-kuin-magenta bg-sumi-900 pt-24 pb-12 text-washi">
+<footer class="mt-24 border-t-8 border-kuin-magenta bg-matcha-100 pt-24 pb-12 text-sumi-900">
   <div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 md:grid-cols-4 md:gap-8 md:px-12">
 
-    <div class="space-y-4 md:col-span-2">
-      <h2 class="font-serif text-3xl font-bold">KUIN.</h2>
-      <p class="max-w-sm font-sans font-light text-sumi-400">Das Netzwerk für barrierefreie Kulturerlebnisse in Graz.</p>
+    <div class="space-y-6 md:col-span-2">
+      {logo && <img src={logo.url} alt="KUIN — Kultur Inklusiv" class="kuin-logo h-11 w-auto" />}
+      <p class="max-w-sm font-sans font-light text-sumi-600">Das Netzwerk für barrierefreie Kulturerlebnisse in Graz.</p>
+
+      <div>
+        <p class="mb-2 text-xs font-bold tracking-widest text-sumi-400 uppercase">Darstellung</p>
+        <div id="footer-theme-group" class="inline-flex rounded-xl border border-sumi-900/15 bg-surface/60 p-1" role="group" aria-label="Farbschema wählen">
+          <button type="button" data-theme-btn="system" class="theme-btn rounded-lg px-3 py-1.5 text-sumi-600 transition-colors" aria-label="System">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
+          </button>
+          <button type="button" data-theme-btn="light" class="theme-btn rounded-lg px-3 py-1.5 text-sumi-600 transition-colors" aria-label="Hell">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" /></svg>
+          </button>
+          <button type="button" data-theme-btn="dark" class="theme-btn rounded-lg px-3 py-1.5 text-sumi-600 transition-colors" aria-label="Dunkel">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="space-y-4">
       <h3 class="font-sans text-sm font-bold tracking-widest text-kuin-magenta uppercase">Kontakt</h3>
-      <ul class="space-y-2 font-sans font-light text-sumi-100">
-        <li><a href="mailto:office@kuin.at" class="transition-colors hover:text-white">office@kuin.at</a></li>
+      <ul class="space-y-2 font-sans font-light text-sumi-600">
+        <li><a href="mailto:office@kuin.at" class="transition-colors hover:text-kuin-magenta">office@kuin.at</a></li>
         {membershipFile && (
-          <li class="pt-4"><a href={membershipFile.url} class="transition-colors hover:text-white">Mitglied werden</a></li>
+          <li class="pt-4"><a href={membershipFile.url} class="transition-colors hover:text-kuin-magenta">Mitglied werden</a></li>
         )}
       </ul>
     </div>
 
     <div class="space-y-4">
       <h3 class="font-sans text-sm font-bold tracking-widest text-kuin-magenta uppercase">Rechtliches</h3>
-      <ul class="space-y-2 font-sans font-light text-sumi-100">
-        <li><a href="/impressum" class="transition-colors hover:text-white">Impressum</a></li>
-        <li><a href="/datenschutzerklaerung-eu" class="transition-colors hover:text-white">Datenschutz</a></li>
-        <li><a href="/kontakt" class="transition-colors hover:text-white">Barrierefreiheit</a></li>
+      <ul class="space-y-2 font-sans font-light text-sumi-600">
+        <li><a href="/impressum" class="transition-colors hover:text-kuin-magenta">Impressum</a></li>
+        <li><a href="/datenschutzerklaerung-eu" class="transition-colors hover:text-kuin-magenta">Datenschutz</a></li>
+        <li><a href="/kontakt" class="transition-colors hover:text-kuin-magenta">Barrierefreiheit</a></li>
       </ul>
     </div>
 
   </div>
 </footer>
+
+<script>
+  import { theme, type Theme } from '../store/theme';
+
+  // Same shared `theme` atom as Header.astro's copy of this control
+  // (Barrierefreiheits-Panel) — scoped query so this script only ever
+  // touches its own buttons.
+  const buttons = Array.from(document.querySelectorAll('#footer-theme-group [data-theme-btn]')) as HTMLButtonElement[];
+  const root = document.documentElement;
+
+  function render(t: Theme) {
+    if (t === 'system') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', t);
+    buttons.forEach((btn) => {
+      const active = btn.dataset.themeBtn === t;
+      btn.classList.toggle('bg-kuin-magenta', active);
+      btn.classList.toggle('text-white', active);
+      btn.classList.toggle('text-sumi-600', !active);
+    });
+    document.cookie = `kuin-theme=${t}; path=/; max-age=31536000; samesite=lax`;
+  }
+
+  theme.set((root.getAttribute('data-theme') as Theme | null) ?? 'system');
+  render(theme.get());
+  theme.listen(render);
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => theme.set(btn.dataset.themeBtn as Theme));
+  });
+</script>

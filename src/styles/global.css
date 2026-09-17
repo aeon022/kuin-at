@@ -9,6 +9,12 @@
    alongside rather than replacing them so nothing else on the site breaks. */
 @theme {
   --color-washi: #faf9f5;
+  /* Elevated card/panel surface — was a literal `bg-white` on every card
+     across the site until dark mode needed something it could repaint.
+     Equal to washi's own near-white in light mode (unchanged look), but
+     gets its own dark twin below since washi's dark twin is the page BG,
+     not the card surface sitting on top of it. */
+  --color-surface: #ffffff;
 
   --color-sumi-100: #e6e6e6;
   --color-sumi-200: #cccccc;
@@ -71,9 +77,22 @@ body.is-leicht-lesen .hide-on-ll { opacity: 0; position: absolute; pointer-event
 body.is-leicht-lesen .show-on-ll { opacity: 1; position: relative; pointer-events: auto; transform: translateY(0); display: block; }
 
 dialog::backdrop {
-  background: rgba(250, 249, 245, 0.85);
+  /* rgb()'s modern slash-alpha syntax (not the old comma-separated rgba())
+     is what lets a single space-separated custom property carry all three
+     channels here. */
+  background: rgb(var(--color-washi-rgb, 250 249 245) / 0.85);
   backdrop-filter: blur(12px);
   transition: all 0.3s ease;
+}
+
+/* KUIN wordmark (Header/Hero/Footer/CommandPalette all fetch the same
+   media item): a solid-black mark on transparent PNG, no colour of its
+   own. `filter: invert(1)` turns pure black into pure white without
+   touching the alpha channel — exactly what's needed once the surface
+   behind it goes dark; kept as one shared class + variable rather than
+   four separate dark-mode overrides. */
+.kuin-logo {
+  filter: var(--logo-filter, none);
 }
 
 .relative-container { position: relative; width: 100%; }
@@ -112,6 +131,77 @@ h1, h2, h3, h4 {
   opacity: 0;
   pointer-events: none;
   transition: opacity 700ms ease;
+}
+
+/* Darstellung — Dunkelmodus (Header.astro a11y panel + Footer.astro).
+   Same token-override trick as [data-contrast] below: every `bg-washi`/
+   `text-sumi-900`/etc. utility already on the page reads these
+   `--color-*` custom properties at paint time, so redefining them here is
+   enough to retheme the whole site — no separate dark-mode class needed
+   anywhere else.
+   Three-way guard (system / explicit light / explicit dark), per
+   artifact-design conventions:
+   1. `@media (prefers-color-scheme: dark)`, guarded by `:not([data-theme="light"])`,
+      covers "system" (no cookie yet) — an explicit light choice beats a
+      dark OS setting.
+   2. `:root[data-theme="dark"]` repeats the same tokens unguarded, so an
+      explicit dark choice also wins against a light OS setting.
+   Placed BEFORE [data-contrast] below so high-contrast (light-on-black
+   text, not part of this toggle) still wins if both are ever active at
+   once — same precedence the two already had before dark mode existed. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-washi: #18171a;
+    --color-washi-rgb: 24 23 26;
+    --color-surface: #221f23;
+
+    --color-sumi-100: #29262a;
+    --color-sumi-200: #38343a;
+    --color-sumi-400: #8a8389;
+    --color-sumi-600: #c8c3c7;
+    --color-sumi-900: #f4f2ef;
+
+    --color-kuin-magenta: #ff2f8f;
+    --color-kuin-dark: #ff6bb0;
+    --color-kuin-soft: #3a1830;
+    /* magenta-dark is documented text-unsafe on dark (1.9:1) — swap it
+       for the already-AAA-verified dark-safe twin instead of tuning a
+       new value, so every existing `text-magenta-dark` (prose links,
+       etc.) just stays readable. */
+    --color-magenta-dark: #f3a9be;
+    --color-magenta-soft: #3a1830;
+
+    --color-matcha-dark: #a8bf82;
+    --color-matcha-100: #24301f;
+    --color-matcha-700: #9fae7a;
+    --color-matcha-900: #cfe0b8;
+
+    --logo-filter: invert(1);
+  }
+}
+:root[data-theme="dark"] {
+  --color-washi: #18171a;
+  --color-washi-rgb: 24 23 26;
+  --color-surface: #221f23;
+
+  --color-sumi-100: #29262a;
+  --color-sumi-200: #38343a;
+  --color-sumi-400: #8a8389;
+  --color-sumi-600: #c8c3c7;
+  --color-sumi-900: #f4f2ef;
+
+  --color-kuin-magenta: #ff2f8f;
+  --color-kuin-dark: #ff6bb0;
+  --color-kuin-soft: #3a1830;
+  --color-magenta-dark: #f3a9be;
+  --color-magenta-soft: #3a1830;
+
+  --color-matcha-dark: #a8bf82;
+  --color-matcha-100: #24301f;
+  --color-matcha-700: #9fae7a;
+  --color-matcha-900: #cfe0b8;
+
+  --logo-filter: invert(1);
 }
 
 /* Barrierefreiheits-Panel (Header.astro): Textgröße, Kontrast, Bewegung —

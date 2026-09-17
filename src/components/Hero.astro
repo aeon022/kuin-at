@@ -40,7 +40,13 @@ import { getMediaItem } from 'orbiter:media';
 const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 ---
 <section class="breathing-element relative max-w-6xl overflow-hidden">
-  <div class="hero-logo-stage hide-on-ll pointer-events-none absolute top-1/2 right-[8%] -z-10 hidden aspect-square w-[55%] max-w-[14rem] -translate-y-1/2 xl:block xl:max-w-sm" aria-hidden="true">
+  <!-- No `hide-on-ll` here (unlike everywhere else on this page) — client
+       feedback: at xl+ this stage used to vanish entirely in Leicht-Lesen
+       mode, leaving a big empty void next to the text column. The logo
+       mark itself stays put; only the animated colour blob + spinning
+       ring pause/hide under [data-ll] (see the <style> block below) so
+       Leicht-Lesen still reads as the calmer mode, just not an empty one. -->
+  <div class="hero-logo-stage pointer-events-none absolute top-1/2 right-[8%] -z-10 hidden aspect-square w-[55%] max-w-[14rem] -translate-y-1/2 xl:block xl:max-w-sm" aria-hidden="true">
     <!-- The blob lives in its own, bigger box so it can be enlarged
          independently of the logo/ring, which stay at the stage's own
          size. Growing a container is the one size lever that's actually
@@ -138,29 +144,38 @@ const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
         <circle cx="50" cy="50" r="46" fill="none" stroke="url(#hero-logo-ink-ring-gradient)" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="110 179" />
       </g>
     </svg>
-    {logo && <img src={logo.url} alt="" class="relative z-10 h-full w-full object-contain p-16 md:p-20" />}
+    {logo && <img src={logo.url} alt="" class="kuin-logo relative z-10 h-full w-full object-contain p-16 md:p-20" />}
   </div>
 
   <div class="max-w-2xl space-y-10">
-    <h1 class="breathing-element relative-container h-[200px] md:h-[240px]">
+    <!-- ll-swap (global.css): both variants stacked in the same grid cell,
+         container auto-sizes to whichever is taller. Was a fixed-height
+         `relative-container` + hide-on-ll/show-on-ll instead — fine for
+         the heading (both variants are close enough in height), but the
+         Leicht-Lesen intro below is a padded, larger-type, three-line card
+         that's genuinely taller than the Standard paragraph the h-[180px]
+         was sized for, so it overflowed its box and visually overlapped
+         the buttons underneath (client-reported). Switched both blocks to
+         ll-swap for consistency, not just the broken one. -->
+    <h1 class="breathing-element ll-swap">
       <!-- Standard -->
-      <span class="hide-on-ll block w-full font-serif text-6xl leading-[1.05] font-bold tracking-tight text-sumi-900 md:text-[5.5rem]">
+      <span class="ll-standard block w-full font-serif text-6xl leading-[1.05] font-bold tracking-tight text-sumi-900 md:text-[5.5rem]">
         Kultur ohne <br />
         <span class="font-medium text-sumi-600 italic">Hindernisse.</span>
       </span>
       <!-- Leicht Lesen -->
-      <span class="show-on-ll font-ll block w-full text-5xl leading-[1.1] font-bold tracking-tight text-sumi-900 md:text-[5rem]">
+      <span class="ll-easy font-ll block w-full text-5xl leading-[1.1] font-bold tracking-tight text-sumi-900 md:text-[5rem]">
         Kultur für <span class="text-kuin-magenta underline decoration-[10px] underline-offset-8">alle.</span>
       </span>
     </h1>
 
-    <div class="breathing-element relative-container h-[180px] max-w-2xl">
+    <div class="breathing-element ll-swap max-w-2xl">
       <!-- Standard -->
-      <p class="hide-on-ll font-sans text-xl leading-[1.7] font-light text-sumi-600">
-        Das Projekt „Kultur Inklusiv" hat das Ziel, kulturelle Teilhabe als universelles Menschenrecht zu fördern und Inklusion als selbstverständliches Element des kulturellen Lebens zu etablieren.
+      <p class="ll-standard font-sans text-xl leading-[1.7] font-light text-sumi-600">
+        Der Verein „Kultur Inklusiv" hat das Ziel, kulturelle Teilhabe als universelles Menschenrecht zu fördern und Inklusion als selbstverständliches Element des kulturellen Lebens zu etablieren.
       </p>
       <!-- Leicht Lesen -->
-      <div class="show-on-ll font-ll rounded-r-2xl border-l-8 border-kuin-magenta bg-kuin-soft p-6 text-2xl leading-[1.8] text-sumi-900 md:p-8">
+      <div class="ll-easy font-ll rounded-r-2xl border-l-8 border-kuin-magenta bg-kuin-soft p-6 text-2xl leading-[1.8] text-sumi-900 md:p-8">
         Kultur Inklusiv setzt sich dafür ein, dass alle Menschen Kunst und Kultur erleben können.<br />
         Kultur ist ein Recht für alle Menschen.<br />
         Inklusion soll ganz normal sein.<br />
@@ -222,6 +237,14 @@ const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
     .hero-logo-ink-ring-group {
       animation: none;
     }
+  }
+
+  /* Leicht Lesen: keep the logo mark (see the removed `hide-on-ll` above)
+     but drop the moving colour blob and spinning ring — the calm/plain
+     version of the same stage, not an empty one. */
+  [data-ll] .hero-blob-wrap,
+  [data-ll] .hero-logo-ink-ring-group {
+    display: none;
   }
 </style>
 

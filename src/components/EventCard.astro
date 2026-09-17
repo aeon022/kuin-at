@@ -19,9 +19,9 @@ const timeRange = startDate && endDate
 ---
 <section id="walks" class="breathing-element group relative max-w-5xl">
   <!-- Decor -->
-  <div class="absolute inset-0 -z-10 -rotate-1 transform rounded-[2.5rem] border border-sumi-400/5 bg-white transition-transform duration-500 group-hover:-rotate-2 group-hover:shadow-xl"></div>
+  <div class="absolute inset-0 -z-10 -rotate-1 transform rounded-[2.5rem] border border-sumi-400/5 bg-surface transition-transform duration-500 group-hover:-rotate-2 group-hover:shadow-xl"></div>
 
-  <div class="relative rounded-[2.5rem] border border-sumi-400/10 bg-white/50 p-8 backdrop-blur-sm md:p-12">
+  <div class="relative rounded-[2.5rem] border border-sumi-400/10 bg-surface/50 p-8 backdrop-blur-sm md:p-12">
     {nextEvent && startDate ? (
       <>
         <div class="hide-on-ll mb-10 inline-flex items-center gap-3 rounded-full bg-kuin-magenta/10 px-4 py-1.5 text-xs font-bold tracking-widest text-kuin-dark uppercase">
@@ -71,7 +71,7 @@ const timeRange = startDate && endDate
                   {nextEvent.data.accessibility_features.map((f) => <>{f}<br /></>)}
                 </>
               )}
-              <a href={`/events/${nextEvent.slug}`} class="mt-4 inline-block rounded-xl border-2 border-kuin-magenta bg-white px-6 py-3 font-bold text-kuin-dark">
+              <a href={`/events/${nextEvent.slug}`} class="mt-4 inline-block rounded-xl border-2 border-kuin-magenta bg-surface px-6 py-3 font-bold text-kuin-dark">
                 Mehr erfahren
               </a>
             </div>

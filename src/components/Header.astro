@@ -35,7 +35,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
 ---
 <header class="breathing-element sticky top-0 z-40 mx-auto flex w-full max-w-6xl items-center justify-between border-b border-sumi-400/10 bg-washi/90 px-6 py-6 backdrop-blur-md md:px-12 md:py-8">
   <a href="/" aria-label="Startseite" class="shrink-0 transition-opacity hover:opacity-80">
-    {logo && <img src={logo.url} alt="KUIN — Kultur Inklusiv" class="h-9 w-auto md:h-10" />}
+    {logo && <img src={logo.url} alt="KUIN — Kultur Inklusiv" class="kuin-logo h-9 w-auto md:h-10" />}
   </a>
 
   <div class="flex items-center gap-3 md:gap-6">
@@ -55,7 +55,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </a>
-            <ul class="invisible absolute top-full left-0 z-10 mt-2 min-w-[10rem] rounded-2xl border border-sumi-400/10 bg-white p-2 opacity-0 shadow-lg transition-all duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+            <ul class="invisible absolute top-full left-0 z-10 mt-2 min-w-[10rem] rounded-2xl border border-sumi-400/10 bg-surface p-2 opacity-0 shadow-lg transition-all duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
               {link.children.map((child) => (
                 <li>
                   <a href={child.href} class="block rounded-xl px-4 py-2 text-sm font-medium text-sumi-900 transition-colors hover:bg-kuin-magenta/10 hover:text-kuin-magenta">
@@ -82,7 +82,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
     <!-- Trigger cluster: Leicht-Lesen switch, search, mobile menu — one
          shared pill with dividers instead of three separate floating
          circles, so it reads as one toolbar. -->
-    <div class="flex items-center rounded-full border border-sumi-400/10 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
+    <div class="flex items-center rounded-full border border-sumi-400/10 bg-surface shadow-sm transition-shadow duration-300 hover:shadow-md">
       <!-- Leicht Lesen Toggle -->
       <button id="ll-toggle" aria-pressed="false" class="group flex h-10 items-center gap-2.5 rounded-full px-3.5 transition-colors duration-300 sm:px-4">
         <span id="ll-track" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-sumi-400/25 transition-colors duration-300">
@@ -101,7 +101,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
             <path d="M11.2 6v5l3.3 2.2M11.2 11H7M13.6 12.5l2.2 6.5M9.5 22a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
           </svg>
         </button>
-        <div id="a11y-panel" hidden class="absolute top-full right-0 z-20 mt-3 w-72 rounded-2xl border border-sumi-400/10 bg-white p-5 shadow-xl">
+        <div id="a11y-panel" hidden class="absolute top-full right-0 z-20 mt-3 w-72 rounded-2xl border border-sumi-400/10 bg-surface p-5 shadow-xl">
           <p class="mb-3 text-xs font-bold tracking-widest text-sumi-400 uppercase">Barrierefreiheit</p>
 
           <div class="mb-4">
@@ -110,6 +110,21 @@ const links: { href: string; label: string; id: string; children?: { href: strin
               <button type="button" data-font-size-btn="0" class="a11y-size-btn flex-1 rounded-xl border border-sumi-400/20 py-2 text-sm font-semibold text-sumi-600 transition-colors hover:border-kuin-magenta/40">A</button>
               <button type="button" data-font-size-btn="1" class="a11y-size-btn flex-1 rounded-xl border border-sumi-400/20 py-2 text-base font-semibold text-sumi-600 transition-colors hover:border-kuin-magenta/40">A</button>
               <button type="button" data-font-size-btn="2" class="a11y-size-btn flex-1 rounded-xl border border-sumi-400/20 py-2 text-lg font-semibold text-sumi-600 transition-colors hover:border-kuin-magenta/40">A</button>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <p class="mb-2 text-sm font-medium text-sumi-900">Darstellung</p>
+            <div id="a11y-theme-group" class="flex gap-2" role="group" aria-label="Farbschema wählen">
+              <button type="button" data-theme-btn="system" class="theme-btn flex-1 rounded-xl border border-sumi-400/20 py-2 text-sm font-semibold text-sumi-600 transition-colors hover:border-kuin-magenta/40" aria-label="System">
+                <svg class="mx-auto h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
+              </button>
+              <button type="button" data-theme-btn="light" class="theme-btn flex-1 rounded-xl border border-sumi-400/20 py-2 text-sm font-semibold text-sumi-600 transition-colors hover:border-kuin-magenta/40" aria-label="Hell">
+                <svg class="mx-auto h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" /></svg>
+              </button>
+              <button type="button" data-theme-btn="dark" class="theme-btn flex-1 rounded-xl border border-sumi-400/20 py-2 text-sm font-semibold text-sumi-600 transition-colors hover:border-kuin-magenta/40" aria-label="Dunkel">
+                <svg class="mx-auto h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+              </button>
             </div>
           </div>
 
@@ -187,6 +202,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
 <script>
   import { leichtLesen } from '../store/leichtLesen';
   import { fontSize, highContrast, reduceMotion, type FontSizeStep } from '../store/accessibility';
+  import { theme, type Theme } from '../store/theme';
 
   const llToggle = document.getElementById('ll-toggle') as HTMLButtonElement;
   const llTrack = document.getElementById('ll-track') as HTMLSpanElement;
@@ -359,4 +375,29 @@ const links: { href: string; label: string; id: string; children?: { href: strin
   renderReduceMotion(reduceMotion.get());
   reduceMotion.listen(renderReduceMotion);
   motionToggle.addEventListener('click', () => reduceMotion.set(!reduceMotion.get()));
+
+  // Darstellung (System/Hell/Dunkel) — same shared `theme` store as
+  // Footer.astro's own copy of this control; scoped queries (this panel's
+  // own container id) so each component only ever touches its own
+  // buttons, not the other one's, even though both listen to the same
+  // atom and both end up writing the same cookie/attribute on click.
+  const themeButtons = Array.from(document.querySelectorAll('#a11y-theme-group [data-theme-btn]')) as HTMLButtonElement[];
+
+  function renderTheme(t: Theme) {
+    if (t === 'system') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', t);
+    themeButtons.forEach((btn) => {
+      const active = btn.dataset.themeBtn === t;
+      btn.classList.toggle('border-kuin-magenta', active);
+      btn.classList.toggle('bg-kuin-magenta/10', active);
+      btn.classList.toggle('text-kuin-dark', active);
+    });
+    document.cookie = `kuin-theme=${t}; path=/; max-age=31536000; samesite=lax`;
+  }
+  theme.set((root.getAttribute('data-theme') as Theme | null) ?? 'system');
+  renderTheme(theme.get());
+  theme.listen(renderTheme);
+  themeButtons.forEach((btn) => {
+    btn.addEventListener('click', () => theme.set(btn.dataset.themeBtn as Theme));
+  });
 </script>
