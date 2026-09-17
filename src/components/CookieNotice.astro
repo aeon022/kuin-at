@@ -1,0 +1,33 @@
+---
+// CookieNotice.astro — purely informational, not a consent manager: the
+// site only ever sets technically-necessary cookies (accessibility/
+// display preferences, see the Cookie-Richtlinie), so there is nothing to
+// opt in/out of — a fake "customize cookies" toggle UI would just be
+// theatre. One dismiss action, remembered via its own cookie (same
+// 1-year/functional pattern as every other cookie this site sets).
+// Server-rendered hidden-by-default from the cookie so there's no flash
+// of the banner on a repeat visit before JS runs.
+const seen = Astro.cookies.get('kuin-cookie-notice-seen')?.value === 'true';
+---
+{!seen && (
+  <div id="cookie-notice" role="region" aria-label="Cookie-Hinweis" class="fixed inset-x-0 bottom-0 z-50 border-t border-sumi-400/10 bg-surface/95 px-6 py-4 shadow-2xl backdrop-blur-md md:px-12">
+    <div class="mx-auto flex max-w-6xl flex-col items-center gap-4 sm:flex-row sm:justify-between">
+      <p class="text-sm text-sumi-600">
+        Wir verwenden nur technisch notwendige Cookies für Ihre Darstellungs- und Barrierefreiheitseinstellungen — keine Tracking- oder Werbe-Cookies.
+        {' '}<a href="/cookie-richtlinie-eu" class="font-medium text-magenta-dark underline hover:text-kuin-magenta">Mehr erfahren</a>
+      </p>
+      <button id="cookie-notice-dismiss" type="button" class="shrink-0 rounded-2xl bg-magenta-dark px-6 py-2.5 font-medium text-washi transition hover:-translate-y-1 hover:bg-kuin-magenta">
+        Verstanden
+      </button>
+    </div>
+  </div>
+)}
+
+<script>
+  const notice = document.getElementById('cookie-notice');
+  const dismiss = document.getElementById('cookie-notice-dismiss');
+  dismiss?.addEventListener('click', () => {
+    document.cookie = 'kuin-cookie-notice-seen=true; path=/; max-age=31536000; samesite=lax';
+    notice?.remove();
+  });
+</script>

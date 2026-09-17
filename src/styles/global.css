@@ -279,3 +279,10 @@ h1, h2, h3, h4 {
 .prose strong { font-weight: 700; }
 .prose blockquote { border-left: 3px solid var(--color-sumi-900); opacity: 0.7; padding-left: 1em; margin: 1em 0; font-style: italic; }
 .prose img { border-radius: 1rem; margin: 1em 0; max-width: 100%; }
+/* Added for the Cookie-Richtlinie's cookie-name/purpose/duration table —
+   .prose had no table rules at all before (nothing else used one), so a
+   raw <table> fell back to unstyled UA defaults. */
+.prose table { width: 100%; margin: 1em 0; border-collapse: collapse; font-size: 0.9em; }
+.prose th, .prose td { border: 1px solid var(--color-sumi-400); padding: 0.5em 0.75em; text-align: left; vertical-align: top; }
+.prose th { background: var(--color-sumi-100); font-weight: 700; }
+.prose code { background: var(--color-sumi-100); border-radius: 0.25em; padding: 0.15em 0.4em; font-size: 0.9em; }
