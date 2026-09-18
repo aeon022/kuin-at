@@ -18,7 +18,15 @@
 
   --color-sumi-100: #e6e6e6;
   --color-sumi-200: #cccccc;
-  --color-sumi-400: #858585;
+  /* #858585 was 3.50:1 on washi — fails WCAG AA's 4.5:1 for normal text
+     (PageSpeed/Lighthouse flagged it; this token is used bare as real
+     label text sitewide — dates, "Hell"/"Dunkel" captions, search
+     placeholder — not just at reduced opacity for borders/dividers,
+     where contrast rules don't apply the same way). #6b6b6b clears
+     4.5:1 with real margin (5.06:1) while staying visually a step
+     lighter than sumi-600 (8.41:1) — still reads as the "muted" tier,
+     just no longer a failing one. */
+  --color-sumi-400: #6b6b6b;
   --color-sumi-600: #4a4a4a;
   --color-sumi-900: #1c1c1c;
 

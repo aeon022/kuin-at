@@ -84,7 +84,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
          circles, so it reads as one toolbar. -->
     <div class="flex items-center rounded-full border border-sumi-400/10 bg-surface shadow-sm transition-shadow duration-300 hover:shadow-md">
       <!-- Leicht Lesen Toggle -->
-      <button id="ll-toggle" aria-pressed="false" class="group flex h-10 items-center gap-2.5 rounded-full px-3.5 transition-colors duration-300 sm:px-4">
+      <button id="ll-toggle" type="button" aria-pressed="false" aria-label="Leicht Lesen umschalten" class="group flex h-10 items-center gap-2.5 rounded-full px-3.5 transition-colors duration-300 sm:px-4">
         <span id="ll-track" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-sumi-400/25 transition-colors duration-300">
           <span id="ll-thumb" class="inline-block h-5 w-5 translate-x-0.5 transform rounded-full bg-white shadow transition-transform duration-300"></span>
         </span>
@@ -129,15 +129,15 @@ const links: { href: string; label: string; id: string; children?: { href: strin
           </div>
 
           <div class="mb-4 flex items-center justify-between gap-4">
-            <span class="text-sm font-medium text-sumi-900">Hoher Kontrast</span>
-            <button id="contrast-toggle" type="button" role="switch" aria-checked="false" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-sumi-400/25 transition-colors duration-300">
+            <span id="contrast-label" class="text-sm font-medium text-sumi-900">Hoher Kontrast</span>
+            <button id="contrast-toggle" type="button" role="switch" aria-checked="false" aria-labelledby="contrast-label" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-sumi-400/25 transition-colors duration-300">
               <span id="contrast-thumb" class="inline-block h-5 w-5 translate-x-0.5 transform rounded-full bg-white shadow transition-transform duration-300"></span>
             </button>
           </div>
 
           <div class="mb-4 flex items-center justify-between gap-4">
-            <span class="text-sm font-medium text-sumi-900">Bewegung reduzieren</span>
-            <button id="motion-toggle" type="button" role="switch" aria-checked="false" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-sumi-400/25 transition-colors duration-300">
+            <span id="motion-label" class="text-sm font-medium text-sumi-900">Bewegung reduzieren</span>
+            <button id="motion-toggle" type="button" role="switch" aria-checked="false" aria-labelledby="motion-label" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-sumi-400/25 transition-colors duration-300">
               <span id="motion-thumb" class="inline-block h-5 w-5 translate-x-0.5 transform rounded-full bg-white shadow transition-transform duration-300"></span>
             </button>
           </div>
