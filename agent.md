@@ -90,7 +90,10 @@ Rückblicke auf vergangene Walks.
 ## Deployment / Server-Betrieb
 
 Server: Plesk + Phusion Passenger, SSH-Alias `kuin-server` (`~/.ssh/config`,
-`37.252.190.170`). Drei vhosts unter `/var/www/vhosts/kuin.at/`:
+`37.252.190.170`, User **muss** die kuin.at-Subscription selbst sein, z.B.
+`kuin.at_9crx4ex6u0b` — ein anderer Plesk-User auf demselben Server (z.B. der
+für a83tech) hat keinen Zugriff, `/var/www/vhosts/kuin.at/` ist `drwx--x---`
+gegen andere Subscriptions). Drei vhosts unter `/var/www/vhosts/kuin.at/`:
 - `preview.kuin.at` — diese Astro-Site
 - `api.kuin.at` — `@a83/orbiter-admin` CLI (Orbiter-CMS-Backend/Admin-UI)
 - `kuin.at` (`httpdocs`) — noch die alte WordPress-Produktion, bis zum Go-Live
@@ -115,10 +118,16 @@ Server: Plesk + Phusion Passenger, SSH-Alias `kuin-server` (`~/.ssh/config`,
 - Node-Version über `.node-version` (Inhalt: `25`) vorgegeben; Plesk stellt Binaries unter
   `/opt/plesk/node/<version>/bin/node` bereit — **nicht** im PATH einer nicht-interaktiven
   SSH-Session (`PATH=/opt/plesk/node/25/bin:$PATH` voranstellen oder Binary direkt aufrufen).
-- `content.pod` (SQLite, gitignored) liegt direkt im Anwendungsroot, wird nicht über Git
-  transportiert — enthält Live-CMS-Daten, beim Deploy niemals überschreiben.
-- `.env` auf dem Server enthält nur `PUBLIC_ORBITER_ADMIN_URL` — kein `ORBITER_POD` (das
-  ist nur für die separate Admin-App relevant, siehe unten).
+- **Kein eigenes `content.pod` auf `preview.kuin.at` mehr.** `astro.config.mjs` liest
+  `orbiter({ pod: process.env.ORBITER_POD || './content.pod' })` — der Server-Build setzt
+  `ORBITER_POD` auf den absoluten Pfad von `api.kuin.at/content.pod` (siehe Deploy-Ablauf),
+  damit Site und Admin-UI dieselbe Live-DB lesen/schreiben. Grund: ursprünglich lief
+  `npm run migrate` offenbar in beiden App-Roots separat und erzeugte zwei unabhängige
+  Pods — Admin-Änderungen landeten nur in `api.kuin.at`s Kopie, die Site blieb tagelang
+  veraltet (behoben 2026-09-22, siehe `stage.md`-Log). `preview.kuin.at`'s lokaler Fallback
+  `./content.pod` existiert nur für lokale Entwicklung, nie auf dem Server.
+- `.env` auf dem Server enthält nur `PUBLIC_ORBITER_ADMIN_URL` — `ORBITER_POD` wird beim
+  Build inline gesetzt (nicht über `.env`), siehe Deploy-Ablauf Schritt 3.
 - Restart: `touch tmp/restart.txt` im Anwendungsroot (Standard-Passenger-Mechanismus).
 - Logs: `/var/www/vhosts/kuin.at/logs/preview.kuin.at/{error_log,access_ssl_log}` — der
   Apache-`error_log` zeigt i.d.R. **keine** Node/App-Stacktraces (nur ModSecurity/Proxy-
@@ -136,9 +145,10 @@ Server: Plesk + Phusion Passenger, SSH-Alias `kuin-server` (`~/.ssh/config`,
      --exclude 'tmp/' --exclude '.superpowers/' \
      ./ kuin-server:/var/www/vhosts/kuin.at/preview.kuin.at/
    ```
-3. Auf dem Server bauen:
+3. Auf dem Server bauen (`ORBITER_POD` zeigt auf die gemeinsame DB in `api.kuin.at`):
    ```
    ssh kuin-server "cd /var/www/vhosts/kuin.at/preview.kuin.at && \
+     ORBITER_POD=/var/www/vhosts/kuin.at/api.kuin.at/content.pod \
      PATH=/opt/plesk/node/25/bin:\$PATH /opt/plesk/node/25/bin/node \
      /opt/plesk/node/25/lib/node_modules/npm/bin/npm-cli.js run build"
    ```

@@ -12,5 +12,8 @@ export default defineConfig({
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   vite: { plugins: [tailwindcss()] },
-  integrations: [orbiter({ pod: './content.pod' })],
+  // Server build points this at api.kuin.at's content.pod directly (shared
+  // Orbiter DB, admin UI writes there) via ORBITER_POD env at build time —
+  // local dev falls back to its own ./content.pod.
+  integrations: [orbiter({ pod: process.env.ORBITER_POD || './content.pod' })],
 });
