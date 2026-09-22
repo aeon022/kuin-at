@@ -11,10 +11,15 @@ Spec: `agent.md`.
   embedded legacy WP media URLs, CMS-data hardening on all content routes).
   The site is being prepared for launch.
 - **Blockers:** none.
-- **Deployment note:** `content.pod` must be deployed alongside `dist/`. The
-  Node adapter loads it from `./content.pod` relative to the server process's
-  working directory, and the file is gitignored — so it is *not* carried by a
-  `git push`/CI checkout. Whoever deploys has to copy or mount it explicitly.
+- **Deployment note:** full server-ops writeup now lives in `agent.md`'s
+  "Deployment / Server-Betrieb" section (Plesk/Passenger, SSH alias
+  `kuin-server`, why the build must run on the server, restart mechanism,
+  the api.kuin.at admin app). Short version: `content.pod` is gitignored and
+  lives only on the server (never overwrite it on deploy); the site must be
+  **built on the server itself**, not locally + uploaded — Orbiter bakes the
+  resolved `pod` path into the compiled bundle at build time, so a locally
+  built `dist/` carries a dev-machine path that doesn't exist on the server
+  (caused a full-site outage on 2026-09-22, see Log).
 - **Execution mode:** subagent-driven (user chose this explicitly). No git worktree — repo had zero commits so there was nothing to isolate from; working directly in `/Users/gweiher/Sites/kuin.at` on branch `build/kuin-relaunch` (created in Task 1, not on a `main`/default branch).
 
 ## Key decisions (don't re-derive these — grounded in actual files, not guesses)
@@ -476,3 +481,40 @@ Spec: `agent.md`.
  - archive: the WP 'Archiv' page was an intro page only (migrated into Pages) — add individual year galleries manually
  - downloads: only KUIN-Manifest.pdf found as a clear download — verify others manually
 ```
+
+## Log (continued)
+
+- 2026-09-22 — Committed and pushed the unlisted `/documentation` editor
+  tutorial page (`2e91cd2`): renders `docs/tutorial-orbiter/README.md` via
+  Astro content import, downloadable PDF at
+  `public/documentation/kuin-orbiter-anleitung.pdf`, `Layout.astro` gained a
+  `noindex` prop for unlisted pages. Bundled with an unrelated dark-mode fix
+  for the Partner logo wall (greyscale+invert so white-background logos stay
+  visible against the dark surface — `.logo-wall-img` in `global.css`).
+- 2026-09-22 — Deployed that commit to `preview.kuin.at` for the first time
+  this session and hit a real incident: built `dist/` locally and rsynced it
+  up, which took the **entire live preview site down** (every page 500),
+  not just the new one. Root cause (traced via
+  `node_modules/@a83/orbiter-integration/src/index.js:284`): the Orbiter
+  integration resolves `pod: './content.pod'` against the Astro project root
+  **at build time** and bakes the resulting absolute path into the compiled
+  server bundle as a string literal — a `dist/` built on a Mac embeds
+  `/Users/.../kuin.at/content.pod`, which doesn't exist on the Linux server,
+  so `better-sqlite3` throws `Cannot open database because the directory
+  does not exist` on every Orbiter-backed page. Fixed by syncing source
+  instead of `dist/` and running `npm run build` on the server itself
+  (`PATH=/opt/plesk/node/25/bin:$PATH /opt/plesk/node/25/bin/node
+  .../npm-cli.js run build`), then `touch tmp/restart.txt`. Confirmed
+  `/`, `/partner`, `/documentation`, and the PDF all back to 200. Outage
+  window was a few minutes. Full deploy procedure now documented in
+  `agent.md` so this isn't rediscovered the hard way again.
+- 2026-09-22 — Attempted `claude_push` (separate `~/.claude` sync repo, not
+  this project) at the user's request; it hit a diverged-branch rebase with
+  real conflicts in append-only JSONL logs (shell history + a session
+  transcript file). Resolved the shell-history conflict via a union merge
+  (both branches' lines kept, no data lost). The second conflict, inside an
+  actual session transcript file, was blocked by the platform's own
+  "session transcript tampering" protection even after explicit user
+  approval — left that rebase in progress, mid-way (2/5 steps), for the user
+  to finish manually. Not part of this project's repo/deploy; noted here
+  only because it happened in the same session.
