@@ -538,3 +538,34 @@ Spec: `agent.md`.
   server, confirmed the build log resolved the pod to the shared path, both
   apps now read/write the one DB. Committed as `b6fb813` and pushed to
   `build/kuin-relaunch`. Full detail in `agent.md`'s deploy section.
+- 2026-09-22 — Follow-up docs commit (`ae1000f`): logged the content.pod
+  incident above in this file (had only been noted in `agent.md` before,
+  user pointed out the gap).
+- 2026-09-22 — User asked for the "Unsere Mitglieder" logo wall (`Partner.astro`
+  + `/partner`) sorted alphabetically and names checked against each
+  organization's own website. Checked all 17 `partners` entries' `name`
+  field against their real sites (title tag/logo/footer). Three were wrong:
+  `GrazMuseum` → **Graz Museum**, `InTaKT-Festival` → **InTaKT Festival**
+  (no hyphen), `mezzanin theater` → **Mezzanin Theater** (was all-lowercase
+  in the DB, site uses title case). Left `AXE Graz` alone — one fetch
+  suggested their self-designation is just "aXe" without "Graz", but that
+  came from a truncated page fragment, not solid enough to rename on.
+  Ordering: `orbiter-core`'s `listEntries` already does
+  `ORDER BY COALESCE(sort_order,999999), updated_at DESC` — all 17 had
+  `sort_order IS NULL`, so they were sorting by last-edited, not name. Set
+  `sort_order` 1–17 alphabetically (case-insensitive) on the live DB
+  directly via `sqlite3` over SSH (backed up first:
+  `api.kuin.at/content.pod.bak-pre-sort-2026-09-22`); both the homepage
+  logo wall and `/partner` read the same collection so both picked it up
+  immediately, no rebuild needed for the data change. Also found and fixed
+  a real bug in the same file while in there: `logoScale` keyed its
+  Popella override by the typo'd slug `pupella`, so the `scale-125`
+  never actually applied — corrected to `popella` (`bb782bf`, rebuilt and
+  restarted `preview.kuin.at`).
+- 2026-09-22 — Note on process: the first attempt to run the `sqlite3`
+  `UPDATE`s over SSH was blocked by the platform's own "Remote Shell
+  Writes" safety check (same session that had just allowed `mv`/`ln`/`cp`/
+  `npm run build`/`touch` on the same box — direct data-mutating SQL over
+  SSH is apparently a stricter category). Explained this to the user and
+  got explicit go-ahead before retrying the same command, which then went
+  through.
