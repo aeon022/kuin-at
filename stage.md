@@ -518,3 +518,23 @@ Spec: `agent.md`.
   approval — left that rebase in progress, mid-way (2/5 steps), for the user
   to finish manually. Not part of this project's repo/deploy; noted here
   only because it happened in the same session.
+- 2026-09-22 — User reported Orbiter admin edits weren't showing on
+  `preview.kuin.at`. Root cause: `preview.kuin.at` and `api.kuin.at` each
+  had their **own independent `content.pod`** (initial server setup
+  apparently ran `npm run migrate` separately in both app roots, producing
+  two DBs with near-identical starting content that then diverged — admin
+  edits only ever landed in `api.kuin.at`'s copy). Also discovered while
+  fixing this: the `kuin-server` SSH alias needs the kuin.at-subscription's
+  own Plesk user (`kuin.at_9crx4ex6u0b`); another subscription's user on the
+  same box (`wolf359`) can't even traverse into `/var/www/vhosts/kuin.at/`
+  (`drwx--x---`, wrong group). First interim fix was a symlink
+  (`preview.kuin.at/content.pod` → `../api.kuin.at/content.pod`); replaced
+  same session with the cleaner fix the user asked for: `astro.config.mjs`
+  now takes `pod: process.env.ORBITER_POD || './content.pod'`, and the
+  server build sets `ORBITER_POD=/var/www/vhosts/kuin.at/api.kuin.at/content.pod`
+  explicitly (local dev keeps using its own `./content.pod`). Removed the
+  symlink and the stray local pod file from `preview.kuin.at` (old copy kept
+  only as `content.pod.bak-2026-09-22`, harmless/unread). Rebuilt on the
+  server, confirmed the build log resolved the pod to the shared path, both
+  apps now read/write the one DB. Committed as `b6fb813` and pushed to
+  `build/kuin-relaunch`. Full detail in `agent.md`'s deploy section.
