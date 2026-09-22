@@ -1,0 +1,43 @@
+---
+// /documentation — Orbiter-Anleitung für Redakteur:innen. Bewusst unlisted:
+// nicht im Menü, nicht in der Suche (CommandPalette) und nicht in der
+// Sitemap, dazu `noindex`. Der Inhalt ist docs/tutorial-orbiter/README.md
+// (einzige Quelle, wird auch fürs PDF benutzt) — dort ändern, nicht hier.
+import Layout from '../layouts/Layout.astro';
+import { Content } from '../../docs/tutorial-orbiter/README.md';
+---
+<Layout
+  title="Anleitung: Inhalte ändern"
+  description="Anleitung für Redakteur:innen: Inhalte auf kuin.at mit Orbiter ändern."
+  noindex
+>
+  <main id="main" class="mx-auto max-w-4xl px-4 py-16 md:py-24">
+    <p class="mb-8" data-no-print>
+      <a
+        href="/documentation/kuin-orbiter-anleitung.pdf"
+        download
+        class="inline-flex items-center gap-2 rounded-2xl bg-magenta-dark px-6 py-3 font-medium text-washi transition hover:-translate-y-1 hover:bg-kuin-magenta"
+      >
+        Anleitung als PDF herunterladen
+      </a>
+    </p>
+    <article class="prose doc">
+      <Content />
+    </article>
+  </main>
+</Layout>
+
+<style is:global>
+  /* .prose caps at 65ch (fine for CMS text) — screenshots and tables need the full column. */
+  .doc { max-width: none; }
+  .doc h1 { font-size: 2.25rem; margin-top: 0; }
+  .doc hr { border: 0; border-top: 1px solid var(--color-sumi-400); margin: 2.5em 0; }
+  .doc img { border: 1px solid var(--color-sumi-400); }
+  /* .prose renders blockquotes faded + italic; these are warnings/tips and must stay fully readable. */
+  .doc blockquote { opacity: 1; font-style: normal; background: var(--color-sumi-100); border-radius: 0.5rem; padding: 0.75em 1em; }
+  .doc blockquote p:last-child { margin-bottom: 0; }
+  .doc pre { background: var(--color-sumi-100); border-radius: 0.5rem; padding: 0.75em 1em; margin: 1em 0; overflow-x: auto; }
+  .doc pre code { background: none; padding: 0; }
+  .doc ol, .doc ul { padding-left: 2em; }
+  .doc table { display: block; overflow-x: auto; }
+</style>

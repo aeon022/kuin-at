@@ -15,7 +15,7 @@ import CookieNotice from '../components/CookieNotice.astro';
 import { getMediaItem } from 'orbiter:media';
 import { ClientRouter } from 'astro:transitions';
 
-interface Props { title: string; description?: string; active?: string; image?: string }
+interface Props { title: string; description?: string; active?: string; image?: string; noindex?: boolean }
 const {
   title,
   description = 'Kultur Inklusiv Graz — Kunst und Kultur barrierefrei erleben.',
@@ -24,6 +24,8 @@ const {
   // wordmark, generated from the same CMS logo — swap per-page via the
   // `image` prop for pages that want their own (an event flyer, etc.).
   image,
+  // Unlisted pages (e.g. /documentation) — reachable by URL only, kept out of search results.
+  noindex = false,
 } = Astro.props;
 
 const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
@@ -55,7 +57,7 @@ const themeAttr = themeCookie === 'light' || themeCookie === 'dark' ? themeCooki
   <title>{title} · KUIN</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonicalURL} />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
 
   <!-- SVG primary (crisp at any size, modern browsers): the CMS wordmark
        directly. /favicon.ico and /apple-touch-icon.png are pre-cropped

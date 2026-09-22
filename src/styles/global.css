@@ -103,6 +103,19 @@ dialog::backdrop {
   filter: var(--logo-filter, none);
 }
 
+/* Partner/Mitglieder logo walls (Partner.astro, /partner): third-party logos
+   are dark marks on transparent or white backgrounds, so on the dark surface
+   several vanish (Die Brücke, Kunstuni, AXE, Oper Graz …). They already sit
+   in greyscale, so the same invert as the KUIN wordmark makes the whole wall
+   light-on-dark and consistent (white-background logos become dark tiles).
+   Only applies in dark mode (--logo-filter is only defined there); the
+   selector outranks the `hover:grayscale-0` utility, so hover-to-colour is
+   intentionally off in dark (colour + invert = wrong colours). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .logo-wall-img { filter: grayscale(1) var(--logo-filter); }
+}
+:root[data-theme="dark"] .logo-wall-img { filter: grayscale(1) var(--logo-filter); }
+
 .relative-container { position: relative; width: 100%; }
 
 body {
