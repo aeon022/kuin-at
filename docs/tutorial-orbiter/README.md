@@ -25,6 +25,7 @@ die Namen der Bereiche (Veranstaltungen, Partner …) sind deutsch.
 9. [„Leicht Lesen"-Texte](#9-leicht-lesen-texte)
 10. [Regeln und Stolperfallen](#10-regeln-und-stolperfallen)
 11. [Wenn etwas nicht klappt](#11-wenn-etwas-nicht-klappt)
+12. [Barrierefreiheit der Website](#12-barrierefreiheit-der-website)
 
 ---
 
@@ -286,3 +287,19 @@ Das Leicht-Lesen-Feld ist optional. Ist es leer, wird der Standardtext angezeigt
 | Sonst irgendetwas Komisches | Nichts weiter anklicken, einen Screenshot machen und Gerwin schicken. |
 
 **Ansprechperson:** Gerwin (Gerwin Weiher, <gerwin.weiher@gmail.com>)
+
+---
+
+## 12. Barrierefreiheit der Website
+
+Was kuin.at für welche Beeinträchtigung bietet (Menü **„Anzeige anpassen"** im Header, wird gespeichert):
+
+| Beeinträchtigung | Angebot |
+|---|---|
+| Sehbehinderung | Textgröße, hoher Kontrast, Hell/Dunkel |
+| Lernschwierigkeiten | „Leicht Lesen" |
+| Legasthenie, Konzentration | Lesehilfe (mehr Abstand zwischen Buchstaben, Wörtern, Zeilen) |
+| Vestibuläre Störungen, Epilepsie | Bewegung reduzieren |
+| Blind / Screenreader | Skip-Link, Landmarks, Alt-Texte, Kontakt im Footer |
+
+**Wichtig für dich als Redakteur:in:** Jedes inhaltliche Bild braucht einen Alt-Text (siehe Abschnitt 6). Ein Screenreader liest ihn vor. Sichtbare Platzhalter wie „ALT-TEXT TODO" dürfen nie stehen bleiben. Kurz beschreiben, was zu sehen ist, ohne „Bild von …".
