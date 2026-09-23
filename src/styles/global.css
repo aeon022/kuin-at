@@ -269,6 +269,10 @@ h1, h2, h3, h4 {
    paint time (not baked-in hex), so overriding them here cascades into
    every existing `text-sumi-600`/`bg-washi`/etc. utility already on the
    page — no separate "high contrast" class needed on each element. */
+/* Lesehilfe (Dyslexie/Konzentration/Low Vision): WCAG 1.4.12 text spacing. */
+:root[data-reading-aid] body { letter-spacing: 0.12em; word-spacing: 0.16em; line-height: 1.8; }
+:root[data-reading-aid] p, :root[data-reading-aid] li { line-height: 1.8; margin-bottom: 2em; }
+
 :root[data-contrast] {
   --color-washi: #ffffff;
   --color-sumi-100: #000000;
