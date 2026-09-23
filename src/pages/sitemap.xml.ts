@@ -18,6 +18,7 @@ const staticRoutes = [
   '/der-verein/vorstand',
   '/der-verein/team',
   '/kontakt',
+  '/barrierefreiheit',
   '/blog',
   '/events',
   '/downloads',
