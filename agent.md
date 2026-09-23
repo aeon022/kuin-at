@@ -87,6 +87,23 @@ Rückblicke auf vergangene Walks.
 - Keine "div-Suppe". Nutze das korrekte HTML-Tag für den jeweiligen Job.
 - Überlege bei jeder UI-Komponente zuerst, wie ein Screenreader sie vorlesen würde.
 
+## Zugänge (Server, Orbiter-Admin, Preview)
+
+Zugangsdaten liegen in **`.env.local`** (gitignored, per `.stignore` nicht gesynct) —
+Variablen `KUIN_SSH_HOST`, `KUIN_SSH_USER`, `KUIN_SSH_PASSWORD`. Keine Werte in
+agent.md/stage.md/Commits schreiben und `.env.local` nicht mit rsync hochladen
+(`--exclude '.env.local'`).
+
+| Was | Wo |
+|---|---|
+| Server (Plesk, Passenger) | SSH-Alias **`kuin-server`** (Key `~/.ssh/id_ed25519_kuin`, User = kuin.at-Subscription-User). Das Passwort in `.env.local` ist nur Fallback (Plesk-Panel/SFTP) |
+| `preview.kuin.at` | die Astro-Site, App-Root `/var/www/vhosts/kuin.at/preview.kuin.at/` (Deploy siehe unten) |
+| `api.kuin.at` | Orbiter-Backend/Admin-UI, App-Root `/var/www/vhosts/kuin.at/api.kuin.at/`; dort liegt die **Live-DB** `content.pod` |
+| `kuin.at` | noch alte WordPress-Produktion bis Go-Live |
+
+Schreibzugriffe auf die Live-DB nur nach Rückfrage beim User und mit vorherigem Backup
+(`cp content.pod content.pod.bak-<datum>`).
+
 ## Deployment / Server-Betrieb
 
 Server: Plesk + Phusion Passenger, SSH-Alias `kuin-server` (`~/.ssh/config`,
@@ -142,7 +159,7 @@ gegen andere Subscriptions). Drei vhosts unter `/var/www/vhosts/kuin.at/`:
    rsync -avz --exclude 'node_modules/' --exclude '.git/' --exclude '.astro/' \
      --exclude 'content.pod' --exclude '*.pod' --exclude 'import-source/' \
      --exclude 'orbiter-env.d.ts' --exclude '.env' --exclude '.env.example' \
-     --exclude 'tmp/' --exclude '.superpowers/' \
+     --exclude 'tmp/' --exclude '.superpowers/' --exclude '.env.local' \
      ./ kuin-server:/var/www/vhosts/kuin.at/preview.kuin.at/
    ```
 3. Auf dem Server bauen (`ORBITER_POD` zeigt auf die gemeinsame DB in `api.kuin.at`):
