@@ -1,0 +1,113 @@
+---
+// /datenschutzerklaerung-eu — Datenschutzerklärung. Statisch im Code, weil sie exakt
+// die Technik dieser Seite beschreibt (Astro + Orbiter, nur Funktions-Cookies, keine
+// Drittanbieter). Bei technischen Änderungen (neues Tracking, Einbettungen, Dienste) hier
+// und in /cookie-richtlinie-eu nachziehen. Route hat Vorrang vor [slug].astro / dem CMS-Eintrag.
+import Layout from '../layouts/Layout.astro';
+const stand = '23. September 2026';
+---
+<Layout title="Datenschutzerklärung" description="Welche Daten kuin.at verarbeitet, wozu und welche Rechte Sie haben.">
+  <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
+    <h1 class="mb-4 text-4xl font-bold text-sumi-900 md:text-5xl">Datenschutzerklärung</h1>
+    <p class="mb-10 text-sumi-600">Stand: {stand}</p>
+
+    <article class="prose">
+      <p>
+        Der Schutz Ihrer Daten ist uns wichtig. Wir halten uns an die Datenschutz-Grundverordnung (DSGVO)
+        und das österreichische Datenschutzgesetz (DSG). Diese Seite erklärt in einfachen Worten,
+        welche Daten wir verarbeiten. Kurz gesagt: <strong>Wir setzen keine Tracking- oder Werbedienste ein
+        und binden keine Inhalte von Drittanbietern ein.</strong>
+      </p>
+
+      <h2 id="verantwortlich">1. Verantwortlicher</h2>
+      <p>
+        Kultur Inklusiv (KUIN)<br />
+        c/o LebensGroß GmbH<br />
+        Conrad-von-Hötzendorf-Straße 37a, 8010 Graz<br />
+        ZVR: 1367918058<br />
+        E-Mail: <a href="mailto:office@kuin.at">office@kuin.at</a><br />
+        Telefon: +43 676 84 52 78 80 7
+      </p>
+
+      <h2 id="server">2. Besuch der Website (Server-Protokolle)</h2>
+      <p>
+        Beim Aufruf unserer Seiten speichert unser Webserver technisch notwendige Daten in Protokolldateien:
+        IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, übertragene Datenmenge, Statuscode sowie Browser- und
+        Betriebssystemangabe. Das ist für den sicheren und stabilen Betrieb notwendig (Fehlersuche,
+        Missbrauchsabwehr). Rechtsgrundlage ist unser berechtigtes Interesse am sicheren Betrieb
+        (Art. 6 Abs. 1 lit. f DSGVO). Die Daten werden nicht mit anderen Daten zusammengeführt und nicht für
+        Werbung oder Profilbildung genutzt.
+      </p>
+
+      <h2 id="hosting">3. Hosting</h2>
+      <p>
+        Die Website läuft auf einem von uns beauftragten Webserver. Der Hosting-Anbieter verarbeitet die
+        Daten aus Abschnitt 2 in unserem Auftrag, auf Grundlage einer Auftragsverarbeitung nach Art. 28 DSGVO.
+        Die Inhalte (Texte, Bilder, Termine) verwalten wir in unserem Redaktionssystem Orbiter. Es läuft auf
+        demselben Server; die Redaktion meldet sich dort mit einem eigenen Konto an.
+      </p>
+
+      <h2 id="kontakt">4. Kontaktformular und E-Mail</h2>
+      <p>
+        Wenn Sie uns über das Formular auf der <a href="/kontakt">Kontaktseite</a> schreiben, speichern wir
+        Ihren <strong>Namen</strong>, Ihre <strong>E-Mail-Adresse</strong> und Ihre <strong>Nachricht</strong>.
+        Zusätzlich wird Ihre <strong>IP-Adresse</strong> gespeichert, um Missbrauch und Spam zu erkennen.
+        Die Angaben liegen in unserem Redaktionssystem auf unserem Server und werden nur zur Bearbeitung
+        Ihrer Anfrage verwendet. Rechtsgrundlage ist die Anbahnung oder Erfüllung eines Vertrags bzw. Ihre
+        Anfrage (Art. 6 Abs. 1 lit. b DSGVO) und unser berechtigtes Interesse an der Beantwortung und am
+        Schutz vor Missbrauch (Art. 6 Abs. 1 lit. f DSGVO). Wir löschen Ihre Anfrage, sobald sie erledigt ist
+        und keine gesetzliche Aufbewahrungspflicht besteht. Wenn Sie uns per E-Mail schreiben, gilt dasselbe
+        für die E-Mail und Ihre Adresse.
+      </p>
+      <p>Die Angabe von Name, E-Mail und Nachricht ist nötig, damit wir antworten können. Ohne diese Angaben ist eine Antwort nicht möglich.</p>
+
+      <h2 id="cookies">5. Cookies und Speicherung im Browser</h2>
+      <p>
+        Wir setzen ausschließlich <strong>technisch notwendige Cookies</strong> ein. Sie speichern Ihre Einstellungen
+        für Darstellung und Barrierefreiheit und dass Sie den Cookie-Hinweis gelesen haben.
+        Es gibt keine Tracking-, Analyse- oder Werbe-Cookies. Weil diese Cookies für die gewünschte Funktion
+        erforderlich sind, brauchen wir dafür keine Einwilligung (§ 165 Abs. 3 TKG 2021). Alle Einzelheiten,
+        auch zu Namen und Laufzeit, stehen in der <a href="/cookie-richtlinie-eu">Cookie-Richtlinie</a>.
+      </p>
+
+      <h2 id="dritte">6. Keine Drittanbieter-Inhalte</h2>
+      <ul>
+        <li>Schriftarten liegen auf unserem eigenen Server. Es wird keine Verbindung zu Google Fonts oder anderen Schriftdiensten aufgebaut.</li>
+        <li>Wir binden keine Karten, Videos, Social-Media-Plugins oder Analyse-Skripte ein.</li>
+        <li>Links zu Instagram, Facebook und anderen externen Seiten sind normale Links. Erst wenn Sie darauf klicken, gelten die Datenschutzbestimmungen der jeweiligen Anbieter.</li>
+      </ul>
+
+      <h2 id="empfaenger">7. Weitergabe von Daten</h2>
+      <p>
+        Wir geben Ihre Daten nicht an Dritte weiter, außer an den Hosting-Anbieter als Auftragsverarbeiter
+        oder wenn wir gesetzlich dazu verpflichtet sind.
+      </p>
+
+      <h2 id="rechte">8. Ihre Rechte</h2>
+      <p>Sie haben das Recht auf:</p>
+      <ul>
+        <li>Auskunft über Ihre gespeicherten Daten (Art. 15 DSGVO),</li>
+        <li>Berichtigung unrichtiger Daten (Art. 16),</li>
+        <li>Löschung (Art. 17),</li>
+        <li>Einschränkung der Verarbeitung (Art. 18),</li>
+        <li>Datenübertragbarkeit (Art. 20),</li>
+        <li>Widerspruch gegen die Verarbeitung (Art. 21).</li>
+      </ul>
+      <p>
+        Wenden Sie sich dafür an <a href="mailto:office@kuin.at">office@kuin.at</a>.
+        Wenn Sie meinen, dass wir Ihre Daten rechtswidrig verarbeiten, können Sie sich bei der Aufsichtsbehörde beschweren:
+        Österreichische Datenschutzbehörde, Barichgasse 40–42, 1030 Wien,
+        <a href="https://www.dsb.gv.at" rel="noopener noreferrer">www.dsb.gv.at</a>.
+      </p>
+
+      <h2 id="sicherheit">9. Sicherheit</h2>
+      <p>Die Seite ist ausschließlich über eine verschlüsselte Verbindung (HTTPS) erreichbar.</p>
+
+      <h2 id="aenderungen">10. Änderungen</h2>
+      <p>
+        Wenn wir die Seite technisch verändern, zum Beispiel um eine Reichweitenmessung einzuführen,
+        passen wir diese Erklärung an. Der Stand steht oben auf der Seite.
+      </p>
+    </article>
+  </main>
+</Layout>
