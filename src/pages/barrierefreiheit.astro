@@ -1,0 +1,105 @@
+---
+// /barrierefreiheit — Erklärung zur Barrierefreiheit. Bewusst statisch im Code
+// (kein CMS-Eintrag): sie beschreibt Funktionen der Seite und ändert sich nur mit dem Code.
+// Fachliche Übersicht für das Team: docs/barrierefreiheit.md
+import Layout from '../layouts/Layout.astro';
+
+const stand = '23. September 2026';
+const angebote = [
+  ['Sehbehinderung', 'Textgröße in 3 Stufen, hoher Kontrast, Hell-/Dunkel-Darstellung, stark sichtbarer Fokusrahmen'],
+  ['Lernschwierigkeiten', '„Leicht Lesen“: gut lesbare Schrift, mehr Abstand, Texte in einfacher Sprache'],
+  ['Legasthenie, Konzentration', 'Lesehilfe: mehr Abstand zwischen Buchstaben, Wörtern und Zeilen'],
+  ['Vestibuläre Störungen, Epilepsie', 'Bewegung reduzieren: keine Animationen und Übergänge'],
+  ['Blindheit, Screenreader', 'Sprunglink zum Inhalt, klare Seitenstruktur, Alt-Texte, Kontakt im Seitenende'],
+  ['Motorische Einschränkungen', 'Vollständige Bedienung per Tastatur'],
+];
+---
+<Layout title="Erklärung zur Barrierefreiheit" description="Wie barrierefrei kuin.at ist: Einstellungen, Bedienung, bekannte Einschränkungen und Kontakt für Rückmeldungen.">
+  <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
+    <h1 class="mb-4 text-4xl font-bold text-sumi-900 md:text-5xl">Erklärung zur Barrierefreiheit</h1>
+    <p class="mb-10 text-sumi-600">Stand: {stand}</p>
+
+    <article class="prose">
+      <p>
+        KUIN – Kultur Inklusiv steht für Teilhabe. Deshalb soll auch unsere Website für alle Menschen
+        nutzbar sein, unabhängig von Beeinträchtigungen. Diese Seite erklärt, was wir dafür bieten,
+        wo wir noch nicht am Ziel sind und wie Sie uns Probleme melden können.
+      </p>
+
+      <h2 id="stand">1. Stand der Barrierefreiheit</h2>
+      <p>
+        Wir orientieren uns an den Web Content Accessibility Guidelines (WCAG) 2.1, Stufe AA.
+        Die Website ist <strong>teilweise konform</strong>: Wir haben sie automatisiert geprüft
+        und von einer Person mit dem Screenreader JAWS testen lassen (Rückmeldung des Blindenverbands, September 2026).
+        Ein vollständiges, unabhängiges Audit gab es bisher nicht. Wir setzen die Rückmeldungen laufend um.
+      </p>
+
+      <h2 id="einstellungen">2. Anzeige anpassen</h2>
+      <p>
+        Oben rechts im Seitenkopf finden Sie die Schaltfläche <strong>„Anzeige anpassen“</strong>
+        (Symbol: Person). Sie öffnet ein Menü mit diesen Einstellungen. Alle Einstellungen werden
+        in Ihrem Browser gespeichert (Cookie) und gelten auf allen Seiten. Mit der Taste <kbd>Esc</kbd> schließen Sie das Menü.
+      </p>
+      <ul>
+        <li><strong>Textgröße:</strong> normal, größer, am größten.</li>
+        <li><strong>Darstellung:</strong> System (folgt Ihrem Gerät), Hell oder Dunkel.</li>
+        <li><strong>Hoher Kontrast:</strong> starke Farbunterschiede, Links immer unterstrichen.</li>
+        <li><strong>Lesehilfe (mehr Abstand):</strong> größerer Abstand zwischen Buchstaben, Wörtern, Zeilen und Absätzen.</li>
+        <li><strong>Bewegung reduzieren:</strong> schaltet Animationen, Einblendungen und Seitenübergänge ab. Wir beachten auch die entsprechende Einstellung Ihres Betriebssystems.</li>
+      </ul>
+      <p>
+        Direkt daneben steht <strong>„Leicht Lesen“</strong>. Damit wechselt die Seite in eine gut lesbare Schrift
+        (Atkinson Hyperlegible) mit mehr Zeilenabstand und, wo vorhanden, Texten in einfacher Sprache.
+      </p>
+
+      <h2 id="uebersicht">3. Übersicht: Was wir wofür anbieten</h2>
+      <div class="overflow-x-auto">
+        <table>
+          <caption class="sr-only">Angebote nach Beeinträchtigung</caption>
+          <thead><tr><th scope="col">Beeinträchtigung</th><th scope="col">Angebot</th></tr></thead>
+          <tbody>
+            {angebote.map(([wer, was]) => <tr><th scope="row">{wer}</th><td>{was}</td></tr>)}
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="bedienung">4. Bedienung mit Tastatur und Screenreader</h2>
+      <ul>
+        <li>Mit <kbd>Tab</kbd> springen Sie von Element zu Element, mit <kbd>Umschalt</kbd> + <kbd>Tab</kbd> zurück. Der aktuelle Punkt ist durch einen dicken magentafarbenen Rahmen markiert.</li>
+        <li>Der erste Tab-Stopp auf jeder Seite ist der Link <strong>„Zum Hauptinhalt springen“</strong>. Er überspringt Kopfbereich und Menü.</li>
+        <li>Die Tastenkombination <kbd>Strg</kbd> + <kbd>K</kbd> (Mac: <kbd>Cmd</kbd> + <kbd>K</kbd>) oder die Taste <kbd>/</kbd> öffnet <strong>Menü und Suche</strong>. Mit den Pfeiltasten wählen Sie einen Eintrag, mit <kbd>Enter</kbd> öffnen Sie ihn, mit <kbd>Esc</kbd> schließen Sie.</li>
+        <li>Jede Seite hat genau eine Hauptüberschrift (Ebene 1) und darunter gegliederte Überschriften. Screenreader-Nutzer:innen können damit per Überschriften-Navigation springen.</li>
+        <li>Die Hauptbereiche sind als Landmarken ausgezeichnet: Kopfbereich, Hauptnavigation, Hauptinhalt, Seitenende. Kontaktdaten und rechtliche Links finden Sie im Seitenende.</li>
+        <li>Schalter (Kontrast, Lesehilfe, Bewegung) melden ihren Zustand als „ein“ oder „aus“ an den Screenreader.</li>
+        <li>Die Seite ist in Deutsch ausgezeichnet, damit Screenreader die richtige Aussprache wählen.</li>
+      </ul>
+
+      <h2 id="bilder">5. Bilder und Logos</h2>
+      <p>
+        Logos unserer Mitglieder tragen den Namen der Organisation als Beschreibung. Bei Fotos von Personen
+        ist es der Name. Inhaltliche Bilder in Beiträgen und im Archiv sollen eine Beschreibung bekommen;
+        das ist noch nicht überall erledigt (siehe Abschnitt 6).
+      </p>
+
+      <h2 id="einschraenkungen">6. Bekannte Einschränkungen</h2>
+      <ul>
+        <li><strong>Bildbeschreibungen in älteren Inhalten:</strong> Beim Umzug von der alten Website haben viele Bilder aus älteren Beiträgen und Archiveinträgen keine Beschreibung mitgebracht. Wir ergänzen sie laufend, beginnend mit den wichtigsten Seiten.</li>
+        <li><strong>PDF-Dokumente:</strong> Ältere Newsletter und Jahresberichte als PDF sind möglicherweise nicht barrierefrei aufbereitet (zum Beispiel ohne Struktur für Screenreader). Auf Anfrage senden wir Ihnen den Inhalt in einer zugänglichen Form.</li>
+        <li><strong>Externe Inhalte:</strong> Für verlinkte Seiten, etwa die Websites unserer Mitglieder oder soziale Netzwerke, sind wir nicht verantwortlich.</li>
+        <li><strong>Lange Startseite:</strong> Die Startseite bündelt mehrere Themen. Über die Überschriften und Sprunglinks kommen Sie gezielt zu einem Bereich; ausführliche Informationen über den Verein gibt es zusätzlich auf der eigenen Seite <a href="/der-verein">Über uns</a>.</li>
+      </ul>
+
+      <h2 id="feedback">7. Barriere gefunden? Sagen Sie es uns</h2>
+      <p>
+        Wenn Sie etwas nicht lesen, finden oder bedienen können, schreiben Sie uns.
+        Bitte nennen Sie die Seite, das Problem und, wenn möglich, Ihr Gerät, Ihren Browser und Ihre
+        Hilfstechnik (zum Beispiel „JAWS unter Windows 11“).
+      </p>
+      <ul>
+        <li>E-Mail: <a href="mailto:office@kuin.at">office@kuin.at</a></li>
+        <li>Ansprechperson: Anita Brodtrager</li>
+        <li>Oder über das <a href="/kontakt">Kontaktformular</a></li>
+      </ul>
+    </article>
+  </main>
+</Layout>

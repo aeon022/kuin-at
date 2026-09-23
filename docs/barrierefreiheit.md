@@ -23,9 +23,12 @@ und serverseitig als `data-*`-Attribute auf `<html>` gesetzt.
 - **Struktur/Themenbereiche:** Skip-Link und Kontakt im Footer vorhanden. „Über uns" bleibt bewusst auch auf der Startseite (eigene Seite `/der-verein` existiert zusätzlich).
 - **„Alt+text todo: Bild manuell beschreiben":** Migrations-Platzhalter war live sichtbar. Templates geben ihn nicht mehr aus (Logos → Name der Organisation, Fotos → Name, Blog-Cover → Titel).
 
+## Erklärung zur Barrierefreiheit
+
+Öffentliche Seite `/barrierefreiheit` (`src/pages/barrierefreiheit.astro`, statisch im Code), verlinkt aus Footer, A11y-Menü, Suche und Sitemap. Stand „teilweise konform“ (WCAG 2.1 AA, kein unabhängiges Audit). Bei neuen Funktionen dort nachziehen.
+
 ## Offen
 
 - Platzhalter `[ALT-TEXT TODO …]` steht noch in der DB (`_media`, 192 von 208 Einträgen) und in den Inhalten der Seiten `kuin`, `landing`, `social-proof` sowie im Archiv-Eintrag `3-spaziergang-2025`. Bereinigung per SQL auf der Live-DB, nach Rücksprache.
 - Echte Alt-Texte für inhaltliche Bilder (Redaktion, siehe Anleitung Abschnitt 6).
-- Erklärung zur Barrierefreiheit: verlinkt aktuell auf `/kontakt`, eigene Seite fehlt.
 - Erneuter Test mit JAWS durch den Blindenverband.
