@@ -6,3 +6,4 @@ content.pod
 import-source/
 orbiter-env.d.ts
 .env
+.env.local
