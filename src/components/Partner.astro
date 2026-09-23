@@ -52,10 +52,10 @@ const logoScale: Record<string, string> = {
       <li data-reveal style={`transition-delay: ${Math.min(i, 10) * 60}ms`} class="reveal-item flex h-14 w-40 shrink-0 items-center justify-center opacity-0 translate-y-3 transition-[opacity,transform] duration-500 ease-out">
         {p.website_url ? (
           <a href={p.website_url} target="_blank" rel="noopener noreferrer" title={p.name} class="flex h-full w-full items-center justify-center transition hover:-translate-y-1">
-            <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? p.name} class:list={['logo-wall-img max-h-full max-w-full object-contain grayscale transition hover:grayscale-0', logoScale[p.slug]]} />
+            <img src={p.logoMedia?.url} alt={p.name} class:list={['logo-wall-img max-h-full max-w-full object-contain grayscale transition hover:grayscale-0', logoScale[p.slug]]} />
           </a>
         ) : (
-          <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? p.name} class:list={['logo-wall-img max-h-full max-w-full object-contain grayscale', logoScale[p.slug]]} />
+          <img src={p.logoMedia?.url} alt={p.name} class:list={['logo-wall-img max-h-full max-w-full object-contain grayscale', logoScale[p.slug]]} />
         )}
       </li>
     ))}

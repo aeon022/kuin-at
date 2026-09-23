@@ -25,7 +25,7 @@ const network = resolved.filter((p) => !p.is_board_member);
         <ul class="grid grid-cols-2 gap-6 sm:grid-cols-4">
           {board.map((p) => (
             <li class="flex flex-col items-center gap-2 rounded-2xl bg-sumi-900/[0.03] p-6 transition hover:-translate-y-1">
-              <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="logo-wall-img h-16 object-contain grayscale transition hover:grayscale-0" />
+              <img src={p.logoMedia?.url} alt={p.name} class="logo-wall-img h-16 object-contain grayscale transition hover:grayscale-0" />
               <span class="text-sm">{p.name}</span>
             </li>
           ))}
@@ -39,8 +39,8 @@ const network = resolved.filter((p) => !p.is_board_member);
         {network.map((p) => (
           <li class="flex flex-col items-center gap-2 rounded-2xl bg-sumi-900/[0.03] p-6 transition hover:-translate-y-1">
             {p.website_url
-              ? <a href={p.website_url} target="_blank" rel="noopener noreferrer"><img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="logo-wall-img h-16 object-contain grayscale transition hover:grayscale-0" /></a>
-              : <img src={p.logoMedia?.url} alt={p.logoMedia?.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="logo-wall-img h-16 object-contain grayscale transition hover:grayscale-0" />}
+              ? <a href={p.website_url} target="_blank" rel="noopener noreferrer"><img src={p.logoMedia?.url} alt={p.name} class="logo-wall-img h-16 object-contain grayscale transition hover:grayscale-0" /></a>
+              : <img src={p.logoMedia?.url} alt={p.name} class="logo-wall-img h-16 object-contain grayscale transition hover:grayscale-0" />}
             <span class="text-sm">{p.name}</span>
           </li>
         ))}

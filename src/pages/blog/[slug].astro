@@ -29,7 +29,7 @@ const coverImage = data.cover_image ? await getMediaItem(data.cover_image) : nul
         {new Date(data.published_at).toLocaleDateString('de-AT', { year: 'numeric', month: 'long', day: 'numeric' })}
       </time>
       {coverImage && (
-        <img src={coverImage.url} alt={coverImage.alt ?? '[ALT-TEXT TODO: Bild manuell beschreiben]'} class="mb-6 rounded-2xl" />
+        <img src={coverImage.url} alt={data.title} class="mb-6 rounded-2xl" />
       )}
       <ProseSwap standard={data.content_standard} leicht={data.content_leicht_lesen} />
     </article>
