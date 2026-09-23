@@ -36,6 +36,7 @@ const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'tru
 const fontSizeStep = Astro.cookies.get('kuin-font-size')?.value;
 const contrastActive = Astro.cookies.get('kuin-contrast')?.value === 'true';
 const reduceMotionActive = Astro.cookies.get('kuin-reduce-motion')?.value === 'true';
+const readingAidActive = Astro.cookies.get('kuin-reading-aid')?.value === 'true';
 const themeCookie = Astro.cookies.get('kuin-theme')?.value;
 // 'system' is never rendered as an attribute — its whole point is "let the
 // prefers-color-scheme media query decide", same as no cookie at all.
@@ -49,6 +50,7 @@ const themeAttr = themeCookie === 'light' || themeCookie === 'dark' ? themeCooki
   data-font-size={fontSizeStep === '1' || fontSizeStep === '2' ? fontSizeStep : undefined}
   data-contrast={contrastActive ? 'true' : undefined}
   data-reduce-motion={reduceMotionActive ? 'true' : undefined}
+  data-reading-aid={readingAidActive ? 'true' : undefined}
   data-theme={themeAttr}
 >
 <head>

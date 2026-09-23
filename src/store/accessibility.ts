@@ -8,3 +8,4 @@ export type FontSizeStep = '0' | '1' | '2';
 export const fontSize = atom<FontSizeStep>('0');
 export const highContrast = atom(false);
 export const reduceMotion = atom(false);
+export const readingAid = atom(false);
