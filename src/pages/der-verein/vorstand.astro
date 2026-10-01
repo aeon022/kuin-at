@@ -6,9 +6,13 @@ import { parseEntries } from '../../lib/content';
 import PersonCard from '../../components/PersonCard.astro';
 import PlaceholderPersonCard from '../../components/PlaceholderPersonCard.astro';
 
+// Order as in the Vereinsregisterauszug; unknown roles go last (then by name).
+const ROLE_ORDER = ['Obfrau', 'Obfrau-Stellvertreter', 'Kassierin', 'Kassierin-Stellvertreterin', 'Schriftführerin', 'Schriftführerin-Stellvertreter'];
+const rank = (role: string) => { const i = ROLE_ORDER.indexOf(role); return i < 0 ? ROLE_ORDER.length : i; };
 const board = parseEntries('people', await getCollection('people'), PersonSchema)
   .map((e) => e.data)
-  .filter((p) => p.category === 'vorstand');
+  .filter((p) => p.category === 'vorstand')
+  .sort((a, b) => rank(a.role) - rank(b.role) || a.name.localeCompare(b.name, 'de'));
 ---
 <Layout title="Vorstand" active="ueber-uns">
   <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
