@@ -32,8 +32,8 @@ const PARTNERS = [
     name: 'Klavierhaus Fiedler & Sohn',
     website_url: 'https://www.klavierhaus-fiedler.at',
     is_board_member: false,
-    // transparent PNG derived from "# assets/logos/Klavierhaus Fiedler_LOGO samt Adresse_SW.jpg"
-    logoFile: 'import-source/mail/KlavierhausFiedler_Logo.png',
+    // transparent PNG derived from "# assets/logos/Klavierhaus Fiedler_LOGO samt Adresse_SW.jpg", address line cropped off (unreadable at wall size)
+    logoFile: 'import-source/mail/KlavierhausFiedler_Logo_ohne-Adresse.png',
     logoMime: 'image/png',
     logoAlt: 'Logo von Klavierhaus Fiedler & Sohn, Graz',
   },
