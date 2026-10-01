@@ -11,3 +11,5 @@ orbiter-env.d.ts
 # Roh-Assets (Design-Quellen, nicht ins Repo)
 \# assets/
 .DS_Store
+*.pod-shm
+*.pod-wal
