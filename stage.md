@@ -5,11 +5,11 @@ plan (read this first for any "why"): `docs/superpowers/plans/2026-09-14-kuin-re
 Spec: `agent.md`.
 
 ## Status
-- **Current task:** all 13 tasks complete. The final whole-branch code review
-  passed; its critical/important findings were fixed in this session (blog
-  500s, missing `.prose` typography, dead Leicht-Lesen toggle, missing footer,
-  embedded legacy WP media URLs, CMS-data hardening on all content routes).
-  The site is being prepared for launch.
+- **Current task:** launch prep. All 13 plan tasks done; content/design polish ongoing on
+  `build/kuin-relaunch` (last pass 2026-10-01: Orbiter update, events section, members/board,
+  alt texts, 404, nav). `kuin.at` itself still shows the static Coming-Soon page
+  (`coming-soon/`); the Astro site runs on `preview.kuin.at`. **Open before go-live:** see
+  "Open items" at the end of this file.
 - **Blockers:** none.
 - **Deployment note:** full server-ops writeup now lives in `agent.md`'s
   "Deployment / Server-Betrieb" section (Plesk/Passenger, SSH alias
@@ -162,7 +162,7 @@ Spec: `agent.md`.
 
 ## Remaining manual work (fills in as migration runs — empty until Task 9)
 
-- [ ] Fill in `[ALT-TEXT TODO]` placeholders across migrated media — 193 media
+- [x] ~~Fill in `[ALT-TEXT TODO]` placeholders~~ — done 2026-10-01 (`fix-alt-texts.ts`, 0 images without alt) — 193 media
       files have no alt text in the legacy WP data (full filename list in the
       migration review report below; rerun `npm run migrate` to reproduce).
 - [ ] Rewrite Oxygen-only pages flagged `needsReview` by `transformPage`.
@@ -171,7 +171,7 @@ Spec: `agent.md`.
       image-reference bugfix, plus Oper Graz, see below). Archive is still
       empty (genuinely no legacy source data — the old `archive` custom
       taxonomy was never populated).
-- [ ] **Events (2026-09-14):** 1 real event added —
+- [x] **Events:** the three autumn events were added 2026-10-01 (see log; 9.12. Oper has no time yet) — original note: 1 real event added —
       `events/kuin-unterwegs-in-graz-2026-09` ("KUIN – Unterwegs in Graz",
       25.9.2026, extracted from the flyer image
       `import-source/uploads/2026/07/KUIN-Programm-2026.jpg` via
@@ -186,7 +186,7 @@ Spec: `agent.md`.
       Add these via the Orbiter admin once the client confirms time/location.
 - [ ] Verify Downloads beyond `KUIN-Manifest.pdf` (only clear candidate found
       in `import-source/uploads/`).
-- [ ] **Partner-Logos (client mail, "DRINGEND"):** Oper Graz is **done** —
+- [x] **Partner-Logos:** all done 2026-10-01 (Oper Graz, Klavierhaus Fiedler & Sohn, Sunny’s Liederlade; aXe + Popella logos replaced) — Oper Graz was —
       added as a published `partners` entry (`oper-graz`) with the real logo
       from `import-source/mail/OperGraz_Logo_SCHWARZ_RGB.png` and alt text
       "Logo der Oper Graz" via `scripts/migrate/add-partner-logos.ts`.
@@ -194,25 +194,25 @@ Spec: `agent.md`.
       client has not supplied logo files for either. Once a file arrives, add
       it to the `PARTNERS` array in that script and re-run (it's idempotent),
       or add the entry by hand in the Orbiter admin.
-- [ ] **Jahresberichte:** `/archiv`'s third section renders the existing
+- [x] **Jahresberichte:** Jahresbericht 2025 is a `downloads` entry now (category normalised, see log). `/archiv`'s third section renders the existing
       `downloads` collection — the client adds each annual report as a
       Downloads entry via the Orbiter admin. If the volume ever grows past a
       handful, a dedicated `reports` collection (with a `year` field for
       sorting) would be worth a proper schema task.
-- [ ] **Galerie:** the client asked for Galerie to be removed. The new site
+- [x] **Galerie:** unpublished 2026-10-01 (draft, not deleted). The client asked for Galerie to be removed. The new site
       never linked it — `grep -rni "galerie" src/` returns nothing, and no
       migrated page/blog body links to it either. The migrated page entry
       `pages/galerie` is still **published**, so `/galerie` is reachable by
       direct URL and appears in Orbiter's generated sitemap. Deleting content
       is the client's call: unpublish it in the Orbiter admin to remove it
       fully (the historical content stays in the pod).
-- [ ] **Kontakt page (user request 2026-09-14):** add board members to the
+- [x] **Kontakt page:** board is on `/der-verein/vorstand` (real names, 2026-10-01). Original: add board members to the
       Partners collection with `is_board_member: true` so the live-pulled
       list on the Kontakt page (Task 12) isn't empty; add a board photo
       directly into the Kontakt page's rich-text content via the Orbiter
       admin. Contact block (Anita Brodtrager / office@kuin.at) is already
       hardcoded into the Kontakt route — no action needed there.
-- [ ] **Inline images in migrated blog post bodies have empty `alt=""`**
+- [x] **Inline images in migrated blog post bodies have empty `alt=""`** (fixed 2026-10-01)
       (found during Task 12's review, **corrected 2026-09-14 after the final
       review**) — these are WordPress Gutenberg `wp-block-image` figures
       embedded directly in a post's `content_standard` HTML, separate from
@@ -614,7 +614,7 @@ Spec: `agent.md`.
     `downloads/jahresbericht-2025` (Kategorie jahresbericht → /archiv + /downloads
     "Jahresberichte"), Blogpost unveröffentlicht.
   - **Unveröffentlicht** (draft, nicht gelöscht): pages/social-proof, pages/landing.
-    `/galerie`, `/veranstaltungen` (leere WP-Hüllen), `/kuin` sind noch live.
+    (`/galerie`, `/veranstaltungen`, `/kuin` followed later the same day, see below.)
   - **Bugfix:** `getEntry()` liefert auch Drafts — unveröffentlichte Seiten waren per
     Direkt-URL erreichbar (`/blog/kuin-spaziergang` Entwurf!). Die vier Detail-Routen
     (`[slug]`, `blog`, `events`, `archiv`) antworten bei status ≠ published jetzt mit 404.
@@ -629,4 +629,20 @@ Spec: `agent.md`.
   `src/pages/404.astro` (all `Astro.redirect('/404')` land there). Nav links now live in
   `src/lib/nav.ts`; Header and CommandPalette both read it, so palette "Seiten" = menu
   (+ Vorstand/Team) and the footer legal pages (Impressum, Datenschutz, Barrierefreiheit);
-  events and newsletters stay searchable. CMS pages are no longer auto-listed in the palette.
+  events and newsletters stay searchable. Published Orbiter pages that are not in the menu
+  are listed automatically too (mixed content: hard-coded routes + CMS pages).
+  `pages/kuin` (legacy logo + manifest link) unpublished as well.
+
+## Open items (2026-10-01)
+- **Go-live plan:** switch `kuin.at` from WordPress/Coming-Soon to the Astro app (vhost/DNS,
+  redirects for old WP URLs, sitemap, remove `noindex`, Impressum/Datenschutz/Cookie review).
+- **Oper Graz event (9.12.2026):** time + details missing (stored as 00:00 → shown without time).
+- **Leicht-Lesen texts** for the three new events (optional field in the admin).
+- **Board photos** (`people` entries still use the placeholder photo) — client uploads via admin;
+  `ROLE_ORDER` in `der-verein/vorstand.astro` must match the role strings.
+- **Newsletter list:** "Programm 2026" is a blog post listed under Newsletter (not a newsletter);
+  unpublish or keep? Sunny’s Liederlade has no website URL yet.
+- **Dark mode contrast** of the Sunny’s Liederlade tile is low (lilac tile → grey); alternative
+  logo variant if the client minds.
+- Remaining drafts: `blog/kuin-spaziergang` (137 photos, alt texts already set), two Rathaus drafts.
+- Housekeeping: `agent.md` still names the env vars `KUIN_SSH_*`; `.env.local` uses `PLESK_*`.
