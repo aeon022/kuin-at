@@ -19,16 +19,15 @@ const withLogos = await Promise.all(
 );
 const network = withLogos.filter((p) => p.logoMedia);
 
-// Per-logo scale overrides (client request 2026-09): Pupella's source file
-// has a lot of internal padding baked in, AXE Graz's has almost none — the
-// shared fixed box (h-14 w-40, see the big comment below) makes every logo
-// occupy the same *footprint*, but can't fix a source file's own internal
-// whitespace, so those two still read as visibly smaller/bigger than their
-// neighbours. A CSS scale transform on just these two nudges them back in
-// line without touching the shared box every other logo relies on.
+// Per-logo scale override (client request 2026-09): Popella's source file
+// has a lot of internal padding baked in — the shared fixed box (h-14 w-40,
+// see the big comment below) makes every logo occupy the same *footprint*,
+// but can't fix a source file's own internal whitespace, so it still reads
+// as visibly smaller than its neighbours. A CSS scale transform on just this
+// one nudges it back in line without touching the shared box every other logo
+// relies on. (AXE Graz had one too until its logo was replaced 2026-10-01.)
 const logoScale: Record<string, string> = {
   popella: 'scale-150',
-  'axe-graz': 'scale-50',
 };
 ---
 <section id="partner" class="breathing-element border-t border-sumi-400/10 pt-24">
