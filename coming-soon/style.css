@@ -1,0 +1,80 @@
+@font-face{font-family:"Atkinson Hyperlegible";font-weight:400;src:url(fonts/atkinson-hyperlegible-400-normal-latin.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";font-weight:700;src:url(fonts/atkinson-hyperlegible-700-normal-latin.woff2) format("woff2");font-display:swap}
+:root{
+  --orchid:#c864b9;      /* Flyer-Farbe */
+  --plum:#2a1327;
+  --ink:#231f20;
+  --paper:#fbf6fa;
+  --max:68rem;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font:400 1.125rem/1.6 "Atkinson Hyperlegible",system-ui,sans-serif;color:var(--ink);background:var(--paper)}
+a{color:inherit}
+:focus-visible{outline:3px solid #fff;outline-offset:3px;box-shadow:0 0 0 6px var(--ink)}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 1.25rem}
+.skip{position:absolute;left:-999px;top:0;background:#fff;color:#000;padding:.75rem 1rem;z-index:9}
+.skip:focus{left:0}
+
+/* Hero */
+.hero{background:var(--orchid);color:var(--ink);padding:2.5rem 0 5rem;overflow:hidden}
+.brand{display:flex;align-items:center;gap:.9rem;font-weight:700;font-size:1.75rem;line-height:1.05;margin:0 0 4rem}
+.brand::before{content:"{";font-size:4rem;font-weight:400;line-height:.8;color:#fff}
+.hero h1{font-size:clamp(3.2rem,12vw,8.5rem);line-height:.95;margin:0;font-weight:700;letter-spacing:-.02em}
+.brush{display:inline-block;background:#fff;padding:.1em .45em .15em .3em;margin-left:-.3em;
+  clip-path:polygon(0 4%,70% 0,100% 8%,92% 22%,100% 36%,90% 50%,99% 66%,88% 80%,96% 100%,10% 96%,2% 70%,0 40%)}
+.hero p.lead{max-width:38rem;font-size:clamp(1.2rem,2.6vw,1.6rem);font-weight:700;margin:2.5rem 0 0}
+.hero .cta{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem}
+.btn{display:inline-block;padding:.8rem 1.4rem;border:3px solid var(--ink);border-radius:999px;font-weight:700;text-decoration:none}
+.btn.fill{background:var(--ink);color:#fff}
+.btn:hover{background:#fff;color:var(--ink)}
+
+/* Sektionen */
+section{padding:4.5rem 0}
+h2{font-size:clamp(2rem,5vw,3.25rem);line-height:1.05;margin:0 0 .5rem}
+h2 small{display:block;font-size:1.1rem;font-weight:700;color:#8a2f7c;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.6rem}
+.sub{max-width:40rem;margin:0 0 2.5rem}
+
+/* Termine */
+#termine{background:#f3e1ef}
+.dank{max-width:44rem;font-size:1.25rem;margin:0 0 3rem}
+.termine{list-style:none;margin:0;padding:0;display:grid;gap:1.5rem}
+@media(min-width:60rem){.termine{grid-template-columns:repeat(3,1fr)}}
+.termine li{background:#fff;border-top:8px solid var(--orchid);padding:1.5rem;box-shadow:0 .5rem 1.5rem rgba(35,31,32,.1)}
+.termine time{display:block;font-weight:700;font-size:1.1rem;color:#8a2f7c}
+.termine h3{font-size:1.4rem;line-height:1.2;margin:.4rem 0 .25rem}
+.termine .ort{font-weight:700;margin:0 0 .75rem}
+.termine p{margin:0 0 .75rem}
+.termine a.mehr{font-weight:700}
+.fragen{margin-top:3rem;padding:1.5rem;background:var(--ink);color:#fff;border-radius:.25rem}
+.fragen a{color:var(--orchid);font-weight:700}
+/* MUT */
+.mut{display:grid;gap:2.5rem;grid-template-columns:1fr}
+@media(min-width:60rem){.mut{grid-template-columns:1.05fr 1fr;align-items:start}}
+.facts{list-style:none;margin:1.5rem 0;padding:1.25rem 1.5rem;background:var(--ink);color:#fff;border-radius:.25rem}
+.facts li{padding:.35rem 0}
+.facts b{color:var(--orchid)}
+.flyers{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.flyers a{display:block;box-shadow:0 .75rem 2rem rgba(35,31,32,.25);transition:transform .2s}
+.flyers a:hover{transform:translateY(-4px) rotate(-.6deg)}
+.flyers img{display:block;width:100%;height:auto}
+.flyers figcaption,.hint{font-size:.95rem;margin-top:.5rem;color:#4a4346}
+.konf{margin-top:1.5rem;padding-left:1rem;border-left:6px solid var(--orchid)}
+
+/* Newsletter */
+.news{background:var(--plum);color:#fff}
+.news h2 small{color:var(--orchid)}
+.viewer{width:100%;height:min(85vh,48rem);border:0;background:#fff;border-radius:.25rem;display:block}
+.news .btn{border-color:#fff;color:#fff}
+.news .btn.fill{background:var(--orchid);border-color:var(--orchid);color:var(--ink)}
+.news .btn:hover{background:#fff;color:var(--plum)}
+.bar{display:flex;flex-wrap:wrap;gap:.75rem;margin:0 0 1.25rem}
+.news .hint{color:#d9c5d6}
+
+/* Kontakt */
+footer{background:var(--orchid);padding:3rem 0}
+footer .wrap{display:flex;flex-wrap:wrap;gap:1.5rem 3rem;justify-content:space-between;align-items:end}
+footer a{font-weight:700;font-size:1.4rem}
+footer p{margin:.25rem 0 0}
+footer .social a{font-size:1.1rem}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
