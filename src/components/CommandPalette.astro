@@ -14,11 +14,18 @@ const staticRoutes = [
   ...legalLinks.map((l) => ({ title: l.label, href: l.href, type: 'legal' })),
 ];
 
+// Pages created in the Orbiter admin (mixed content: hard-coded routes + CMS pages) are searchable
+// automatically; anything already covered above (menu, legal) is skipped.
+const known = new Set(staticRoutes.map((r) => r.href));
+const cmsPages = (await getCollection('pages'))
+  .map((p) => ({ title: String(p.data.title), href: `/${p.slug}`, type: 'nav' }))
+  .filter((p) => !known.has(p.href));
+
 const posts = (await getCollection('blog')).map((p) => ({ title: String(p.data.title), href: `/blog/${p.slug}`, type: 'blog' }));
 
 const events = (await getCollection('events')).map((e) => ({ title: String(e.data.title), href: `/events/${e.slug}`, type: 'event' }));
 
-const index = [...staticRoutes, ...events, ...posts];
+const index = [...staticRoutes, ...cmsPages, ...events, ...posts];
 
 const META = {
   nav: { icon: '🧭', label: 'Seite' },
