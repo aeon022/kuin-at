@@ -2,11 +2,10 @@
  * One-off: add partners whose logo file arrived by mail rather than through
  * the legacy WordPress media library.
  *
- * Currently just Oper Graz (flagged "DRINGEND" by the client, outstanding
- * since June 2026, logo attached to the "Oper Graz ist Mitglied bei KUIN"
- * mail). Sunny's Liederlade and Klavierhaus Fiedler are also pending, but the
- * client has not supplied logo files for them — add an entry to PARTNERS below
- * once a file exists, then re-run.
+ * Oper Graz (flagged "DRINGEND" by the client, logo attached to the "Oper Graz
+ * ist Mitglied bei KUIN" mail) and Klavierhaus Fiedler & Sohn (logo from
+ * "# assets/logos"). Sunny's Liederlade is still pending — add an entry to
+ * PARTNERS below once a logo file exists, then re-run.
  *
  * Idempotent: skips a partner whose entry already exists.
  * Run: node --import tsx scripts/migrate/add-partner-logos.ts
@@ -16,7 +15,7 @@ import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 
-const POD_PATH = './content.pod';
+const POD_PATH = process.env.ORBITER_POD || './content.pod';
 
 const PARTNERS = [
   {
@@ -27,6 +26,16 @@ const PARTNERS = [
     logoFile: 'import-source/mail/OperGraz_Logo_SCHWARZ_RGB.png',
     logoMime: 'image/png',
     logoAlt: 'Logo der Oper Graz',
+  },
+  {
+    slug: 'klavierhaus-fiedler',
+    name: 'Klavierhaus Fiedler & Sohn',
+    website_url: 'https://www.klavierhaus-fiedler.at',
+    is_board_member: false,
+    // transparent PNG derived from "# assets/logos/Klavierhaus Fiedler_LOGO samt Adresse_SW.jpg"
+    logoFile: 'import-source/mail/KlavierhausFiedler_Logo.png',
+    logoMime: 'image/png',
+    logoAlt: 'Logo von Klavierhaus Fiedler & Sohn, Graz',
   },
 ];
 
