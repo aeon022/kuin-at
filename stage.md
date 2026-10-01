@@ -618,3 +618,10 @@ Spec: `agent.md`.
   - **Bugfix:** `getEntry()` liefert auch Drafts — unveröffentlichte Seiten waren per
     Direkt-URL erreichbar (`/blog/kuin-spaziergang` Entwurf!). Die vier Detail-Routen
     (`[slug]`, `blog`, `events`, `archiv`) antworten bei status ≠ published jetzt mit 404.
+- 2026-10-01 (evening) — Events/nav pass: `/events` + `/events/[slug]` redesigned (next-event
+  feature, month timeline, past events folded; single page with date block + facts + other
+  events). Menu: "Aktuell" replaced by a direct "Veranstaltungen" link (hover-only submenu was
+  invisible to users); Newsletter lives under Archiv (`/blog` highlights Archiv, `/aktuell`
+  still reachable by URL). Desktop nav now starts at `lg` (1024px) — at 768–1023 the 6 links
+  plus tools overflowed. Home page card: "Aktuelle Veranstaltung" + "Alle Veranstaltungen"
+  button. Newsletter Okt–Dez 2026 added as blog entry (`add-newsletter-2026-q4.ts`).

@@ -13,7 +13,8 @@
 // earlier version that just dumped two buttons into the page content
 // (client feedback: that's not a submenu). Mobile nav nests the same two
 // links under "Über uns" instead of a second disclosure mechanism. "Aktuell" has the
-// same kind of submenu (Veranstaltungen / Newsletter), per the client's "2 Kategorien".
+// ("Aktuell" was replaced by a direct "Veranstaltungen" link, 2026-10-01: a hover-only submenu
+// was not discoverable. Newsletters live under Archiv; /aktuell stays reachable by URL.)
 import { getMediaItem } from 'orbiter:media';
 const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 
@@ -21,13 +22,7 @@ interface Props { active?: string }
 const { active } = Astro.props;
 const links: { href: string; label: string; id: string; children?: { href: string; label: string }[] }[] = [
   { href: '/', label: 'Start', id: 'home' },
-  {
-    href: '/aktuell', label: 'Aktuell', id: 'events',
-    children: [
-      { href: '/events', label: 'Veranstaltungen' },
-      { href: '/blog', label: 'Newsletter' },
-    ],
-  },
+  { href: '/events', label: 'Veranstaltungen', id: 'events' },
   { href: '/archiv', label: 'Archiv', id: 'archiv' },
   { href: '/partner', label: 'Mitglieder', id: 'partner' },
   {
@@ -46,7 +41,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
   </a>
 
   <div class="flex items-center gap-3 lg:gap-4">
-    <nav id="main-nav" aria-label="Hauptnavigation" class="relative hidden gap-1 font-medium text-sumi-600 md:flex">
+    <nav id="main-nav" aria-label="Hauptnavigation" class="relative hidden gap-1 text-sm font-medium whitespace-nowrap text-sumi-600 lg:flex xl:text-base">
       <span id="nav-indicator" class="pointer-events-none absolute top-0 left-0 -z-10 h-full rounded-full bg-kuin-magenta/10 opacity-0 transition-[transform,width,opacity] duration-300 ease-out"></span>
       {links.map((link) => (
         link.children ? (
@@ -84,7 +79,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
       ))}
     </nav>
 
-    <div class="hidden h-6 w-px bg-sumi-400/30 md:block"></div>
+    <div class="hidden h-6 w-px bg-sumi-400/30 lg:block"></div>
 
     <!-- Trigger cluster: Leicht-Lesen switch, search, mobile menu — one
          shared pill with dividers instead of three separate floating
@@ -187,10 +182,10 @@ const links: { href: string; label: string; id: string; children?: { href: strin
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 10-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6v1.9H16l-.4 2.9h-2.1v7A10 10 0 0022 12z" /></svg>
       </a>
 
-      <div class="h-6 w-px bg-sumi-400/15 md:hidden"></div>
+      <div class="h-6 w-px bg-sumi-400/15 lg:hidden"></div>
 
       <!-- Mobile menu toggle -->
-      <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Hauptmenü öffnen" class="flex h-10 w-10 items-center justify-center rounded-full text-sumi-600 transition-colors duration-300 hover:text-kuin-magenta md:hidden">
+      <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Hauptmenü öffnen" class="flex h-10 w-10 items-center justify-center rounded-full text-sumi-600 transition-colors duration-300 hover:text-kuin-magenta lg:hidden">
         <svg id="nav-toggle-icon-open" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
         <svg id="nav-toggle-icon-close" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
       </button>
@@ -198,7 +193,7 @@ const links: { href: string; label: string; id: string; children?: { href: strin
   </div>
 </header>
 
-<nav id="mobile-nav" transition:persist aria-label="Hauptnavigation (mobil)" hidden class="border-b border-sumi-400/10 bg-washi px-6 py-4 md:hidden">
+<nav id="mobile-nav" transition:persist aria-label="Hauptnavigation (mobil)" hidden class="border-b border-sumi-400/10 bg-washi px-6 py-4 lg:hidden">
   <ul class="flex flex-col gap-1">
     {links.map((link) => (
       <li>

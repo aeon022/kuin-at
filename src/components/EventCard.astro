@@ -24,7 +24,7 @@ const timeRange = startDate && endDate ? formatTimeRange(startDate, endDate) : '
     {nextEvent && startDate ? (
       <>
         <div class="hide-on-ll mb-10 inline-flex items-center gap-3 rounded-full bg-kuin-magenta/10 px-4 py-1.5 text-xs font-bold tracking-widest text-kuin-dark uppercase">
-          <span class="h-1.5 w-1.5 rounded-full bg-kuin-magenta"></span> Aktueller Walk
+          <span class="h-1.5 w-1.5 rounded-full bg-kuin-magenta"></span> Aktuelle Veranstaltung
         </div>
 
         <article class="flex flex-col items-start gap-8 md:flex-row md:gap-16">
@@ -76,6 +76,10 @@ const timeRange = startDate && endDate ? formatTimeRange(startDate, endDate) : '
             </div>
           </div>
         </article>
+
+        <a href="/events" class="mt-10 inline-flex items-center gap-2 rounded-full border-2 border-kuin-magenta px-6 py-3 font-semibold text-kuin-dark transition-colors hover:bg-kuin-magenta hover:text-white">
+          Alle Veranstaltungen <span aria-hidden="true">→</span>
+        </a>
       </>
     ) : (
       <p class="text-center text-sumi-600"><em>Derzeit sind keine Veranstaltungen geplant.</em></p>

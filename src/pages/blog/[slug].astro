@@ -19,7 +19,7 @@ if (!parsed.success) {
 const data = parsed.data;
 const coverImage = data.cover_image ? await getMediaItem(data.cover_image) : null;
 ---
-<Layout title={data.title} active="events">
+<Layout title={data.title} active="archiv">
   <main id="main" class="mx-auto max-w-3xl space-y-6 px-4 py-16 md:py-24">
     <a href="/blog" class="inline-flex items-center gap-2 text-sm font-semibold text-sumi-600 transition-colors hover:text-kuin-magenta">
       ← Alle Beiträge
