@@ -4,8 +4,7 @@
  *
  * Oper Graz (flagged "DRINGEND" by the client, logo attached to the "Oper Graz
  * ist Mitglied bei KUIN" mail) and Klavierhaus Fiedler & Sohn (logo from
- * "# assets/logos"). Sunny's Liederlade is still pending — add an entry to
- * PARTNERS below once a logo file exists, then re-run.
+ * "# assets/logos") and Sunny’s Liederlade (logo from "# assets/logos").
  *
  * Idempotent: skips a partner whose entry already exists.
  * Run: node --import tsx scripts/migrate/add-partner-logos.ts
@@ -36,6 +35,16 @@ const PARTNERS = [
     logoFile: 'import-source/mail/KlavierhausFiedler_Logo_ohne-Adresse.png',
     logoMime: 'image/png',
     logoAlt: 'Logo von Klavierhaus Fiedler & Sohn, Graz',
+  },
+  {
+    slug: 'sunnys-liederlade',
+    name: 'Sunny’s Liederlade',
+    // no website supplied — left out rather than guessed
+    is_board_member: false,
+    // "# assets/logos/sunny-Logolilahintergrund.png" (full wordmark with sun, lilac tile), resized to 1600px
+    logoFile: 'import-source/mail/SunnysLiederlade_Logo.png',
+    logoMime: 'image/png',
+    logoAlt: 'Logo von Sunny’s Liederlade',
   },
 ];
 

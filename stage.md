@@ -569,3 +569,37 @@ Spec: `agent.md`.
   SSH is apparently a stricter category). Explained this to the user and
   got explicit go-ahead before retrying the same command, which then went
   through.
+- 2026-10-01 — Session wrap-up (all on `build/kuin-relaunch`, live DB changes each
+  backed up as `api.kuin.at/content.pod.bak-pre-<thema>-2026-10-01`):
+  - **Coming-Soon** (static, `coming-soon/`, served by the WP vhost via the
+    `.htaccess` block; no WP plugin involved, so nothing to deactivate): MUT
+    workshop + flyers, "Weitere Termine" (incl. Konferenz Save-the-Date PDF),
+    newsletter PDF viewer, Impressum. Deploy = plain rsync to
+    `httpdocs/coming-soon/`, no build. Raw design assets live in `# assets/`
+    (gitignored). Oxygen builder can't open while the block is active
+    (`?ct_builder=true` is rewritten to the static page) — by design.
+  - **Orbiter updated** on both apps: core 0.3.18, integration 0.3.20,
+    admin 0.3.85 (package.json, lock, `deploy/api-package.json`).
+    Pre-update DB backup via `sqlite3 .backup`. Integrity check ok afterwards.
+  - **Mitglieder:** Klavierhaus Fiedler & Sohn (logo without address line),
+    Sunny's Liederlade (lilac wordmark tile) added; aXe logo replaced (white-on-
+    transparent source → black mark, matches the site's dark-mark convention);
+    Popella viewBox cropped (logo only filled ~1/3 of its canvas; `logoScale`
+    overrides removed). Wall + `/partner` now always sort alphabetically in code.
+    Logos zoom 1.1x on hover/focus (not with reduced motion).
+  - **Vorstand** = the six placeholders replaced by the Vereinsregisterauszug
+    (06.02.2024) board; Astrid Kury → Angela Fink per client. Order in
+    `vorstand.astro` `ROLE_ORDER` must match the role strings typed in the admin.
+    Photos still placeholders (client uploads via admin).
+  - **Alt texts** (`scripts/migrate/fix-alt-texts.ts`): archive photos get
+    "… (Bild N von M)"; inline images in pages/blog bodies got real alts
+    (logos, flyer text transcribed, stock photos); `_media.alt` filled for
+    everything used (190 → 0 images without alt). Side effect fixed: the
+    legacy `landing` page pointed at the replaced AXE/Popella media.
+    `social-proof` is an untouched WP template page (Lorem ipsum, hotlinked
+    placeholders) — recommend unpublishing; so far only flagged.
+  - **Jahresberichte:** `DownloadSchema` now normalizes the free-text category
+    ("Jahresbericht", "jahresberichte " or a title containing "Jahresbericht"
+    → `jahresbericht`) so reports always land under /archiv + /downloads
+    "Jahresberichte".
+  - Untracked `content.pod-shm/-wal` (were committed by accident).
