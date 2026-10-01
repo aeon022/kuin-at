@@ -72,3 +72,12 @@ test('DownloadSchema validates a file entry as an Orbiter media-id string', () =
   });
   assert.ok(result.success);
 });
+
+test('DownloadSchema files Jahresberichte under "jahresbericht" however the admin typed it', () => {
+  const base = { file: 'abc' };
+  const cat = (d: object) => (DownloadSchema.parse({ ...base, ...d }) as { category?: string }).category;
+  assert.equal(cat({ title: 'x', category: 'Jahresbericht' }), 'jahresbericht');
+  assert.equal(cat({ title: 'x', category: ' Jahresberichte ' }), 'jahresbericht');
+  assert.equal(cat({ title: 'Jahresbericht 2024' }), 'jahresbericht');
+  assert.equal(cat({ title: 'Satzung', category: 'sonstiges' }), 'sonstiges');
+});
