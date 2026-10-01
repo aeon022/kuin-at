@@ -640,8 +640,8 @@ Spec: `agent.md`.
 - **Leicht-Lesen texts** for the three new events (optional field in the admin).
 - **Board photos** (`people` entries still use the placeholder photo) — client uploads via admin;
   `ROLE_ORDER` in `der-verein/vorstand.astro` must match the role strings.
-- **Newsletter list:** "Programm 2026" is a blog post listed under Newsletter (not a newsletter);
-  unpublish or keep? Sunny’s Liederlade has no website URL yet.
+- Sunny’s Liederlade has no website URL yet. (`blog/programm-2026`, not a newsletter, was
+  unpublished 2026-10-01 so it no longer appears in the newsletter lists.)
 - **Dark mode contrast** of the Sunny’s Liederlade tile is low (lilac tile → grey); alternative
   logo variant if the client minds.
 - Remaining drafts: `blog/kuin-spaziergang` (137 photos, alt texts already set), two Rathaus drafts.
