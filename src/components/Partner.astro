@@ -11,7 +11,9 @@ import { PartnerSchema } from '../schemas';
 import { parseEntries } from '../lib/content';
 
 const partners = parseEntries('partners', await getCollection('partners'), PartnerSchema)
-  .map((e) => ({ ...e.data, slug: e.slug }));
+  .map((e) => ({ ...e.data, slug: e.slug }))
+  // Alphabetical by name regardless of sort_order, so entries added later in the admin land in the right spot.
+  .sort((a, b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }));
 const withLogos = await Promise.all(
   partners.map(async (p) => ({ ...p, logoMedia: await getMediaItem(p.logo) })),
 );
