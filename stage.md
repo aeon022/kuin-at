@@ -603,3 +603,18 @@ Spec: `agent.md`.
     → `jahresbericht`) so reports always land under /archiv + /downloads
     "Jahresberichte".
   - Untracked `content.pod-shm/-wal` (were committed by accident).
+- 2026-10-01 (later) — Content pass on request:
+  - **Events angelegt** (`scripts/migrate/add-events-herbst-2026.ts`): MUT-Workshop-Tag
+    (24.10., "ab 09:30 Uhr", mit beiden Flyern als Bilder + Alt-Text), Konferenz (11.11.,
+    09:00–16:00, Save-the-Date-PDF als Orbiter-Media verlinkt), "Unterwegs in der Oper Graz"
+    (9.12., Uhrzeit noch nicht bekannt). Nur Quellenangaben aus Flyer/Save-the-Date — keine
+    erfundenen Zeiten: `src/lib/eventTime.ts` zeigt bei Start 00:00 gar keine Zeit und bei
+    Ende ≤ Start "ab HH:MM Uhr". Leicht-Lesen-Texte fehlen noch (optional im Admin).
+  - **Jahresbericht 2025** war ein Blogpost (erschien unter Archiv > Newsletter). Jetzt
+    `downloads/jahresbericht-2025` (Kategorie jahresbericht → /archiv + /downloads
+    "Jahresberichte"), Blogpost unveröffentlicht.
+  - **Unveröffentlicht** (draft, nicht gelöscht): pages/social-proof, pages/landing.
+    `/galerie`, `/veranstaltungen` (leere WP-Hüllen), `/kuin` sind noch live.
+  - **Bugfix:** `getEntry()` liefert auch Drafts — unveröffentlichte Seiten waren per
+    Direkt-URL erreichbar (`/blog/kuin-spaziergang` Entwurf!). Die vier Detail-Routen
+    (`[slug]`, `blog`, `events`, `archiv`) antworten bei status ≠ published jetzt mit 404.

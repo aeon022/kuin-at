@@ -5,7 +5,8 @@ import { ArchiveSchema } from '../../schemas';
 
 const { slug } = Astro.params;
 const entry = await getEntry('archive', slug!);
-if (!entry) return Astro.redirect('/404');
+// getEntry() also returns drafts (only the collection lists filter by status) — unpublished must 404.
+if (!entry || (entry as { status?: string }).status !== 'published') return Astro.redirect('/404');
 
 const parsed = ArchiveSchema.safeParse(entry.data);
 if (!parsed.success) {
