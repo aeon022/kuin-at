@@ -7,3 +7,7 @@ import-source/
 orbiter-env.d.ts
 .env
 .env.local
+
+# Roh-Assets (Design-Quellen, nicht ins Repo)
+\# assets/
+.DS_Store
