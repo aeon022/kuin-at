@@ -12,28 +12,15 @@
 // native CSS group-hover/group-focus-within, no JS/library — replacing an
 // earlier version that just dumped two buttons into the page content
 // (client feedback: that's not a submenu). Mobile nav nests the same two
-// links under "Über uns" instead of a second disclosure mechanism. "Aktuell" has the
-// ("Aktuell" was replaced by a direct "Veranstaltungen" link, 2026-10-01: a hover-only submenu
+// links under "Über uns" instead of a second disclosure mechanism. ("Aktuell" was replaced by a direct "Veranstaltungen" link, 2026-10-01: a hover-only submenu
 // was not discoverable. Newsletters live under Archiv; /aktuell stays reachable by URL.)
 import { getMediaItem } from 'orbiter:media';
+import { navLinks } from '../lib/nav';
 const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 
 interface Props { active?: string }
 const { active } = Astro.props;
-const links: { href: string; label: string; id: string; children?: { href: string; label: string }[] }[] = [
-  { href: '/', label: 'Start', id: 'home' },
-  { href: '/events', label: 'Veranstaltungen', id: 'events' },
-  { href: '/archiv', label: 'Archiv', id: 'archiv' },
-  { href: '/partner', label: 'Mitglieder', id: 'partner' },
-  {
-    href: '/der-verein', label: 'Über uns', id: 'ueber-uns',
-    children: [
-      { href: '/der-verein/vorstand', label: 'Vorstand' },
-      { href: '/der-verein/team', label: 'Team' },
-    ],
-  },
-  { href: '/kontakt', label: 'Kontakt', id: 'kontakt' },
-];
+const links = navLinks;
 ---
 <header transition:persist class="breathing-element sticky top-0 z-40 mx-auto flex w-full max-w-7xl items-center justify-between border-b border-sumi-400/10 bg-washi/90 px-6 py-6 backdrop-blur-md md:px-12 md:py-8">
   <a href="/" aria-label="Startseite" class="shrink-0 transition-opacity hover:opacity-80">
