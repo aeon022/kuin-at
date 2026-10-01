@@ -14,9 +14,9 @@
     "admin": "ORBITER_POD=\"$(pwd)/content.pod\" orbiter-admin"
   },
   "dependencies": {
-    "@a83/orbiter-admin": "^0.3.81",
-    "@a83/orbiter-core": "^0.3.14",
-    "@a83/orbiter-integration": "^0.3.18",
+    "@a83/orbiter-admin": "^0.3.85",
+    "@a83/orbiter-core": "^0.3.18",
+    "@a83/orbiter-integration": "^0.3.20",
     "@astrojs/node": "^11.1.5",
     "@nanostores/persistent": "^1.3.5",
     "@tailwindcss/vite": "^4.3.3",
