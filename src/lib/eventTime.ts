@@ -10,3 +10,24 @@ export function formatTimeRange(start: string | Date, end: string | Date): strin
   if (new Date(end).getTime() <= new Date(start).getTime()) return `ab ${s} Uhr`;
   return `${s}–${fmt.format(new Date(end))} Uhr`;
 }
+
+// Day / weekday / month in Vienna time (the server may run in another TZ).
+const part = (opts: Intl.DateTimeFormatOptions, d: Date) => new Intl.DateTimeFormat('de-AT', { timeZone: 'Europe/Vienna', ...opts }).format(d);
+
+export function dateParts(start: string | Date) {
+  const d = new Date(start);
+  return {
+    day: part({ day: 'numeric' }, d),
+    weekday: part({ weekday: 'long' }, d),
+    month: part({ month: 'long' }, d),
+    year: part({ year: 'numeric' }, d),
+    // sortable key for grouping by month
+    monthKey: part({ year: 'numeric', month: '2-digit' }, d),
+  };
+}
+
+// An event is over once its end has passed; open-ended ones (end <= start) count until the end of that day.
+export function isPast(start: string | Date, end: string | Date, now = Date.now()) {
+  const s = new Date(start).getTime(), e = new Date(end).getTime();
+  return (e > s ? e : s + 24 * 3600 * 1000) < now;
+}
