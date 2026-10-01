@@ -18,17 +18,6 @@ const withLogos = await Promise.all(
   partners.map(async (p) => ({ ...p, logoMedia: await getMediaItem(p.logo) })),
 );
 const network = withLogos.filter((p) => p.logoMedia);
-
-// Per-logo scale override (client request 2026-09): Popella's source file
-// has a lot of internal padding baked in — the shared fixed box (h-14 w-40,
-// see the big comment below) makes every logo occupy the same *footprint*,
-// but can't fix a source file's own internal whitespace, so it still reads
-// as visibly smaller than its neighbours. A CSS scale transform on just this
-// one nudges it back in line without touching the shared box every other logo
-// relies on. (AXE Graz had one too until its logo was replaced 2026-10-01.)
-const logoScale: Record<string, string> = {
-  popella: 'scale-150',
-};
 ---
 <section id="partner" class="breathing-element border-t border-sumi-400/10 pt-24">
   <h2 class="mb-12 text-center font-sans text-sm font-bold tracking-widest text-sumi-400 uppercase">Unsere Mitglieder</h2>
@@ -53,10 +42,10 @@ const logoScale: Record<string, string> = {
       <li data-reveal style={`transition-delay: ${Math.min(i, 10) * 60}ms`} class="reveal-item flex h-14 w-40 shrink-0 items-center justify-center opacity-0 translate-y-3 transition-[opacity,transform] duration-500 ease-out">
         {p.website_url ? (
           <a href={p.website_url} target="_blank" rel="noopener noreferrer" title={p.name} class="flex h-full w-full items-center justify-center transition hover:-translate-y-1 hover:scale-110 focus-visible:scale-110 motion-reduce:hover:scale-100">
-            <img src={p.logoMedia?.url} alt={p.name} class:list={['logo-wall-img max-h-full max-w-full object-contain grayscale transition hover:grayscale-0', logoScale[p.slug]]} />
+            <img src={p.logoMedia?.url} alt={p.name} class="logo-wall-img max-h-full max-w-full object-contain grayscale transition hover:grayscale-0" />
           </a>
         ) : (
-          <img src={p.logoMedia?.url} alt={p.name} class:list={['logo-wall-img max-h-full max-w-full object-contain grayscale', logoScale[p.slug]]} />
+          <img src={p.logoMedia?.url} alt={p.name} class="logo-wall-img max-h-full max-w-full object-contain grayscale" />
         )}
       </li>
     ))}
