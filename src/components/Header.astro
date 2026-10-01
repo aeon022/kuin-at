@@ -12,7 +12,8 @@
 // native CSS group-hover/group-focus-within, no JS/library — replacing an
 // earlier version that just dumped two buttons into the page content
 // (client feedback: that's not a submenu). Mobile nav nests the same two
-// links under "Über uns" instead of a second disclosure mechanism.
+// links under "Über uns" instead of a second disclosure mechanism. "Aktuell" has the
+// same kind of submenu (Veranstaltungen / Newsletter), per the client's "2 Kategorien".
 import { getMediaItem } from 'orbiter:media';
 const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 
@@ -20,7 +21,13 @@ interface Props { active?: string }
 const { active } = Astro.props;
 const links: { href: string; label: string; id: string; children?: { href: string; label: string }[] }[] = [
   { href: '/', label: 'Start', id: 'home' },
-  { href: '/aktuell', label: 'Aktuell', id: 'events' },
+  {
+    href: '/aktuell', label: 'Aktuell', id: 'events',
+    children: [
+      { href: '/events', label: 'Veranstaltungen' },
+      { href: '/blog', label: 'Newsletter' },
+    ],
+  },
   { href: '/archiv', label: 'Archiv', id: 'archiv' },
   { href: '/partner', label: 'Mitglieder', id: 'partner' },
   {
