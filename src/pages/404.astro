@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { navLinks } from '../lib/nav';
+
+Astro.response.status = 404;
+const links = navLinks.filter((l) => l.href !== '/');
+---
+<Layout title="Seite nicht gefunden" description="Diese Seite gibt es nicht (mehr)." noindex>
+  <main id="main" class="mx-auto max-w-3xl px-4 py-16 md:py-24">
+    <p class="font-serif text-9xl leading-none font-bold tracking-tighter text-kuin-magenta" aria-hidden="true">404</p>
+    <h1 class="mt-6 mb-4 text-4xl font-bold text-sumi-900 md:text-5xl">Diese Seite gibt es nicht</h1>
+    <p class="mb-10 max-w-xl text-lg text-sumi-600">
+      Die Adresse stimmt nicht, oder die Seite wurde verschoben oder entfernt. Mit der Suche
+      (Taste <kbd class="rounded bg-sumi-400/10 px-1.5 py-0.5 text-sm font-bold">/</kbd>) oder einem dieser Links geht es weiter:
+    </p>
+    <ul class="flex flex-wrap gap-3">
+      <li>
+        <a href="/" class="inline-block rounded-full bg-kuin-magenta px-6 py-3 font-semibold text-white transition-colors hover:bg-kuin-dark">Zur Startseite</a>
+      </li>
+      {links.map((l) => (
+        <li>
+          <a href={l.href} class="inline-block rounded-full border-2 border-sumi-400/30 px-6 py-3 font-semibold text-sumi-900 transition-colors hover:border-kuin-magenta hover:text-kuin-dark">{l.label}</a>
+        </li>
+      ))}
+    </ul>
+  </main>
+</Layout>

@@ -625,3 +625,8 @@ Spec: `agent.md`.
   still reachable by URL). Desktop nav now starts at `lg` (1024px) — at 768–1023 the 6 links
   plus tools overflowed. Home page card: "Aktuelle Veranstaltung" + "Alle Veranstaltungen"
   button. Newsletter Okt–Dez 2026 added as blog entry (`add-newsletter-2026-q4.ts`).
+- 2026-10-01 (night) — `pages/galerie` + `pages/veranstaltungen` unpublished (draft). New
+  `src/pages/404.astro` (all `Astro.redirect('/404')` land there). Nav links now live in
+  `src/lib/nav.ts`; Header and CommandPalette both read it, so palette "Seiten" = menu
+  (+ Vorstand/Team) and the footer legal pages (Impressum, Datenschutz, Barrierefreiheit);
+  events and newsletters stay searchable. CMS pages are no longer auto-listed in the palette.
