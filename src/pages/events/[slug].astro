@@ -3,7 +3,9 @@ import Layout from '../../layouts/Layout.astro';
 import { getEntry } from 'orbiter:collections';
 import { EventSchema } from '../../schemas';
 import ProseSwap from '../../components/ProseSwap.astro';
-import { formatTimeRange } from '../../lib/eventTime';
+import { getCollection } from 'orbiter:collections';
+import { parseEntries } from '../../lib/content';
+import { dateParts, formatTimeRange, isPast } from '../../lib/eventTime';
 
 const { slug } = Astro.params;
 const entry = await getEntry('events', slug!);
@@ -20,48 +22,80 @@ const data = parsed.data;
 const startDate = new Date(data.start_date);
 const endDate = new Date(data.end_date);
 const timeRange = formatTimeRange(data.start_date, data.end_date);
+const d = dateParts(data.start_date);
+const over = isPast(data.start_date, data.end_date);
+// up to two other upcoming events, to keep people moving through the programme
+const others = parseEntries('events', await getCollection('events'), EventSchema)
+  .filter((e) => e.slug !== slug && !isPast(e.data.start_date, e.data.end_date))
+  .sort((a, b) => new Date(a.data.start_date).getTime() - new Date(b.data.start_date).getTime())
+  .slice(0, 2)
+  .map((e) => ({ slug: e.slug, title: e.data.title, d: dateParts(e.data.start_date) }));
 ---
-<Layout title={data.title} active="events">
-  <main id="main" class="mx-auto max-w-6xl space-y-8 px-6 py-16 md:px-12 md:py-24">
+<Layout title={data.title} description={`${d.weekday}, ${d.day}. ${d.month} ${d.year}${timeRange ? `, ${timeRange}` : ''} – ${data.location}`} active="events">
+  <main id="main" class="mx-auto max-w-5xl px-4 py-16 md:py-24">
     <a href="/events" class="inline-flex items-center gap-2 text-sm font-semibold text-sumi-600 transition-colors hover:text-kuin-magenta">
-      ← Alle Veranstaltungen
+      <span aria-hidden="true">←</span> Alle Veranstaltungen
     </a>
 
-    <article class="rounded-[2.5rem] border border-sumi-400/10 bg-surface/50 p-8 backdrop-blur-sm md:p-12">
-      <div class="mb-8 inline-flex items-center gap-3 rounded-full bg-kuin-magenta/10 px-4 py-1.5 text-xs font-bold tracking-widest text-kuin-dark uppercase">
-        <span class="h-1.5 w-1.5 rounded-full bg-kuin-magenta"></span> Veranstaltung
-      </div>
-
-      <div class="flex flex-col items-start gap-8 md:flex-row md:gap-16">
-        <div class="shrink-0 pt-2">
-          <span class="block font-serif text-6xl font-bold tracking-tighter text-sumi-900">{startDate.getDate()}.</span>
-          <span class="mt-2 block font-sans text-sm font-semibold tracking-widest text-sumi-400 uppercase">
-            {startDate.toLocaleDateString('de-AT', { month: 'long', year: 'numeric' })}
-          </span>
+    <article class="mt-8 grid gap-10 lg:grid-cols-[17rem_1fr] lg:gap-16">
+      <!-- The date is the spine of this site's event pages: big numeral, then the facts people plan around. -->
+      <aside class="lg:sticky lg:top-8 lg:self-start" aria-label="Termin und Ort">
+        <div class="rounded-[2.5rem] bg-kuin-soft p-8">
+          <p class="sr-only"><time datetime={data.start_date}>{d.weekday}, {d.day}. {d.month} {d.year}</time></p>
+          <p class="font-serif text-8xl leading-none font-bold tracking-tighter text-sumi-900" aria-hidden="true">{d.day}.</p>
+          <p class="mt-3 text-lg font-semibold text-sumi-900">{d.weekday}</p>
+          <p class="text-sumi-600">{d.month} {d.year}</p>
         </div>
-
-        <div class="flex-1 space-y-6">
-          <h1 class="font-serif text-4xl font-bold text-sumi-900 md:text-5xl">{data.title}</h1>
-
-          <div class="flex items-center gap-3 font-medium text-sumi-900">
-            <svg class="h-5 w-5 shrink-0 text-kuin-magenta" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-            {data.location}
-          </div>
-          {timeRange && <p class="text-sm font-semibold tracking-widest text-sumi-400 uppercase">{timeRange}</p>}
-
-          {data.accessibility_features.length > 0 && (
-            <ul class="flex flex-wrap gap-2 border-t border-sumi-400/10 pt-6" aria-label="Barrierefreiheit">
-              {data.accessibility_features.map((f) => (
-                <li class="rounded-full border border-matcha-700/20 bg-matcha-100 px-4 py-1.5 text-sm font-semibold text-matcha-900">{f}</li>
-              ))}
-            </ul>
+        <dl class="mt-6 space-y-5">
+          {timeRange && (
+            <div>
+              <dt class="text-sm font-semibold text-sumi-600">Zeit</dt>
+              <dd class="font-medium text-sumi-900">{timeRange}</dd>
+            </div>
           )}
-
-          <div class="border-t border-sumi-400/10 pt-6">
-            <ProseSwap standard={data.description_standard} leicht={data.description_leicht_lesen} />
+          <div>
+            <dt class="text-sm font-semibold text-sumi-600">Ort</dt>
+            <dd class="font-medium text-sumi-900">{data.location}</dd>
           </div>
-        </div>
+          {data.accessibility_features.length > 0 && (
+            <div>
+              <dt class="mb-2 text-sm font-semibold text-sumi-600">Barrierefreiheit</dt>
+              <dd>
+                <ul class="flex flex-wrap gap-2">
+                  {data.accessibility_features.map((f) => (
+                    <li class="rounded-full border border-matcha-700/30 bg-matcha-100 px-3 py-1 text-sm font-semibold text-matcha-900">{f}</li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          )}
+        </dl>
+      </aside>
+
+      <div class="max-w-2xl">
+        <h1 class="mb-6 text-4xl leading-tight font-bold text-sumi-900 md:text-5xl">{data.title}</h1>
+        {over && (
+          <p class="mb-6 rounded-2xl border border-sumi-400/30 px-5 py-3 text-sumi-600" role="note">Diese Veranstaltung hat bereits stattgefunden.</p>
+        )}
+        <ProseSwap standard={data.description_standard} leicht={data.description_leicht_lesen} />
       </div>
     </article>
+
+    {others.length > 0 && (
+      <section class="mt-20 border-t border-sumi-400/20 pt-10" aria-labelledby="mehr">
+        <h2 id="mehr" class="mb-6 text-2xl font-bold text-sumi-900">Weitere Termine</h2>
+        <ul class="grid gap-4 sm:grid-cols-2">
+          {others.map((e) => (
+            <li class="group relative flex items-baseline gap-4 rounded-2xl bg-sumi-900/[0.03] p-5 transition hover:-translate-y-1">
+              <span class="font-serif text-4xl leading-none font-bold text-sumi-900 transition-colors group-hover:text-kuin-magenta" aria-hidden="true">{e.d.day}.</span>
+              <span>
+                <span class="block text-sm text-sumi-600">{e.d.month} {e.d.year}</span>
+                <a href={`/events/${e.slug}`} class="font-semibold text-sumi-900 after:absolute after:inset-0 after:content-[''] hover:text-kuin-dark">{e.title}</a>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
   </main>
 </Layout>
