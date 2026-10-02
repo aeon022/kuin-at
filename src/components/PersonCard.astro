@@ -6,6 +6,8 @@ import type { Person } from '../schemas';
 interface Props { person: Person }
 const { person } = Astro.props;
 const photo = await getMediaItem(person.photo);
+// Female academic title "Mag.a" — the "a" is set superscript (Mag.ᵃ), the data keeps plain "Mag.a".
+const title = person.name.match(/^(.*?Mag\.)a(\s.*)$/);
 ---
 <li class="flex flex-col items-center gap-3 rounded-2xl bg-sumi-900/[0.03] p-6 text-center transition hover:-translate-y-1">
   {photo && (
@@ -16,7 +18,7 @@ const photo = await getMediaItem(person.photo);
     />
   )}
   <div>
-    <p class="font-semibold text-sumi-900">{person.name}</p>
+    <p class="font-semibold text-sumi-900">{title ? <>{title[1]}<sup>a</sup>{title[2]}</> : person.name}</p>
     <p class="text-sm text-sumi-600">{person.role}</p>
   </div>
   {person.bio && <p class="text-sm text-sumi-600">{person.bio}</p>}
