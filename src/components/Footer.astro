@@ -15,62 +15,83 @@
 // rather than to /kontakt as a stand-in.
 import { getEntry } from 'orbiter:collections';
 import { getMediaItem } from 'orbiter:media';
+import { legalLinks } from '../lib/nav';
 
 const membershipForm = await getEntry('downloads', 'beitrittsformular-mitgliedschaft-2025');
 const membershipFile = membershipForm ? await getMediaItem(membershipForm.data.file as string) : null;
 const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 ---
-<footer transition:persist class="mt-24 border-t-8 border-kuin-magenta bg-matcha-100 pt-24 pb-12 text-sumi-900">
-  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 md:grid-cols-4 md:gap-8 md:px-12">
+<footer transition:persist class="mt-24 border-t-8 border-kuin-magenta bg-matcha-100 pt-16 pb-8 text-sumi-900 md:pt-24">
+  <div class="mx-auto max-w-6xl px-6 md:px-12">
 
-    <div class="space-y-6 md:col-span-2">
-      {logo && <img src={logo.url} alt="KUIN — Kultur Inklusiv" class="kuin-logo h-11 w-auto" />}
-      <p class="max-w-md font-sans font-light text-sumi-600">Das Netzwerk für barrierefreie Kulturerlebnisse in Graz.</p>
-
-      <div>
-        <p class="mb-2 text-xs font-bold tracking-widest text-sumi-400 uppercase">Darstellung</p>
-        <div id="footer-theme-group" class="inline-flex rounded-xl border border-sumi-900/15 bg-surface/60 p-1" role="group" aria-label="Farbschema wählen">
-          <button type="button" data-theme-btn="system" class="theme-btn rounded-lg px-3 py-1.5 text-sumi-600 transition-colors" aria-label="System">
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
-          </button>
-          <button type="button" data-theme-btn="light" class="theme-btn rounded-lg px-3 py-1.5 text-sumi-600 transition-colors" aria-label="Hell">
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" /></svg>
-          </button>
-          <button type="button" data-theme-btn="dark" class="theme-btn rounded-lg px-3 py-1.5 text-sumi-600 transition-colors" aria-label="Dunkel">
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
-          </button>
-        </div>
+    <!-- Statement + the two actions people come here for. -->
+    <div class="flex flex-col gap-8 border-b border-sumi-900/10 pb-12 md:flex-row md:items-end md:justify-between md:pb-16">
+      <p class="max-w-2xl font-sans text-4xl leading-tight font-bold text-sumi-900 md:text-6xl">Kultur für alle.<br /><span class="text-kuin-magenta">Gemeinsam.</span></p>
+      <div class="flex flex-wrap gap-3">
+        {membershipFile && (
+          <a href={membershipFile.url} class="rounded-full bg-kuin-magenta px-6 py-3 font-sans font-semibold text-white transition hover:bg-kuin-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kuin-magenta">Mitglied werden</a>
+        )}
+        <a href="mailto:office@kuin.at" class="rounded-full border border-sumi-900/25 px-6 py-3 font-sans font-semibold text-sumi-900 transition hover:border-kuin-magenta hover:text-kuin-magenta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kuin-magenta">office@kuin.at</a>
       </div>
     </div>
 
-    <div class="space-y-4">
-      <h3 class="font-sans text-sm font-bold tracking-widest text-magenta-dark uppercase">Kontakt</h3>
-      <ul class="space-y-2 font-sans font-light text-sumi-600">
-        <li><a href="mailto:office@kuin.at" class="transition-colors hover:text-kuin-magenta">office@kuin.at</a></li>
-        {membershipFile && (
-          <li class="pt-4"><a href={membershipFile.url} class="transition-colors hover:text-kuin-magenta">Mitglied werden</a></li>
-        )}
-        <li><a href="https://www.graz.at/cms/ziel/15214947/DE/" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-kuin-magenta">Inklusionskalender Graz<span class="sr-only"> (öffnet in neuem Tab)</span> ↗</a></li>
-      </ul>
-      <div class="flex gap-2 pt-2">
+    <div class="grid grid-cols-1 gap-12 py-12 md:grid-cols-4 md:gap-8">
+
+      <div class="space-y-6 md:col-span-2">
+        {logo && <img src={logo.url} alt="KUIN — Kultur Inklusiv" class="kuin-logo h-11 w-auto" />}
+        <p class="max-w-md font-sans font-light text-sumi-600">Das Netzwerk für barrierefreie Kulturerlebnisse in Graz.</p>
+        <div class="flex gap-2">
         <a href="https://www.instagram.com/kulturinklusiv/" target="_blank" rel="noopener noreferrer" aria-label="KUIN auf Instagram" class="flex h-9 w-9 items-center justify-center rounded-full border border-sumi-900/15 text-sumi-600 transition-colors hover:border-kuin-magenta/40 hover:text-kuin-magenta">
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" /></svg>
         </a>
         <a href="https://www.facebook.com/profile.php?id=61593917724559" target="_blank" rel="noopener noreferrer" aria-label="KUIN auf Facebook" class="flex h-9 w-9 items-center justify-center rounded-full border border-sumi-900/15 text-sumi-600 transition-colors hover:border-kuin-magenta/40 hover:text-kuin-magenta">
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 10-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6v1.9H16l-.4 2.9h-2.1v7A10 10 0 0022 12z" /></svg>
         </a>
+        </div>
+      </div>
+
+      <nav aria-label="Entdecken" class="space-y-4">
+        <h3 class="font-sans text-sm font-bold tracking-widest text-magenta-dark uppercase">Entdecken</h3>
+        <ul class="space-y-2 font-sans font-light text-sumi-600">
+          <li><a href="/events" class="transition-colors hover:text-kuin-magenta">Veranstaltungen</a></li>
+          <li><a href="/archiv" class="transition-colors hover:text-kuin-magenta">Archiv</a></li>
+          <li><a href="/partner" class="transition-colors hover:text-kuin-magenta">Mitglieder</a></li>
+          <li><a href="/der-verein" class="transition-colors hover:text-kuin-magenta">Über uns</a></li>
+          <li><a href="https://www.graz.at/cms/ziel/15214947/DE/" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-kuin-magenta">Inklusionskalender Graz<span class="sr-only"> (öffnet in neuem Tab)</span> ↗</a></li>
+        </ul>
+      </nav>
+
+      <div class="space-y-4">
+        <h3 class="font-sans text-sm font-bold tracking-widest text-magenta-dark uppercase">Kontakt</h3>
+        <ul class="space-y-2 font-sans font-light text-sumi-600">
+          <li><a href="/kontakt" class="transition-colors hover:text-kuin-magenta">Kontaktformular</a></li>
+          <li><a href="mailto:office@kuin.at" class="transition-colors hover:text-kuin-magenta">office@kuin.at</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Slim bottom bar: © + legal links + theme switch. -->
+    <div class="flex flex-col gap-4 border-t border-sumi-900/10 pt-6 md:flex-row md:items-center md:justify-between">
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-sumi-600">
+        <span class="text-sumi-400">© {new Date().getFullYear()} Kultur Inklusiv</span>
+        {legalLinks.map((l) => <a href={l.href} class="transition-colors hover:text-kuin-magenta">{l.label}</a>)}
+      </div>
+    <div>
+      <p class="sr-only font-bold tracking-widest text-sumi-400 uppercase">Darstellung</p>
+      <div id="footer-theme-group" class="inline-flex rounded-xl border border-sumi-900/15 bg-surface/60 p-1" role="group" aria-label="Farbschema wählen">
+        <button type="button" data-theme-btn="system" class="theme-btn rounded-lg px-3 py-1.5 text-sumi-600 transition-colors" aria-label="System">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
+        </button>
+        <button type="button" data-theme-btn="light" class="theme-btn rounded-lg px-3 py-1.5 text-sumi-600 transition-colors" aria-label="Hell">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" /></svg>
+        </button>
+        <button type="button" data-theme-btn="dark" class="theme-btn rounded-lg px-3 py-1.5 text-sumi-600 transition-colors" aria-label="Dunkel">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+        </button>
       </div>
     </div>
-
-    <div class="space-y-4">
-      <h3 class="font-sans text-sm font-bold tracking-widest text-magenta-dark uppercase">Rechtliches</h3>
-      <ul class="space-y-2 font-sans font-light text-sumi-600">
-        <li><a href="/impressum" class="transition-colors hover:text-kuin-magenta">Impressum</a></li>
-        <li><a href="/datenschutzerklaerung-eu" class="transition-colors hover:text-kuin-magenta">Datenschutz</a></li>
-        <li><a href="/barrierefreiheit" class="transition-colors hover:text-kuin-magenta">Barrierefreiheit</a></li>
-      </ul>
     </div>
-
   </div>
 </footer>
 
