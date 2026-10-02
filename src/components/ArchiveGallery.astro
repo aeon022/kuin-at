@@ -3,7 +3,7 @@
 // with the real `archive` collection entry (scripts/migrate/add-archive-entry.ts):
 // one of the 137 real WordPress photos from "3. Spaziergang" (12. Jänner
 // 2025, see that entry's description for the real recap), linking through
-// to the full recap at blog/kuin-spaziergang. Reading from the same
+// to the full recap at /archiv/<slug>. Reading from the same
 // collection /archiv itself uses, rather than hardcoding media ids here,
 // so editing the entry via the Orbiter admin updates both places.
 // Was a 6-photo grid (client: went 2 -> 6 to fill the row evenly) — client
@@ -16,10 +16,18 @@ import { getCollection } from 'orbiter:collections';
 import { ArchiveSchema } from '../schemas';
 import { parseEntries } from '../lib/content';
 
-const [latest] = parseEntries('archive', await getCollection('archive'), ArchiveSchema)
-  .map((e) => e.data)
-  .sort((a, b) => b.year - a.year);
-const [cover] = latest?.images ?? [];
+const [latestEntry] = parseEntries('archive', await getCollection('archive'), ArchiveSchema)
+  .sort((a, b) => b.data.year - a.data.year);
+const latest = latestEntry?.data;
+const href = latestEntry ? `/archiv/${latestEntry.slug}` : '/archiv';
+// Preview photo: the group walking through a Graz street (photo 49 of 137 of the 2025 walk) instead of
+// whatever is first in the gallery. Falls back to the first image if the entry changes.
+const COVER_URL = '/orbiter/media/49cf8046-ce77-4d7d-a12b-c4524027a5d3';
+const COVER_ALT = 'Eine Gruppe geht gemeinsam durch eine Grazer Gasse, darunter Menschen im Rollstuhl.';
+const first = latest?.images?.[0];
+const cover = latest?.images?.find((i) => i.image_url === COVER_URL)
+  ? { image_url: COVER_URL, alt_text: COVER_ALT }
+  : first;
 ---
 <section id="archiv" class="breathing-element space-y-12">
   <header class="relative-container h-[80px]">
@@ -29,12 +37,12 @@ const [cover] = latest?.images ?? [];
 
   {latest && cover && (
     <>
-      <a href="/blog/kuin-spaziergang" class="group block max-w-md cursor-pointer">
+      <a href={href} class="group block max-w-md cursor-pointer">
         <div class="relative aspect-[4/3] overflow-hidden rounded-2xl bg-sumi-100">
           <img src={cover.image_url} alt={cover.alt_text} class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0" />
         </div>
       </a>
-      <a href="/blog/kuin-spaziergang" class="group -mt-4 block">
+      <a href={href} class="group -mt-4 block">
         <div class="hide-on-ll">
           <h3 class="font-sans text-lg font-semibold text-sumi-900 group-hover:text-kuin-magenta">{latest.title}</h3>
           <p class="text-sm text-sumi-400">{latest.year}</p>
