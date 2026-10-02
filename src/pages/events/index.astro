@@ -26,9 +26,16 @@ const months = later.reduce<{ key: string; label: string; items: typeof later }[
   <main id="main" class="mx-auto max-w-5xl px-4 py-16 md:py-24">
     <h1 class="mb-4 text-4xl font-bold text-sumi-900 md:text-5xl">Veranstaltungen</h1>
     <ProseSwap
-      class="mb-14 max-w-2xl text-lg text-sumi-600"
+      class="mb-8 max-w-2xl text-lg text-sumi-600"
       standard="<p>Zwei Mal im Jahr organisiert Kultur Inklusiv den „Walk“. Dieser Rundgang ist als inklusiver kultureller Spaziergang durch die Stadt gestaltet. Er umfasst mehrere Ausstellungen und Veranstaltungen. Wir erforschen gemeinsam den Stadtraum und machen kulturelle Barrierefreiheit aktiv erlebbar.</p>"
       leicht="<p>Wir machen zwei Mal im Jahr einen Spaziergang. Wir nennen ihn „Walk“. Wir gehen gemeinsam durch Graz und besuchen Ausstellungen. Dabei schauen wir genau: Können hier alle Menschen gut mitmachen?</p>"
+    />
+
+    <!-- Requested by the Inklusionskoordination der Stadt Graz; wording from their mail. -->
+    <ProseSwap
+      class="mb-14 max-w-2xl rounded-2xl border border-sumi-400/30 px-6 py-4 text-sumi-600"
+      standard="<p>Einen Überblick zu Veranstaltungsangeboten rund ums Thema Inklusion und für Menschen mit Behinderungen finden Sie im <a href='https://www.graz.at/cms/ziel/15214947/DE/' target='_blank' rel='noopener noreferrer'>Veranstaltungskalender Inklusion der Stadt Graz<span class='sr-only'> (öffnet in neuem Tab)</span> ↗</a>.</p>"
+      leicht="<p>Die Stadt Graz hat einen Kalender. Dort finden Sie viele Veranstaltungen für Menschen mit Behinderungen. <a href='https://www.graz.at/cms/ziel/15214947/DE/' target='_blank' rel='noopener noreferrer'>Zum Kalender der Stadt Graz<span class='sr-only'> (öffnet in neuem Tab)</span> ↗</a></p>"
     />
 
     {next ? (
