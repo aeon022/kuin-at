@@ -28,6 +28,7 @@ Der ursprüngliche Plan `docs/superpowers/plans/2026-09-14-kuin-relaunch.md` ist
 - [ ] Entwürfe entscheiden: `blog/kuin-spaziergang` (137 Fotos, Alt-Texte gesetzt), zwei Rathaus-Entwürfe
 
 ### Technik / Aufräumen
+- [ ] GitHub-Repo auf **privat** stellen oder beim GitHub-Support alte Commits entfernen lassen (Historie wurde am 04.10. umgeschrieben, alte SHAs sind auf GitHub evtl. noch abrufbar)
 - [ ] Dunkelmodus-Kontrast der Sunny’s-Liederlade-Kachel (lila → grau); ggf. andere Logo-Variante
 - [ ] SSH-Key-Login zum Server einrichten (aktuell Passwort aus `.env.local`)
 - [ ] `deploy/apply-*.sh` sind Einmal-Skripte; bei Bedarf in Doku/`agent.md` aufnehmen
@@ -65,6 +66,7 @@ Der ursprüngliche Plan `docs/superpowers/plans/2026-09-14-kuin-relaunch.md` ist
 - [x] Orbiter auf aktuelle Versionen aktualisiert
 
 ### Seit 02.10.
+- [x] Git-Historie bereinigt (04.10.): Server-IP, Subscription-User, Key-Name, fremde Accounts und versehentlich committete `content.pod-shm/-wal` entfernt; Details jetzt in der gitignorierten `SERVER.local.md`; Backup `~/kuin-at-pre-rewrite-2026-10-04.bundle`
 - [x] `agent.md`/`stage.md` bereinigt: Server-IP, Subscription-User, Key-Name und fremde Accountnamen entfernt (Repo ist öffentlich); Variablen heißen jetzt `PLESK_*`
 - [x] Link auf die Stadt-Graz-Inklusionsveranstaltungen (Sticker auf `/events`, Link im Footer)
 - [x] Footer neu: Statement, Buttons, „Entdecken“-Spalte, schlanke Fußleiste mit Rechtlichem und Darstellung-Umschalter
