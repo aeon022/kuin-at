@@ -18,7 +18,8 @@ Der ursprüngliche Plan `docs/superpowers/plans/2026-09-14-kuin-relaunch.md` ist
 - [ ] Mit der Stadt Graz abstimmen, dass der Kalender-Hinweis (Sticker auf `/events`) so passt
 
 ### Vor dem Go-live — Empfehlungen (04.10.)
-- [ ] **Backups:** auf dem Server liegen 17 alte Kopien von `content.pod` (~1,2 GB) — auf die letzten ~5 aufräumen; tägliches **externes** Backup einrichten (Plesk-Backup-Manager), aktuell liegt das einzige Backup auf demselben Server
+- [x] Alte DB-Sicherungen auf dem Server aufgeräumt (04.10.): 19 gelöscht, behalten `bak-pre-people-2026-10-02` und `bak-pre-fix-edi-haberl-2026-10-04` (1,5 GB → 201 MB)
+- [ ] **Externes Backup** einrichten (Plesk-Backup-Manager und/oder regelmäßiger Download der Live-DB auf den Mac) — aktuell liegt jede Sicherung auf demselben Server wie die Live-DB
 - [ ] **301-Weiterleitungen** der alten WordPress-URLs (13 Seiten, 25 Beiträge), Sitemap in der Search Console anmelden
 - [ ] **Formulare testen** (Kontakt, Newsletter → `api.kuin.at`): Spam-Schutz/Rate-Limit, Mails kommen an
 - [ ] **Admin `api.kuin.at` absichern:** starkes Passwort, nur nötige Konten, Zugriff nach Möglichkeit einschränken
