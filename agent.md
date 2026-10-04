@@ -94,6 +94,9 @@ Variablen `PLESK_HOST`, `PLESK_USER`, `PLESK_PASSWORD`. Keine Werte in
 agent.md/stage.md/Commits schreiben und `.env.local` nicht mit rsync hochladen
 (`--exclude '.env.local'`).
 
+Server-IP, SSH-User und Key-Name stehen **nicht** hier (öffentliches Repo), sondern in der lokalen,
+gitignorierten Datei **`SERVER.local.md`** im Projektroot.
+
 | Was | Wo |
 |---|---|
 | Server (Plesk, Passenger) | SSH-Alias **`kuin-server`** (Key- oder Passwort-Login, User = kuin.at-Subscription-User; Details in `~/.ssh/config`). Das Passwort in `.env.local` ist nur Fallback (Plesk-Panel/SFTP) |
@@ -107,7 +110,7 @@ Schreibzugriffe auf die Live-DB nur nach Rückfrage beim User und mit vorherigem
 ## Deployment / Server-Betrieb
 
 Server: Plesk + Phusion Passenger, SSH-Alias `kuin-server` (`~/.ssh/config`,
-Host/User stehen nur dort und in `.env.local`; der User **muss** die kuin.at-Subscription
+Host/User/Key-Name stehen nur in `SERVER.local.md` (gitignored, nicht im Repo), `~/.ssh/config` und `.env.local`; der User **muss** die kuin.at-Subscription
 selbst sein — ein anderer Plesk-User auf demselben Server hat keinen Zugriff, `/var/www/vhosts/kuin.at/` ist `drwx--x---`
 gegen andere Subscriptions). Drei vhosts unter `/var/www/vhosts/kuin.at/`:
 - `preview.kuin.at` — diese Astro-Site
@@ -158,7 +161,7 @@ gegen andere Subscriptions). Drei vhosts unter `/var/www/vhosts/kuin.at/`:
    rsync -avz --exclude 'node_modules/' --exclude '.git/' --exclude '.astro/' \
      --exclude 'content.pod' --exclude '*.pod' --exclude 'import-source/' \
      --exclude 'orbiter-env.d.ts' --exclude '.env' --exclude '.env.example' \
-     --exclude 'tmp/' --exclude '.superpowers/' --exclude '.env.local' \
+     --exclude 'tmp/' --exclude '.superpowers/' --exclude '.env.local' --exclude 'SERVER.local.md' \
      ./ kuin-server:/var/www/vhosts/kuin.at/preview.kuin.at/
    ```
 3. Auf dem Server bauen (`ORBITER_POD` zeigt auf die gemeinsame DB in `api.kuin.at`):

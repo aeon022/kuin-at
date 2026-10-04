@@ -19,7 +19,7 @@ rsync -az -e "${SSH[*]}" \
   --exclude 'node_modules/' --exclude '.git/' --exclude '.astro/' --exclude 'dist/' \
   --exclude 'content.pod' --exclude '*.pod' --exclude 'import-source/' \
   --exclude 'orbiter-env.d.ts' --exclude '.env' --exclude '.env.example' \
-  --exclude 'tmp/' --exclude '.superpowers/' --exclude '.env.local' --exclude '.claude/' \
+  --exclude 'tmp/' --exclude '.superpowers/' --exclude '.env.local' --exclude 'SERVER.local.md' --exclude '.claude/' \
   ./ kuin-server:$APP/
 
 "${SSH[@]}" kuin-server "cd $APP && \

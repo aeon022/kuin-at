@@ -13,3 +13,6 @@ orbiter-env.d.ts
 .DS_Store
 *.pod-shm
 *.pod-wal
+
+# Serverdetails (Repo ist öffentlich)
+SERVER.local.md
