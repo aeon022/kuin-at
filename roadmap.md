@@ -19,7 +19,8 @@ Der ursprüngliche Plan `docs/superpowers/plans/2026-09-14-kuin-relaunch.md` ist
 
 ### Vor dem Go-live — Empfehlungen (04.10.)
 - [x] Alte DB-Sicherungen auf dem Server aufgeräumt (04.10.): 19 gelöscht, behalten `bak-pre-people-2026-10-02` und `bak-pre-fix-edi-haberl-2026-10-04` (1,5 GB → 201 MB)
-- [ ] **Externes Backup** einrichten (Plesk-Backup-Manager und/oder regelmäßiger Download der Live-DB auf den Mac) — aktuell liegt jede Sicherung auf demselben Server wie die Live-DB
+- [x] Externes Backup per Skript (04.10.): `bash deploy/pull-pod.sh` lädt die Live-DB nach `~/Backups/kuin/` (prüft Integrität, behält die letzten 10)
+- [ ] Pull-Backup regelmäßig ausführen (z. B. wöchentlich/vor jeder DB-Änderung) und zusätzlich Plesk-Backup-Manager einrichten — gilt auch für den Medienordner, falls auf `local`/`s3` umgestellt wird
 - [ ] **301-Weiterleitungen** der alten WordPress-URLs (13 Seiten, 25 Beiträge), Sitemap in der Search Console anmelden
 - [ ] **Formulare testen** (Kontakt, Newsletter → `api.kuin.at`): Spam-Schutz/Rate-Limit, Mails kommen an
 - [ ] **Admin `api.kuin.at` absichern:** starkes Passwort, nur nötige Konten, Zugriff nach Möglichkeit einschränken

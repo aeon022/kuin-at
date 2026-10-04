@@ -72,6 +72,8 @@ Strukturelle oder gesammelte Inhaltsänderungen laufen über idempotente Skripte
    Das Skript legt `content.pod.bak-pre-<skript>-<datum>` an, führt es auf dem Server aus und startet die App neu.
 3. Skript committen (Doku, was wann geändert wurde).
 
+**Externes Backup:** `bash deploy/pull-pod.sh` lädt die Live-DB (nur Download) nach `~/Backups/kuin/`, prüft sie und behält die letzten 10 Kopien. Vor größeren Änderungen und regelmäßig ausführen.
+
 ## Deployment
 
 ```bash
