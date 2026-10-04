@@ -17,6 +17,23 @@ Der ursprüngliche Plan `docs/superpowers/plans/2026-09-14-kuin-relaunch.md` ist
 - [ ] Impressum, Datenschutz, Cookie-Richtlinie abschließend prüfen
 - [ ] Mit der Stadt Graz abstimmen, dass der Kalender-Hinweis (Sticker auf `/events`) so passt
 
+### Vor dem Go-live — Empfehlungen (04.10.)
+- [ ] **Backups:** auf dem Server liegen 17 alte Kopien von `content.pod` (~1,2 GB) — auf die letzten ~5 aufräumen; tägliches **externes** Backup einrichten (Plesk-Backup-Manager), aktuell liegt das einzige Backup auf demselben Server
+- [ ] **301-Weiterleitungen** der alten WordPress-URLs (13 Seiten, 25 Beiträge), Sitemap in der Search Console anmelden
+- [ ] **Formulare testen** (Kontakt, Newsletter → `api.kuin.at`): Spam-Schutz/Rate-Limit, Mails kommen an
+- [ ] **Admin `api.kuin.at` absichern:** starkes Passwort, nur nötige Konten, Zugriff nach Möglichkeit einschränken
+- [ ] **DNS:** TTL vorher senken, `www` → `kuin.at`, SSL prüfen, Umschaltzeitpunkt mit erreichbarem Team
+- [ ] **Uptime-Check** (z. B. UptimeRobot) mit Mail an das Team
+- [ ] Nach dem Go-live: Screenreader-Test mit echten Nutzer:innen, Leicht-Lesen-Texte von einer Prüfstelle gegenlesen lassen; optional datenschutzfreundliche Statistik (Matomo/Plausible)
+
+### Medien-Speicher (Orbiter) — Entscheidung bei Bedarf
+Stand: 224 Medien, 68,5 MB in `content.pod` (159 JPEG 45 MB, 32 PDF 23 MB) — unkritisch. Orbiter kann Medien auch anders speichern
+(Admin → Settings → Media storage, kein Neustart): `blob` (jetzt, in der DB), `local` (Ordner auf dem Server), `s3` (S3-kompatibel, z. B. EU-Anbieter/Cloudflare R2),
+`github` (nicht empfohlen), External link (nicht empfohlen: instabile Links, Datenschutz).
+- [ ] Beim Admin-Upload WebP aktivieren (`media.img_convert_webp`), Maximalbreite/Qualität prüfen (Standard 2400 px / 85)
+- [ ] Ab ca. 500 MB Fotos: auf `local` oder `s3` umstellen; dann **Medienordner/Bucket ins Backup** aufnehmen (nicht mehr in `content.pod`). Bestehende Medien bleiben im Blob, nur neue Uploads gehen an das neue Ziel
+- [ ] Dropbox/Google Drive/WeTransfer **nicht** als Bildquelle verwenden
+
 ### Inhalte
 - [ ] **Fotos** für Angela Fink, Susanne Maurer-Aldrian, Anita Brodtrager, Edi Haberl (aktuell Platzhalterfoto)
 - [ ] **Funktion/Rolle** für Anita Brodtrager (aktuell „Teammitglied")
