@@ -90,13 +90,13 @@ Rückblicke auf vergangene Walks.
 ## Zugänge (Server, Orbiter-Admin, Preview)
 
 Zugangsdaten liegen in **`.env.local`** (gitignored, per `.stignore` nicht gesynct) —
-Variablen `KUIN_SSH_HOST`, `KUIN_SSH_USER`, `KUIN_SSH_PASSWORD`. Keine Werte in
+Variablen `PLESK_HOST`, `PLESK_USER`, `PLESK_PASSWORD`. Keine Werte in
 agent.md/stage.md/Commits schreiben und `.env.local` nicht mit rsync hochladen
 (`--exclude '.env.local'`).
 
 | Was | Wo |
 |---|---|
-| Server (Plesk, Passenger) | SSH-Alias **`kuin-server`** (Key `~/.ssh/<ssh-key>`, User = kuin.at-Subscription-User). Das Passwort in `.env.local` ist nur Fallback (Plesk-Panel/SFTP) |
+| Server (Plesk, Passenger) | SSH-Alias **`kuin-server`** (Key- oder Passwort-Login, User = kuin.at-Subscription-User; Details in `~/.ssh/config`). Das Passwort in `.env.local` ist nur Fallback (Plesk-Panel/SFTP) |
 | `preview.kuin.at` | die Astro-Site, App-Root `/var/www/vhosts/kuin.at/preview.kuin.at/` (Deploy siehe unten) |
 | `api.kuin.at` | Orbiter-Backend/Admin-UI, App-Root `/var/www/vhosts/kuin.at/api.kuin.at/`; dort liegt die **Live-DB** `content.pod` |
 | `kuin.at` | noch alte WordPress-Produktion bis Go-Live |
@@ -107,9 +107,8 @@ Schreibzugriffe auf die Live-DB nur nach Rückfrage beim User und mit vorherigem
 ## Deployment / Server-Betrieb
 
 Server: Plesk + Phusion Passenger, SSH-Alias `kuin-server` (`~/.ssh/config`,
-`<server-ip>`, User **muss** die kuin.at-Subscription selbst sein, z.B.
-`<subscription-user>` — ein anderer Plesk-User auf demselben Server (z.B. der
-für <other-subscription>) hat keinen Zugriff, `/var/www/vhosts/kuin.at/` ist `drwx--x---`
+Host/User stehen nur dort und in `.env.local`; der User **muss** die kuin.at-Subscription
+selbst sein — ein anderer Plesk-User auf demselben Server hat keinen Zugriff, `/var/www/vhosts/kuin.at/` ist `drwx--x---`
 gegen andere Subscriptions). Drei vhosts unter `/var/www/vhosts/kuin.at/`:
 - `preview.kuin.at` — diese Astro-Site
 - `api.kuin.at` — `@a83/orbiter-admin` CLI (Orbiter-CMS-Backend/Admin-UI)

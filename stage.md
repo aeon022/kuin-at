@@ -527,8 +527,8 @@ Spec: `agent.md`.
   two DBs with near-identical starting content that then diverged — admin
   edits only ever landed in `api.kuin.at`'s copy). Also discovered while
   fixing this: the `kuin-server` SSH alias needs the kuin.at-subscription's
-  own Plesk user (`<subscription-user>`); another subscription's user on the
-  same box (`<other-user>`) can't even traverse into `/var/www/vhosts/kuin.at/`
+  own Plesk user; another subscription's user on the
+  same box can't even traverse into `/var/www/vhosts/kuin.at/`
   (`drwx--x---`, wrong group). First interim fix was a symlink
   (`preview.kuin.at/content.pod` → `../api.kuin.at/content.pod`); replaced
   same session with the cleaner fix the user asked for: `astro.config.mjs`
@@ -647,4 +647,3 @@ Spec: `agent.md`.
 - **Dark mode contrast** of the Sunny’s Liederlade tile is low (lilac tile → grey); alternative
   logo variant if the client minds.
 - Remaining drafts: `blog/kuin-spaziergang` (137 photos, alt texts already set), two Rathaus drafts.
-- Housekeeping: `agent.md` still names the env vars `KUIN_SSH_*`; `.env.local` uses `PLESK_*`.
