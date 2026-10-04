@@ -1,5 +1,8 @@
 # kuin.at Relaunch Implementation Plan
 
+> **Stand 2026-10-04: abgeschlossen.** Alle 13 Tasks sind umgesetzt (Checkboxen unten bewusst nicht nachgezogen). Aktuelle To-dos: [`roadmap.md`](../../../roadmap.md), Verlauf: [`stage.md`](../../../stage.md).
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 >
 > **Also required:** keep `stage.md` (repo root) updated after every task — one line appended to its "Log" section stating what just landed and any open follow-up. This is the user's own progress ledger and is separate from this plan's checkboxes.

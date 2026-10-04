@@ -1,5 +1,7 @@
 # kuin.at — Stage / Progress Log
 
+> Kurzfassung mit allen To-dos (offen + erledigt): [`roadmap.md`](roadmap.md).
+
 Living progress tracker so context survives across sessions. Full implementation
 plan (read this first for any "why"): `docs/superpowers/plans/2026-09-14-kuin-relaunch.md`.
 Spec: `agent.md`.
