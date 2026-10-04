@@ -30,6 +30,8 @@ const {
 
 const logo = await getMediaItem('05702c2b-c0ca-47d7-aef4-72e285f169cb');
 const ogImage = new URL(image ?? '/og-image.png', Astro.site ?? Astro.url).toString();
+// preview.* is a staging copy: never index it (canonical already points at kuin.at).
+const isPreview = Astro.url.hostname.startsWith('preview.');
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
 
 const leichtLesenActive = Astro.cookies.get('kuin-leicht-lesen')?.value === 'true';
@@ -59,7 +61,7 @@ const themeAttr = themeCookie === 'light' || themeCookie === 'dark' ? themeCooki
   <title>{title} · KUIN</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonicalURL} />
-  <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+  <meta name="robots" content={noindex || isPreview ? 'noindex, nofollow' : 'index, follow'} />
 
   <!-- SVG primary (crisp at any size, modern browsers): the CMS wordmark
        directly. /favicon.ico and /apple-touch-icon.png are pre-cropped

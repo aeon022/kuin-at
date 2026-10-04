@@ -13,7 +13,7 @@ Der ursprüngliche Plan `docs/superpowers/plans/2026-09-14-kuin-relaunch.md` ist
 ### Vor dem Go-live
 - [ ] `kuin.at` von Coming-Soon (`coming-soon/`) auf die Astro-App umstellen (vhost/DNS)
 - [ ] Weiterleitungen der alten WordPress-URLs
-- [ ] Sitemap prüfen, `noindex` der Preview entfernen
+- [ ] Sitemap prüfen und in der Search Console anmelden (Preview ist bereits `noindex` + `Disallow`; auf `kuin.at` greift automatisch `index, follow` und `Allow`, kein Umbau nötig)
 - [ ] Impressum, Datenschutz, Cookie-Richtlinie abschließend prüfen
 - [ ] Mit der Stadt Graz abstimmen, dass der Kalender-Hinweis (Sticker auf `/events`) so passt
 
@@ -66,6 +66,7 @@ Der ursprüngliche Plan `docs/superpowers/plans/2026-09-14-kuin-relaunch.md` ist
 - [x] Orbiter auf aktuelle Versionen aktualisiert
 
 ### Seit 02.10.
+- [x] Preview aus Suchmaschinen ausgeschlossen (04.10.): `robots.txt` als Route (Host `preview.*` → `Disallow: /`), Meta `noindex, nofollow`; Canonical zeigt auf `kuin.at`
 - [x] Git-Historie bereinigt (04.10.): Server-IP, Subscription-User, Key-Name, fremde Accounts und versehentlich committete `content.pod-shm/-wal` entfernt; Details jetzt in der gitignorierten `SERVER.local.md`; Backup `~/kuin-at-pre-rewrite-2026-10-04.bundle`
 - [x] `agent.md`/`stage.md` bereinigt: Server-IP, Subscription-User, Key-Name und fremde Accountnamen entfernt (Repo ist öffentlich); Variablen heißen jetzt `PLESK_*`
 - [x] Link auf die Stadt-Graz-Inklusionsveranstaltungen (Sticker auf `/events`, Link im Footer)
