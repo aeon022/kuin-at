@@ -50,6 +50,7 @@ Stand: 224 Medien, 68,5 MB in `content.pod` (159 JPEG 45 MB, 32 PDF 23 MB) — u
 - [ ] GitHub-Repo auf **privat** stellen oder beim GitHub-Support alte Commits entfernen lassen (Historie wurde am 04.10. umgeschrieben, alte SHAs sind auf GitHub evtl. noch abrufbar)
 - [ ] Dunkelmodus-Kontrast der Sunny’s-Liederlade-Kachel (lila → grau); ggf. andere Logo-Variante
 - [ ] SSH-Key-Login zum Server einrichten (aktuell Passwort aus `.env.local`)
+- [ ] (niedrige Priorität) Plesk-Passwort rotieren und `PLESK_PASSWORD` in `.env.local` anpassen — das alte steht im Klartext in einer Notiz und in den Session-Protokollen der privaten Repo `claude-sync`; danach auch in der Notiz „SERVER“ aktualisieren
 - [ ] `deploy/apply-*.sh` sind Einmal-Skripte; bei Bedarf in Doku/`agent.md` aufnehmen
 - [ ] Bildnachweis „Porträtfotos: Edi Haberl“ im `vorstand.astro` in ein Fragment packen (optisch egal)
 
